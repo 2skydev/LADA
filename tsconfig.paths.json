@@ -1,0 +1,12 @@
+{
+  "compilerOptions": {
+    "paths": {
+      "@app/*": [
+        "./app/*"
+      ],
+      "~/*": [
+        "./src/*"
+      ]
+    }
+  }
+}
