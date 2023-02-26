@@ -1,17 +1,17 @@
 {
-  "appId": "com.2skydev.templateapp",
-  "productName": "TemplateApp",
+  "appId": "com.2skydev.lolps",
+  "productName": "LOL.PS Desktop",
   "protocols": {
-    "name": "templateapp",
+    "name": "lolps",
     "schemes": [
-      "templateapp"
+      "lolps"
     ]
   },
   "publish": [
     {
       "provider": "github",
       "owner": "2skydev",
-      "repo": "electron-vite-react-ts-template"
+      "repo": "LOL.PS-Desktop"
     }
   ],
   "asar": true,
@@ -25,8 +25,8 @@
   },
   "nsis": {
     "oneClick": true,
-    "artifactName": "TemplateApp-Setup-${version}.${ext}",
-    "uninstallDisplayName": "TemplateApp"
+    "artifactName": "LOL.PS-Desktop-Setup-${version}.${ext}",
+    "uninstallDisplayName": "LOL.PS-Desktop"
   },
   "extraResources": [
     "./resources/**"
