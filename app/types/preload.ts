@@ -21,4 +21,6 @@ export interface ElectronRendererContext {
   getStorePath: () => Promise<string>;
   getLogs: () => Promise<Log[]>;
   clearLogs: () => Promise<boolean>;
+
+  api: (url: string) => Promise<any>;
 }

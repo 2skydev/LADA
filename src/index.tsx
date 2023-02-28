@@ -26,6 +26,9 @@ const swrConfig: SWRConfiguration = {
   errorRetryInterval: 500,
   revalidateOnFocus: false,
   revalidateIfStale: false,
+  fetcher: async (url: string) => {
+    return await window.electron.api(url);
+  },
 };
 
 createRoot(document.getElementById('root') as HTMLElement).render(
