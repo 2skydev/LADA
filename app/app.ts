@@ -7,6 +7,8 @@ import { globImport } from './utils/import';
 export type AppContextType = InstanceType<typeof AppContext>;
 export type ModuleFunction = (context: AppContextType) => void | Promise<void>;
 
+app.commandLine.appendSwitch(`--enable-smooth-scrolling`);
+
 const { productName, protocols } = require(app.isPackaged
   ? './app.json'
   : '../electron-builder.json');
