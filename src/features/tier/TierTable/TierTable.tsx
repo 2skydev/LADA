@@ -46,7 +46,7 @@ const TierTable = ({ className }: TierTableProps) => {
               const item = data[props['data-row-key'] - 1];
 
               return (
-                <tr className={clsx(className, `tier${item.opTier}`)} {...props}>
+                <tr className={clsx(className, item && `tier${item.opTier}`)} {...props}>
                   {children}
                 </tr>
               );
