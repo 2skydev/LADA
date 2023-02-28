@@ -2,12 +2,12 @@ import { useEffect, useMemo } from 'react';
 import { Outlet } from 'react-router-dom';
 
 import { ConfigProvider, theme } from 'antd';
-import { useRecoilState, useRecoilValue } from 'recoil';
+import antdLocaleKR from 'antd/locale/ko_KR';
+import { useRecoilState } from 'recoil';
 import { ThemeProvider } from 'styled-components';
 
 import Layout from '~/components/Layout';
 import Titlebar from '~/components/Titlebar';
-import { configStore } from '~/stores/config';
 import { updateStore } from '~/stores/update';
 import { InitGlobalStyled } from '~/styles/init';
 import { antdTheme, colors, sizes } from '~/styles/themes';
@@ -24,7 +24,7 @@ declare module 'styled-components' {
 
 const App = () => {
   return (
-    <ConfigProvider theme={antdTheme}>
+    <ConfigProvider theme={antdTheme} locale={antdLocaleKR}>
       <AppInner />
     </ConfigProvider>
   );
@@ -33,7 +33,6 @@ const App = () => {
 const AppInner = () => {
   const antdToken = theme.useToken();
 
-  const config = useRecoilValue(configStore);
   const [update, setUpdate] = useRecoilState(updateStore);
 
   const bootstrap = async () => {
