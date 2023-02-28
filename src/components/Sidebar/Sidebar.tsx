@@ -7,6 +7,7 @@ import { useRecoilValue } from 'recoil';
 
 import { configStore } from '~/stores/config';
 
+import LaneIcon from '../LaneIcon';
 import { SidebarStyled } from './styled';
 
 export interface SidebarProps {
@@ -20,16 +21,12 @@ const Sidebar = ({ className }: SidebarProps) => {
   const menus = useMemo(
     () => [
       {
-        title: '테스트',
+        title: '챔피언',
         items: [
           {
-            icon: 'bx-home-alt-2',
+            icon: <LaneIcon laneId={0} />,
             link: '/',
-            text: '메인페이지',
-          },
-          {
-            link: '/testpage',
-            text: '404테스트',
+            text: '챔피언 티어',
           },
         ],
       },
@@ -182,7 +179,11 @@ const Sidebar = ({ className }: SidebarProps) => {
                             />
                           )}
 
-                          <i className={`bx ${item.icon}`} />
+                          {typeof item.icon === 'string' ? (
+                            <i className={`bx ${item.icon}`} />
+                          ) : (
+                            item.icon
+                          )}
                           <span>{item.text}</span>
                         </Link>
                       </motion.div>

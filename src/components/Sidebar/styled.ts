@@ -53,12 +53,17 @@ export const SidebarStyled = styled.div`
           color: ${props => props.theme.colors.primary};
         }
 
+        &.active svg {
+          fill: ${props => props.theme.colors.primary};
+        }
+
         &:hover {
           background-color: rgba(0, 0, 0, 0.04);
         }
 
         .bx,
-        span {
+        span,
+        svg {
           position: relative;
           z-index: 1;
         }
@@ -67,6 +72,12 @@ export const SidebarStyled = styled.div`
           font-size: 1.4rem;
           margin-right: 0.5rem;
           transition: 200ms color;
+        }
+
+        svg {
+          width: 1.4rem;
+          margin-right: 0.5rem;
+          transition: 200ms fill;
         }
 
         span {

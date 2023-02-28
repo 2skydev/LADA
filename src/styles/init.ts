@@ -145,7 +145,8 @@ export const InitGlobalStyled = memo(createGlobalStyle`
     }
 
     .ant-table-wrapper .ant-table-tbody > tr> td {
-      border-radius: 8px;
+      transition: background 0.2s;
+      /* border-radius: 8px; */
     }
 
     .ant-table-wrapper .ant-table-tbody > tr:last-child > td {
@@ -154,6 +155,19 @@ export const InitGlobalStyled = memo(createGlobalStyle`
 
     .ant-table-wrapper .ant-table-thead >tr>th {
       color: ${props => props.theme.colors.textColor2};
+    }
+
+    .ant-table-wrapper .ant-table-thead th.ant-table-column-sort {
+      color: ${props => props.theme.colors.primary};
+    }
+
+    .ant-table-wrapper td.ant-table-column-sort {
+      background: none;
+    }
+
+    .ant-table-wrapper .ant-table-thead >tr>th:not(:last-child):not(.ant-table-selection-column):not(.ant-table-row-expand-icon-cell):not([colspan])::before,
+    .ant-table-wrapper .ant-table-thead >tr>td:not(:last-child):not(.ant-table-selection-column):not(.ant-table-row-expand-icon-cell):not([colspan])::before {
+      display: none;
     }
 
 
