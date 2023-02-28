@@ -1,7 +1,7 @@
 import { useEffect, useMemo } from 'react';
 import { Outlet } from 'react-router-dom';
 
-import { ConfigProvider, theme } from 'antd';
+import { ConfigProvider, GlobalToken, theme } from 'antd';
 import antdLocaleKR from 'antd/locale/ko_KR';
 import { useRecoilState } from 'recoil';
 import { ThemeProvider } from 'styled-components';
@@ -19,6 +19,7 @@ declare module 'styled-components' {
   export interface DefaultTheme {
     sizes: Sizes;
     colors: Colors;
+    token: GlobalToken;
   }
 }
 
