@@ -20,6 +20,8 @@ const electronContext: ElectronRendererContext = {
   getStorePath: () => ipcRenderer.invoke('getStorePath'),
   getLogs: () => ipcRenderer.invoke('getLogs'),
   clearLogs: () => ipcRenderer.invoke('clearLogs'),
+
+  api: url => ipcRenderer.invoke('apis', url),
 };
 
 contextBridge.exposeInMainWorld('electron', electronContext);
