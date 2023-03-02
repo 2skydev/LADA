@@ -21,7 +21,9 @@ const electronContext: ElectronRendererContext = {
   getLogs: () => ipcRenderer.invoke('getLogs'),
   clearLogs: () => ipcRenderer.invoke('clearLogs'),
 
-  api: url => ipcRenderer.invoke('apis', url),
+  apis: (category, url, payload) => ipcRenderer.invoke(`apis/${category}`, url, payload),
+  subscribeLeague: (path, callback) =>
+    ipcRenderer.on(`league/${path}`, (_, data) => callback(data)),
 };
 
 contextBridge.exposeInMainWorld('electron', electronContext);

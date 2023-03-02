@@ -3,6 +3,8 @@ import { AppControlAction } from '../modules/general';
 import { UpdateEvent, UpdateStatus } from '../modules/update';
 import { ConfigStoreValues } from '../stores/config';
 
+export type APICategory = 'league' | 'ps';
+
 export interface ElectronRendererContext {
   onUpdate: (callback: (event: UpdateEvent, data: any) => void) => void;
 
@@ -22,5 +24,6 @@ export interface ElectronRendererContext {
   getLogs: () => Promise<Log[]>;
   clearLogs: () => Promise<boolean>;
 
-  api: (url: string) => Promise<any>;
+  apis: (category: APICategory, url: string, payload?: any) => Promise<any>;
+  subscribeLeague: (path: string, callback: (data: any) => void) => void;
 }

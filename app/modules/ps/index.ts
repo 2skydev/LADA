@@ -2,8 +2,7 @@ import axios from 'axios';
 import * as cheerio from 'cheerio';
 
 import { ModuleFunction } from '@app/app';
-
-import IPCServer from './IPCServer';
+import IPCServer from '@app/utils/IPCServer';
 
 interface Version {
   id: number;
@@ -33,10 +32,10 @@ const getLatestVersion = async (): Promise<Version> => {
   };
 };
 
-const APIModule: ModuleFunction = async () => {
+const PSModule: ModuleFunction = async () => {
   const version = await getLatestVersion();
 
-  const server = new IPCServer('apis');
+  const server = new IPCServer('apis/ps');
 
   server.add('/tiers/:lane', async ({ params }) => {
     const { lane } = params;
@@ -56,4 +55,4 @@ const APIModule: ModuleFunction = async () => {
   });
 };
 
-export default APIModule;
+export default PSModule;

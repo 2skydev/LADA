@@ -38,6 +38,11 @@ const Sidebar = ({ className }: SidebarProps) => {
             link: '/settings',
             text: '일반 설정',
           },
+          {
+            icon: 'bx-joystick',
+            link: '/settings/game',
+            text: '게임 설정',
+          },
           ...(config.general.developerMode
             ? [
                 {

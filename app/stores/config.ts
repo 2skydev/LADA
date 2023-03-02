@@ -4,6 +4,9 @@ export interface ConfigStoreValues {
   general: {
     developerMode: boolean;
   };
+  game: {
+    autoAccept: boolean;
+  };
 }
 
 export const configStore = new Store<ConfigStoreValues>({
@@ -12,6 +15,9 @@ export const configStore = new Store<ConfigStoreValues>({
   defaults: {
     general: {
       developerMode: false,
+    },
+    game: {
+      autoAccept: false,
     },
   },
 });
