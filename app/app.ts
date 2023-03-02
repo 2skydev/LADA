@@ -118,11 +118,11 @@ class AppContext {
     tray.setContextMenu(contextMenu);
   }
 
-  async register(module: ModuleFunction) {
+  private async register(module: ModuleFunction) {
     await module(this);
   }
 
-  async autoload() {
+  private async autoload() {
     const modules = await globImport('./modules/**/index.js', { cwd: __dirname });
 
     await Promise.all(modules.map(({ default: module }) => this.register(module)));

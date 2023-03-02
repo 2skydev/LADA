@@ -8,6 +8,7 @@ import { ThemeProvider } from 'styled-components';
 
 import Layout from '~/components/Layout';
 import Titlebar from '~/components/Titlebar';
+import { appStateStore } from '~/stores/app';
 import { updateStore } from '~/stores/update';
 import { InitGlobalStyled } from '~/styles/init';
 import { antdTheme, colors, sizes } from '~/styles/themes';
@@ -35,6 +36,7 @@ const AppInner = () => {
   const antdToken = theme.useToken();
 
   const [update, setUpdate] = useRecoilState(updateStore);
+  const [appState, setAppState] = useRecoilState(appStateStore);
 
   const bootstrap = async () => {
     window.electron.onUpdate((event, data) => {
@@ -49,6 +51,25 @@ const AppInner = () => {
     });
 
     window.electron.initlizeUpdater();
+
+    const isReady = await window.electron.apis('league', '/is-ready');
+
+    setAppState({
+      ...appState,
+      leagueIsReady: isReady,
+    });
+
+    window.electron.subscribeLeague('connect-change', state => {
+      console.log('connect-change', state);
+      setAppState({
+        ...appState,
+        leagueIsReady: state === 'connect',
+      });
+    });
+
+    window.electron.subscribeLeague('room/session', data => {
+      console.log('room/session', data);
+    });
   };
 
   const styledTheme = useMemo(

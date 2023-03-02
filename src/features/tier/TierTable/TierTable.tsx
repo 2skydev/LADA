@@ -1,12 +1,14 @@
 import { Controller } from 'react-hook-form';
 
-import { Table } from 'antd';
+import { Table, Tooltip } from 'antd';
 import clsx from 'clsx';
+import dayjs from 'dayjs';
 import useSWR from 'swr';
 
 import ChampionProfileSmall from '~/components/ChampionProfileSmall';
 import LaneSelect from '~/components/LaneSelect';
 import RankingVariation from '~/components/RankingVariation';
+import useAPI from '~/hooks/useAPI';
 import { useCustomForm } from '~/hooks/useCustomForm';
 
 import { TierTableStyled } from './styled';
@@ -25,12 +27,27 @@ const TierTable = ({ className }: TierTableProps) => {
 
   const lane = form.watch('lane');
 
-  const { data = [], isLoading } = useSWR<any[]>(`/tiers/${lane}`, {
-    keepPreviousData: true,
-  });
+  const { data = [], isLoading } = useAPI<any[]>('ps', `/tiers/${lane}`);
+
+  const updatedAt = data[0]?.updatedAt;
 
   return (
     <TierTableStyled className={clsx('TierTable', className)}>
+      <header>
+        <h2>라인별 챔피언 티어</h2>
+
+        <div className="updatedAt">
+          {!updatedAt && '불러오는 중...'}
+          {updatedAt && (
+            <Tooltip title={dayjs(updatedAt).format('YYYY.MM.DD a h:m')}>
+              {dayjs(updatedAt).fromNow()} KST 기준
+            </Tooltip>
+          )}
+        </div>
+
+        <div className="info">라인별 픽률 0.5% 이상만 표시</div>
+      </header>
+
       <Controller
         control={form.control}
         name="lane"
@@ -87,6 +104,7 @@ const TierTable = ({ className }: TierTableProps) => {
             align: 'right',
             sorter: (a, b) => a.opScore - b.opScore,
             defaultSortOrder: 'descend',
+            width: 150,
           },
           {
             key: 'honeyScore',
@@ -94,6 +112,7 @@ const TierTable = ({ className }: TierTableProps) => {
             title: '꿀챔 점수',
             align: 'right',
             sorter: (a, b) => a.honeyScore - b.honeyScore,
+            width: 150,
           },
           {
             key: 'winRate',
@@ -102,6 +121,7 @@ const TierTable = ({ className }: TierTableProps) => {
             align: 'right',
             sorter: (a, b) => a.winRate - b.winRate,
             render: (value: number) => value + '%',
+            width: 150,
           },
           {
             key: 'pickRate',
@@ -110,6 +130,7 @@ const TierTable = ({ className }: TierTableProps) => {
             align: 'right',
             sorter: (a, b) => a.pickRate - b.pickRate,
             render: (value: number) => value + '%',
+            width: 150,
           },
           {
             key: 'banRate',
@@ -118,6 +139,7 @@ const TierTable = ({ className }: TierTableProps) => {
             align: 'right',
             sorter: (a, b) => a.banRate - b.banRate,
             render: (value: number) => value + '%',
+            width: 150,
           },
           {
             key: 'count',
@@ -126,6 +148,7 @@ const TierTable = ({ className }: TierTableProps) => {
             align: 'right',
             sorter: (a, b) => a.count - b.count,
             render: (value: number) => Number(value).toLocaleString(),
+            width: 150,
           },
         ]}
         dataSource={data}
