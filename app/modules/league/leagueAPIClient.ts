@@ -77,9 +77,11 @@ class LeagueAPIClient {
             url: '/lol-summoner/v1/current-summoner',
           })
             .then(response => {
-              if (response.httpStatus === 404) return reject(new Error('Not logged in'));
-              if (!response.summonerId) return reject(new Error('Summoner not found'));
-              resolve(response);
+              const data = response.json();
+
+              if (data.httpStatus === 404) return reject(new Error('Not logged in'));
+              if (!data.summonerId) return reject(new Error('Summoner not found'));
+              resolve(data);
             })
             .catch(reject);
         }),
@@ -97,9 +99,7 @@ class LeagueAPIClient {
   public async request(options: HttpRequestOptions) {
     if (!this.credentials) throw new Error('Credentials not found');
 
-    const res = await createHttp1Request(options, this.credentials);
-
-    return res.json();
+    return await createHttp1Request(options, this.credentials);
   }
 
   public async subscribe(path: string, effect: EventCallback) {

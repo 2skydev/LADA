@@ -11,12 +11,12 @@ const LeagueModule: ModuleFunction = async context => {
   server.add('/is-ready', async () => client.isReady());
 
   server.add('/summoner/current', async () => {
-    const data = await client.request({
+    const res = await client.request({
       method: 'GET',
       url: '/lol-summoner/v1/current-summoner',
     });
 
-    return data;
+    return res.json();
   });
 
   client.on('connect', () => {
@@ -41,7 +41,7 @@ const LeagueModule: ModuleFunction = async context => {
     });
 
     client.subscribe('/lol-matchmaking/v1/ready-check', async data => {
-      if (data.playerResponse === 'None' && configStore.get('game.autoAccept')) {
+      if (data?.playerResponse === 'None' && configStore.get('game').autoAccept) {
         await client.request({
           method: 'POST',
           url: '/lol-matchmaking/v1/ready-check/accept',
