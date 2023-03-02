@@ -1,4 +1,4 @@
-![image](https://user-images.githubusercontent.com/43225384/221976059-4f5cac02-0de0-4b4b-a314-ea3ac5583049.png)
+![image](https://user-images.githubusercontent.com/43225384/222410194-65a82855-a48c-4abf-9fef-f1f4e3d500d9.png)
 
 # LOL.PS Desktop
 
@@ -60,5 +60,5 @@ yarn build:all
 
 ## 스크린샷들
 
-![image](https://user-images.githubusercontent.com/43225384/221976059-4f5cac02-0de0-4b4b-a314-ea3ac5583049.png)
+![image](https://user-images.githubusercontent.com/43225384/222410194-65a82855-a48c-4abf-9fef-f1f4e3d500d9.png)
 
