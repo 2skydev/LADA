@@ -3,7 +3,6 @@ import { Controller } from 'react-hook-form';
 import { Table, Tooltip } from 'antd';
 import clsx from 'clsx';
 import dayjs from 'dayjs';
-import useSWR from 'swr';
 
 import ChampionProfileSmall from '~/components/ChampionProfileSmall';
 import LaneSelect from '~/components/LaneSelect';
@@ -27,7 +26,9 @@ const TierTable = ({ className }: TierTableProps) => {
 
   const lane = form.watch('lane');
 
-  const { data = [], isLoading } = useAPI<any[]>('ps', `/tiers/${lane}`);
+  const { data = [], isLoading } = useAPI<any[]>('ps', `/tiers/${lane}`, {
+    dedupingInterval: 1000 * 60 * 5,
+  });
 
   const updatedAt = data[0]?.updatedAt;
 
