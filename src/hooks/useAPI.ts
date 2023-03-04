@@ -37,8 +37,12 @@ const useAPI = <T = any>(category: APICategory, url: string, options: useAPIOpti
     revalidateOnReconnect: false,
     ...(!requestable && { fallbackData: cacheData }),
     fetcher: async ([category, url, payload]: [APICategory, string, any]) => {
-      console.log('fetcher', category, url, payload);
-      return await window.electron.apis(category, url, payload);
+      console.log('API 요청', category, url, payload);
+      const response = await window.electron.apis(category, url, payload);
+
+      if (response?.errorCode) throw new Error(response?.message || 'Unknown Error');
+
+      return response;
     },
     ...swrOptions,
   });

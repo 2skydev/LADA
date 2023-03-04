@@ -25,5 +25,9 @@ export interface ElectronRendererContext {
   clearLogs: () => Promise<boolean>;
 
   apis: (category: APICategory, url: string, payload?: any) => Promise<any>;
+
   subscribeLeague: (path: string, callback: (data: any) => void) => void;
+  unsubscribeLeague: (path: string) => void;
+
+  off: (channel: string, listener: (...args: any[]) => void) => void;
 }

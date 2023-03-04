@@ -13,7 +13,7 @@ class IPCServer {
   public resolvers: Map<string, Resolver> = new Map();
 
   constructor(channel: string) {
-    ipcMain.handle(channel, (_, url: string, payload: any) => this.handler(url, payload));
+    ipcMain.handle(channel, (_, url: string, payload: any = {}) => this.handler(url, payload));
   }
 
   private async handler(url: string, payload: any) {

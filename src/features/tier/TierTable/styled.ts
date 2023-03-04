@@ -30,6 +30,10 @@ export const TierTableStyled = styled.div`
       border-bottom: none !important;
     }
 
+    .ant-table-tbody td {
+      cursor: pointer;
+    }
+
     .tier1 td {
       background-color: rgba(235, 87, 87, 0.2);
 

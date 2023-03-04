@@ -19,6 +19,15 @@ const LeagueModule: ModuleFunction = async context => {
     return res.json();
   });
 
+  server.add('/lobby', async () => {
+    const res = await client.request({
+      method: 'GET',
+      url: '/lol-lobby/v2/lobby',
+    });
+
+    return res.json();
+  });
+
   client.on('connect', () => {
     context.window?.webContents.send('league/connect');
     context.window?.webContents.send('league/connect-change', 'connect');
@@ -38,6 +47,10 @@ const LeagueModule: ModuleFunction = async context => {
 
     client.subscribe('/lol-summoner/v1/current-summoner', data => {
       context.window?.webContents.send('league/summoner/current', data);
+    });
+
+    client.subscribe('/lol-lobby/v2/lobby', data => {
+      context.window?.webContents.send('league/lobby', data);
     });
 
     client.subscribe('/lol-matchmaking/v1/ready-check', async data => {

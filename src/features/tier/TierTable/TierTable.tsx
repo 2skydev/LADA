@@ -1,4 +1,5 @@
 import { Controller } from 'react-hook-form';
+import { useNavigate } from 'react-router-dom';
 
 import { Table, Tooltip } from 'antd';
 import clsx from 'clsx';
@@ -17,6 +18,8 @@ export interface TierTableProps {
 }
 
 const TierTable = ({ className }: TierTableProps) => {
+  const navigate = useNavigate();
+
   const form = useCustomForm({
     defaultValues: {
       lane: 0,
@@ -58,6 +61,11 @@ const TierTable = ({ className }: TierTableProps) => {
       <br />
 
       <Table
+        onRow={record => ({
+          onClick: () => {
+            navigate(`/champ/${record.championId}`);
+          },
+        })}
         components={{
           body: {
             row: ({ className, children, ...props }: any) => {
