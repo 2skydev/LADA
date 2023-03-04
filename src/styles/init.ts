@@ -395,7 +395,7 @@ export const InitGlobalStyled = memo(createGlobalStyle`
     }
   
     .ant-modal-body {
-      padding: 1.5rem;
+      /* padding: 1.5rem; */
     }
   
     .ant-divider {

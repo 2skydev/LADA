@@ -31,6 +31,16 @@ const Sidebar = ({ className }: SidebarProps) => {
         ],
       },
       {
+        title: '유틸리티',
+        items: [
+          {
+            icon: 'bx-group',
+            link: '/team',
+            text: '5:5 팀 구성',
+          },
+        ],
+      },
+      {
         title: '설정',
         items: [
           {
