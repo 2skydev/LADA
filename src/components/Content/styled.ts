@@ -49,7 +49,7 @@ export const ContentStyled = styled.div`
       color: ${props => props.theme.colors.textColor1};
       border-radius: 8px;
 
-      .SummonerProfileIcon {
+      .DataDragonImage {
         margin-right: 0.5rem;
       }
     }

@@ -83,13 +83,48 @@ const PSModule: ModuleFunction = async () => {
     const { laneId, tierId } = payload;
 
     const {
-      data: { data },
+      data: { data: champArguments },
     } = await axios.get(`https://lol.ps/api/champ/${id}/arguments.json`);
 
-    const selectedLaneId = Number(laneId || data.laneId);
-    const selectedTierId = Number(tierId || data.tierId);
+    const selectedLaneId = Number(laneId || champArguments.laneId);
+    const selectedTierId = Number(tierId || champArguments.tierId);
 
-    return data;
+    const {
+      data: {
+        data: { itemWinrates: item, spellWinrates: spell },
+      },
+    } = await axios.get(`https://lol.ps/api/champ/${id}/spellitem.json`, {
+      params: {
+        region: 0,
+        version: version.id,
+        tier: selectedTierId,
+        lane: selectedLaneId,
+      },
+    });
+
+    const {
+      data: { data: skill },
+    } = await axios.get(`https://lol.ps/api/champ/${id}/skill.json`, {
+      params: {
+        region: 0,
+        version: version.id,
+        tier: selectedTierId,
+        lane: selectedLaneId,
+      },
+    });
+
+    const {
+      data: { data: runestatperk },
+    } = await axios.get(`https://lol.ps/api/champ/${id}/runestatperk.json`, {
+      params: {
+        region: 0,
+        version: version.id,
+        tier: selectedTierId,
+        lane: selectedLaneId,
+      },
+    });
+
+    return { item, spell, skill, runestatperk };
   });
 };
 
