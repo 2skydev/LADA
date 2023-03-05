@@ -1,4 +1,4 @@
-![image](https://user-images.githubusercontent.com/43225384/222410194-65a82855-a48c-4abf-9fef-f1f4e3d500d9.png)
+![image](https://user-images.githubusercontent.com/43225384/222954627-046f316f-967c-4059-b5d6-e35362f68631.png)
 
 # LADA - League of Legends Assistant Desktop App
 
@@ -61,4 +61,4 @@ yarn build:all
 
 ## 스크린샷들
 
-![image](https://user-images.githubusercontent.com/43225384/222410194-65a82855-a48c-4abf-9fef-f1f4e3d500d9.png)
+![image](https://user-images.githubusercontent.com/43225384/222954627-046f316f-967c-4059-b5d6-e35362f68631.png)
