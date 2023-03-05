@@ -1,4 +1,4 @@
-import { useMemo } from 'react';
+import { ReactNode, useMemo } from 'react';
 import { Link, useLocation } from 'react-router-dom';
 
 import clsx from 'clsx';
@@ -6,20 +6,32 @@ import { motion, LayoutGroup, AnimatePresence } from 'framer-motion';
 import { useRecoilValue } from 'recoil';
 
 import logoImage from '~/assets/images/logo@256.png';
+import LaneIcon from '~/features/asset/LaneIcon';
 import { configStore } from '~/stores/config';
 
-import LaneIcon from '../LaneIcon';
 import { SidebarStyled } from './styled';
 
 export interface SidebarProps {
   className?: string;
 }
 
+interface Menu {
+  title: string;
+  items: MenuItem[];
+}
+
+interface MenuItem {
+  icon: ReactNode;
+  link: string;
+  text: string;
+  isActiveFn?: (pathname: string) => boolean;
+}
+
 const Sidebar = ({ className }: SidebarProps) => {
   const config = useRecoilValue(configStore);
   const { pathname } = useLocation();
 
-  const menus = useMemo(
+  const menus: Menu[] = useMemo(
     () => [
       {
         title: '챔피언',
@@ -28,6 +40,7 @@ const Sidebar = ({ className }: SidebarProps) => {
             icon: <LaneIcon laneId={0} />,
             link: '/',
             text: '챔피언 티어',
+            isActiveFn: (pathname: string) => pathname === '/' || pathname.includes('/champ/'),
           },
         ],
       },
@@ -85,7 +98,9 @@ const Sidebar = ({ className }: SidebarProps) => {
               <div className="items">
                 <AnimatePresence>
                   {menuGroup.items.map(item => {
-                    const isActive = pathname === item.link;
+                    const isActive = item?.isActiveFn
+                      ? item?.isActiveFn(pathname)
+                      : pathname === item.link;
 
                     return (
                       <motion.div

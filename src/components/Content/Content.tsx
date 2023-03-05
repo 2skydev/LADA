@@ -5,10 +5,10 @@ import clsx from 'clsx';
 import { motion } from 'framer-motion';
 import { useRecoilValue } from 'recoil';
 
+import DataDragonImage from '~/features/asset/DataDragonImage';
 import useAPI from '~/hooks/useAPI';
 import { layoutStore } from '~/stores/layout';
 
-import SummonerProfileIcon from '../SummonerProfileIcon';
 import { ContentStyled } from './styled';
 
 export interface ContentProps {
@@ -48,7 +48,9 @@ const Content = ({ className, children }: ContentProps) => {
           <Button
             type="text"
             className="right"
-            icon={<SummonerProfileIcon profileIconId={profileIconId} size="28px" />}
+            icon={
+              <DataDragonImage type="profileicon" filename={profileIconId} size="28px" circle />
+            }
           >
             <span>{displayName}</span>
           </Button>

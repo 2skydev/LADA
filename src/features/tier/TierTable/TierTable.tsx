@@ -5,9 +5,9 @@ import { Table, Tooltip } from 'antd';
 import clsx from 'clsx';
 import dayjs from 'dayjs';
 
-import ChampionProfileSmall from '~/components/ChampionProfileSmall';
 import LaneSelect from '~/components/LaneSelect';
 import RankingVariation from '~/components/RankingVariation';
+import ChampionProfileSmall from '~/features/asset/ChampionProfileSmall';
 import useAPI from '~/hooks/useAPI';
 import { useCustomForm } from '~/hooks/useCustomForm';
 
