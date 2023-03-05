@@ -1,17 +1,17 @@
 {
-  "appId": "com.2skydev.lolps",
-  "productName": "LOL.PS Desktop",
+  "appId": "com.2skydev.lada",
+  "productName": "LADA",
   "protocols": {
-    "name": "lolps",
+    "name": "lada",
     "schemes": [
-      "lolps"
+      "lada"
     ]
   },
   "publish": [
     {
       "provider": "github",
       "owner": "2skydev",
-      "repo": "LOL.PS-Desktop"
+      "repo": "LADA"
     }
   ],
   "asar": true,
@@ -25,8 +25,8 @@
   },
   "nsis": {
     "oneClick": true,
-    "artifactName": "LOL.PS-Desktop-Setup-${version}.${ext}",
-    "uninstallDisplayName": "LOL.PS-Desktop"
+    "artifactName": "LADA-Setup-${version}.${ext}",
+    "uninstallDisplayName": "LADA"
   },
   "extraResources": [
     "./resources/**"

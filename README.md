@@ -1,11 +1,9 @@
 ![image](https://user-images.githubusercontent.com/43225384/222410194-65a82855-a48c-4abf-9fef-f1f4e3d500d9.png)
 
-# LOL.PS Desktop
+# LADA - League of Legends Assistant Desktop App
 
-LOL.PS에서 데스크탑 앱을 내주지 않아서 직접 만들게 되었습니다.<br />
+리그 오브 레전드 전적 검색 및 챔피언 티어, 룬, 아이템 자동설정 등 여러 기능이 있는 데스크탑 앱 입니다.<br />
 해당 프로젝트는 개인 토이 프로젝트로 개발 기간은 마구잡이일 경우가 있습니다.<br />
-
-> 해당 데스크탑 앱은 공식 앱이 아니며, LOL.PS에서 제공하는 API를 사용합니다.<br />
 
 <br />
 

@@ -13,9 +13,11 @@ export const SidebarStyled = styled.div`
     font-size: 1.6rem;
     display: flex;
     align-items: center;
+    font-weight: bold;
 
     img {
-      margin-right: 0.5rem;
+      width: 3.5rem;
+      margin-right: 1rem;
     }
   }
 

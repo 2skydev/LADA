@@ -1,7 +1,7 @@
 {
-  "name": "lol.ps-desktop",
+  "name": "lada",
   "version": "0.0.1",
-  "description": "LOL.PS Desktop App",
+  "description": "LADA - League of Legends Assistant Desktop App",
   "main": "dist-electron/index.js",
   "license": "MIT",
   "scripts": {
