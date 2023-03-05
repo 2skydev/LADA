@@ -17,6 +17,7 @@
   "dependencies": {
     "@types/react-virtualized": "^9.21.21",
     "antd": "^5.1.5",
+    "auto-launch": "^5.0.5",
     "axios": "^1.2.3",
     "cheerio": "^1.0.0-rc.12",
     "clsx": "^1.2.1",
@@ -44,6 +45,7 @@
   },
   "devDependencies": {
     "@trivago/prettier-plugin-sort-imports": "^4.0.0",
+    "@types/auto-launch": "^5.0.2",
     "@types/lodash": "^4.14.191",
     "@types/node": "^18.11.18",
     "@types/react": "^18.0.26",
