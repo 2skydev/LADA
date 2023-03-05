@@ -31,6 +31,24 @@ const Settings = () => {
       <LayoutConfig breadcrumbs={['설정', '일반 설정']} />
 
       <Section
+        title="컴퓨터 부팅시 자동 시작"
+        description={<div>컴퓨터가 켜진 후 자동으로 앱이 시작되도록 설정합니다.</div>}
+      >
+        <Controller
+          name="autoLaunch"
+          control={form.control}
+          render={({ field }) => (
+            <Switch
+              checked={field.value}
+              onChange={checked => field.onChange(checked)}
+              checkedChildren={<i className="bx bx-check" />}
+              unCheckedChildren={<i className="bx bx-x" />}
+            />
+          )}
+        />
+      </Section>
+
+      <Section
         title="개발자모드 설정"
         description={
           <div>
