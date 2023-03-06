@@ -82,12 +82,15 @@ const PSModule: ModuleFunction = async () => {
     const { id } = params;
     const { laneId, tierId } = payload;
 
-    const {
-      data: { data: champArguments },
-    } = await axios.get(`https://lol.ps/api/champ/${id}/arguments.json`);
+    const { data: html } = await axios.get(`https://lol.ps/champ/${id}`);
+    const $ = cheerio.load(html);
 
-    const selectedLaneId = Number(laneId || champArguments.laneId);
-    const selectedTierId = Number(tierId || champArguments.tierId);
+    const [, , , { data: champData }] = JSON.parse(
+      $('script[sveltekit\\:data-type="server_data"]').text(),
+    );
+
+    const selectedLaneId = Number(laneId || champData.championArguments.laneId);
+    const selectedTierId = Number(tierId || champData.championArguments.tierId);
 
     const {
       data: {
@@ -124,7 +127,7 @@ const PSModule: ModuleFunction = async () => {
       },
     });
 
-    return { item, spell, skill, runestatperk };
+    return { item, spell, skill, runestatperk, champ: champData };
   });
 };
 

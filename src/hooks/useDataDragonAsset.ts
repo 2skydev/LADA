@@ -1,21 +1,12 @@
-import axios from 'axios';
-import useSWRImmutable from 'swr/immutable';
-
 import logoImage from '~/assets/images/logo@256.png';
 
+import useLeagueVersion from './useLeagueVersion';
+
 const useDataDragonAsset = (type: string, asset: string | number) => {
-  const { data: versions } = useSWRImmutable(
-    'https://ddragon.leagueoflegends.com/api/versions.json',
-    async url => {
-      const { data } = await axios.get(url);
-      return data;
-    },
-  );
+  const version = useLeagueVersion();
 
-  const latestVersion = versions?.[0];
-
-  return latestVersion
-    ? `https://ddragon.leagueoflegends.com/cdn/${latestVersion}/img/${type}/${asset}.png`
+  return version
+    ? `https://ddragon.leagueoflegends.com/cdn/${version}/img/${type}/${asset}.png`
     : logoImage;
 };
 
