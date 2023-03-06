@@ -25,6 +25,48 @@ export const ChampDetailStyled = styled.div`
 
   .championSection {
     display: flex;
+    position: relative;
+
+    .noData {
+      display: flex;
+      align-items: center;
+      margin-top: 2rem;
+
+      .bx {
+        font-size: 2.5rem;
+        color: ${props => props.theme.colors.error};
+      }
+
+      .texts {
+        margin-left: 1rem;
+
+        h3 {
+          margin-bottom: 0.1rem;
+          line-height: 1;
+        }
+
+        p {
+          font-size: 0.8rem;
+          color: ${props => props.theme.colors.textColor2};
+          margin-bottom: 0;
+        }
+      }
+    }
+
+    .loadingOverlay {
+      position: absolute;
+      top: 50%;
+      left: 50%;
+      transform: translate(-50%, -50%);
+      width: 100%;
+      height: 100%;
+      background-color: rgba(0, 0, 0, 0.5);
+      border-radius: 8px;
+      z-index: 1;
+      display: flex;
+      justify-content: center;
+      align-items: center;
+    }
 
     .championImageContainer {
       width: 150px;

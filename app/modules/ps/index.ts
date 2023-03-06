@@ -37,8 +37,9 @@ const PSModule: ModuleFunction = async () => {
 
   const server = new IPCServer('apis/ps');
 
-  server.add('/tiers/:lane', async ({ params }) => {
+  server.add('/tiers/:lane', async ({ params, payload }) => {
     const { lane } = params;
+    const { rankRangeId = 2 } = payload;
 
     const {
       data: { data },
@@ -46,7 +47,7 @@ const PSModule: ModuleFunction = async () => {
       params: {
         region: 0,
         version: version.id,
-        tier: 2,
+        tier: rankRangeId,
         lane: Number(lane),
       },
     });
@@ -80,17 +81,29 @@ const PSModule: ModuleFunction = async () => {
 
   server.add('/champ/:id', async ({ params, payload }) => {
     const { id } = params;
-    const { laneId, tierId } = payload;
+    let { laneId, rankRangeId = 2 } = payload;
 
-    const { data: html } = await axios.get(`https://lol.ps/champ/${id}`);
-    const $ = cheerio.load(html);
+    // 선택한 라인이 없다면 챔피언의 기본 라인을 가져오기
+    if (laneId === null || laneId === undefined) {
+      const {
+        data: { data: champArgs },
+      } = await axios.get(`https://lol.ps/api/champ/${id}/arguments.json`);
+      laneId = champArgs.laneId;
+    }
 
-    const [, , , { data: champData }] = JSON.parse(
-      $('script[sveltekit\\:data-type="server_data"]').text(),
-    );
+    laneId = Number(laneId);
+    rankRangeId = Number(rankRangeId);
 
-    const selectedLaneId = Number(laneId || champData.championArguments.laneId);
-    const selectedTierId = Number(tierId || champData.championArguments.tierId);
+    const {
+      data: { data: summary },
+    } = await axios.get(`https://lol.ps/api/champ/${id}/summary.json`, {
+      params: {
+        region: 0,
+        version: version.id,
+        tier: rankRangeId,
+        lane: laneId,
+      },
+    });
 
     const {
       data: {
@@ -100,8 +113,8 @@ const PSModule: ModuleFunction = async () => {
       params: {
         region: 0,
         version: version.id,
-        tier: selectedTierId,
-        lane: selectedLaneId,
+        tier: rankRangeId,
+        lane: laneId,
       },
     });
 
@@ -111,8 +124,8 @@ const PSModule: ModuleFunction = async () => {
       params: {
         region: 0,
         version: version.id,
-        tier: selectedTierId,
-        lane: selectedLaneId,
+        tier: rankRangeId,
+        lane: laneId,
       },
     });
 
@@ -122,12 +135,12 @@ const PSModule: ModuleFunction = async () => {
       params: {
         region: 0,
         version: version.id,
-        tier: selectedTierId,
-        lane: selectedLaneId,
+        tier: rankRangeId,
+        lane: laneId,
       },
     });
 
-    return { item, spell, skill, runestatperk, champ: champData };
+    return { item, spell, skill, runestatperk, summary };
   });
 };
 

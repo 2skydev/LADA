@@ -8,6 +8,7 @@ import dayjs from 'dayjs';
 import RankingVariation from '~/components/RankingVariation';
 import ChampionProfileSmall from '~/features/asset/ChampionProfileSmall';
 import LaneSelect from '~/features/lane/LaneSelect';
+import RankRangeSelect from '~/features/rank/RankRangeSelect';
 import useAPI from '~/hooks/useAPI';
 import { useCustomForm } from '~/hooks/useCustomForm';
 
@@ -22,15 +23,20 @@ const TierTable = ({ className }: TierTableProps) => {
 
   const form = useCustomForm({
     defaultValues: {
-      lane: 0,
+      laneId: 0,
+      rankRangeId: 2,
     },
     onSubmit: () => {},
   });
 
-  const lane = form.watch('lane');
+  const laneId = form.watch('laneId');
+  const rankRangeId = form.watch('rankRangeId');
 
-  const { data = [], isLoading } = useAPI<any[]>('ps', `/tiers/${lane}`, {
+  const { data = [], isLoading } = useAPI<any[]>('ps', `/tiers/${laneId}`, {
     dedupingInterval: 1000 * 60 * 5,
+    payload: {
+      rankRangeId,
+    },
   });
 
   const updatedAt = data[0]?.updatedAt;
@@ -52,11 +58,19 @@ const TierTable = ({ className }: TierTableProps) => {
         <div className="info">라인별 픽률 0.5% 이상만 표시</div>
       </header>
 
-      <Controller
-        control={form.control}
-        name="lane"
-        render={({ field }) => <LaneSelect {...field} />}
-      />
+      <div className="argments">
+        <Controller
+          control={form.control}
+          name="laneId"
+          render={({ field }) => <LaneSelect {...field} />}
+        />
+
+        <Controller
+          control={form.control}
+          name="rankRangeId"
+          render={({ field }) => <RankRangeSelect {...field} />}
+        />
+      </div>
 
       <br />
 
