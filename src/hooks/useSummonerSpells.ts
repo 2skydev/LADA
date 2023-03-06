@@ -3,11 +3,11 @@ import useSWRImmutable from 'swr/immutable';
 
 import useLeagueVersion from './useLeagueVersion';
 
-const useChampNames = (): null | Record<string, { en: string; ko: string }> => {
+const useSummonerSpells = (): null | Record<string, { en: string; ko: string }> => {
   const version = useLeagueVersion();
 
   const { data } = useSWRImmutable(
-    version ? `https://ddragon.leagueoflegends.com/cdn/${version}/data/ko_KR/champion.json` : null,
+    version ? `https://ddragon.leagueoflegends.com/cdn/${version}/data/ko_KR/summoner.json` : null,
     async url => {
       const { data } = await axios.get(url);
       return data;
@@ -16,12 +16,12 @@ const useChampNames = (): null | Record<string, { en: string; ko: string }> => {
 
   if (!data) return null;
 
-  return Object.values(data.data).reduce((acc: Record<string, any>, champ: any) => {
+  return Object.values(data.data).reduce((acc: Record<string, any>, spell: any) => {
     return {
       ...acc,
-      [champ.key]: { en: champ.id, ko: champ.name },
+      [spell.key]: { en: spell.id, ko: spell.name },
     };
   }, {});
 };
 
-export default useChampNames;
+export default useSummonerSpells;
