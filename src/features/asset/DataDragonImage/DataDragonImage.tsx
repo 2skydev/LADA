@@ -7,7 +7,7 @@ import { DataDragonImageStyled } from './styled';
 export interface DataDragonImageProps {
   className?: string;
   type: DataDragonAssetType;
-  filename: string;
+  filename: string | number;
   size?: string;
   circle?: boolean;
 }

@@ -140,7 +140,53 @@ const PSModule: ModuleFunction = async () => {
       },
     });
 
-    return { item, spell, skill, runestatperk, summary };
+    const {
+      data: {
+        data: { timelineWinrates },
+      },
+    } = await axios.get(`https://lol.ps/api/champ/${id}/graphs.json`, {
+      params: {
+        region: 0,
+        version: version.id,
+        tier: rankRangeId,
+        lane: laneId,
+      },
+    });
+
+    const {
+      data: { data: versus },
+    } = await axios.get(`https://lol.ps/api/champ/${id}/versus.json`, {
+      params: {
+        region: 0,
+        version: version.id,
+        tier: rankRangeId,
+        lane: laneId,
+      },
+    });
+
+    const counterChampionIdList = JSON.parse(versus.counterChampionIdList);
+    const counterWinrateList = JSON.parse(versus.counterWinrateList);
+
+    interface CounterChampions {
+      up: { champId: number; winrate: number }[];
+      down: { champId: number; winrate: number }[];
+    }
+
+    const counterChampions: CounterChampions = counterChampionIdList.reduce(
+      (acc: CounterChampions, champId: number, index: number) => {
+        const winrate = counterWinrateList[index];
+
+        acc[winrate > 50 ? 'up' : 'down'].push({ champId, winrate });
+
+        return acc;
+      },
+      { up: [], down: [] },
+    );
+
+    counterChampions.down.sort((a, b) => a.winrate - b.winrate);
+    counterChampions.up.sort((a, b) => b.winrate - a.winrate);
+
+    return { item, spell, skill, runestatperk, summary, timelineWinrates, counterChampions };
   });
 };
 

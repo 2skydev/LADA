@@ -38,6 +38,7 @@
     "react-hook-form": "^7.43.2",
     "react-router-dom": "^6.6.2",
     "react-virtualized": "git+https://git@github.com/remorses/react-virtualized-fixed-import.git#9.22.3",
+    "recharts": "^2.4.3",
     "recoil": "^0.7.6",
     "styled-components": "^5.3.6",
     "swr": "^2.0.0",

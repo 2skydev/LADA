@@ -1,3 +1,4 @@
+import { darken } from 'polished';
 import styled from 'styled-components';
 
 export const ChampDetailStyled = styled.div`
@@ -13,6 +14,10 @@ export const ChampDetailStyled = styled.div`
     padding: 1rem;
     border-radius: 8px;
     background-color: rgba(0, 0, 0, 0.2);
+
+    + section {
+      margin-top: 0.8rem;
+    }
   }
 
   .argments {
@@ -23,35 +28,10 @@ export const ChampDetailStyled = styled.div`
     margin-bottom: 2rem;
   }
 
-  .championSection {
+  .summary {
     display: flex;
+    gap: 1rem;
     position: relative;
-
-    .noData {
-      display: flex;
-      align-items: center;
-      margin-top: 2rem;
-
-      .bx {
-        font-size: 2.5rem;
-        color: ${props => props.theme.colors.error};
-      }
-
-      .texts {
-        margin-left: 1rem;
-
-        h3 {
-          margin-bottom: 0.1rem;
-          line-height: 1;
-        }
-
-        p {
-          font-size: 0.8rem;
-          color: ${props => props.theme.colors.textColor2};
-          margin-bottom: 0;
-        }
-      }
-    }
 
     .loadingOverlay {
       position: absolute;
@@ -68,157 +48,287 @@ export const ChampDetailStyled = styled.div`
       align-items: center;
     }
 
-    .championImageContainer {
-      width: 150px;
-      height: 200px;
-      position: relative;
-      transform: translate(-1rem, -3rem);
-      box-shadow: 0 0 20px rgba(0, 0, 0, 0.3);
-      border-radius: 8px;
-
-      .TierIcon {
-        position: absolute;
-        width: 34px;
-        left: -10px;
-        top: -10px;
-        z-index: 1;
+    .imageGroup {
+      .title {
+        color: ${props => props.theme.colors.textColor2};
+        margin-bottom: 0.5rem;
       }
 
-      .HoneyIcon {
-        position: absolute;
-        width: 35px;
-        right: -20px;
-        bottom: 50px;
-        z-index: 1;
-      }
+      .images {
+        display: flex;
+        align-items: center;
+        gap: 0.5rem;
 
-      .OpIcon {
-        position: absolute;
-        width: 40px;
-        right: -20px;
-        bottom: 20px;
-        z-index: 1;
-      }
+        img {
+          width: 30px;
+          height: 30px;
+          border-radius: 5px;
+        }
 
-      .imageOverflowBox {
-        width: 100%;
-        height: 100%;
-        overflow: hidden;
-        border-radius: 8px;
-
-        .championImage {
-          width: 100%;
-          transform: translateY(-10px);
+        .bx {
+          color: ${props => props.theme.colors.textColor2};
         }
       }
     }
 
-    .right {
-      margin-left: 1rem;
-      padding-top: 0.8rem;
+    .champion {
+      display: flex;
+      position: relative;
 
-      .championName {
+      .noData {
         display: flex;
-        align-items: flex-end;
-        font-size: 1.4rem;
+        align-items: center;
+        margin-top: 2rem;
 
-        span {
+        .bx {
+          font-size: 2.5rem;
+          color: ${props => props.theme.colors.error};
+        }
+
+        .texts {
           margin-left: 1rem;
-          font-size: 0.85rem;
-          color: ${props => props.theme.colors.textColor2};
-          transform: translateY(-3px);
+
+          h3 {
+            margin-bottom: 0.1rem;
+            line-height: 1;
+          }
+
+          p {
+            font-size: 0.8rem;
+            color: ${props => props.theme.colors.textColor2};
+            margin-bottom: 0;
+          }
         }
       }
 
-      .spellskill {
-        display: flex;
+      .championImageContainer {
+        width: 150px;
+        height: 200px;
+        position: relative;
+        transform: translate(-1rem, -3rem);
+        box-shadow: 0 0 20px rgba(0, 0, 0, 0.3);
+        border-radius: 8px;
 
-        .title {
-          color: ${props => props.theme.colors.textColor2};
-          margin-bottom: 0.5rem;
+        .TierIcon {
+          position: absolute;
+          width: 34px;
+          left: -10px;
+          top: -10px;
+          z-index: 1;
         }
 
-        .images {
+        .HoneyIcon {
+          position: absolute;
+          width: 35px;
+          right: -20px;
+          bottom: 50px;
+          z-index: 1;
+        }
+
+        .OpIcon {
+          position: absolute;
+          width: 40px;
+          right: -20px;
+          bottom: 20px;
+          z-index: 1;
+        }
+
+        .imageOverflowBox {
+          width: 100%;
+          height: 100%;
+          overflow: hidden;
+          border-radius: 8px;
+
+          .championImage {
+            width: 100%;
+            transform: translateY(-10px);
+          }
+        }
+      }
+
+      > .right {
+        margin-left: 1rem;
+        padding-top: 0.8rem;
+
+        .championName {
           display: flex;
-          align-items: center;
-          gap: 0.5rem;
+          align-items: flex-end;
+          font-size: 1.4rem;
 
-          img {
-            width: 30px;
-            height: 30px;
-            border-radius: 5px;
-          }
-
-          .bx {
+          span {
+            margin-left: 1rem;
+            font-size: 0.85rem;
             color: ${props => props.theme.colors.textColor2};
+            transform: translateY(-3px);
           }
         }
 
-        .spell {
-          margin-right: 5rem;
-        }
+        .spellskill {
+          display: flex;
 
-        .skill {
-          .images {
-            .skillImageContainer {
-              width: 30px;
-              height: 30px;
-              position: relative;
-              border-radius: 5px;
-              overflow: hidden;
+          .spell {
+            margin-right: 5rem;
+          }
 
-              .label {
-                width: 1.1rem;
-                height: 1.1rem;
-                position: absolute;
-                right: 0;
-                bottom: 0;
-                font-size: 0.7rem;
-                background-color: rgba(0, 0, 0, 0.9);
-                border-top-left-radius: 5px;
+          .skill {
+            .images {
+              .skillImageContainer {
+                width: 30px;
+                height: 30px;
+                position: relative;
+                border-radius: 5px;
+                overflow: hidden;
+
+                .label {
+                  width: 1.1rem;
+                  height: 1.1rem;
+                  position: absolute;
+                  right: 0;
+                  bottom: 0;
+                  font-size: 0.7rem;
+                  background-color: rgba(0, 0, 0, 0.9);
+                  border-top-left-radius: 5px;
+                  display: flex;
+                  justify-content: center;
+                  align-items: center;
+                }
+              }
+            }
+
+            .skillList {
+              display: flex;
+              gap: 0.15rem;
+              margin-top: 0.5rem;
+
+              .item {
+                width: 26px;
+                height: 26px;
+                border-radius: 5px;
                 display: flex;
                 justify-content: center;
                 align-items: center;
+                background-color: ${props => props.theme.colors.contentBG};
+                font-size: 0.85rem;
+                font-weight: bold;
+
+                span {
+                  transform: translateY(1px);
+                }
+
+                &.Q {
+                  color: #2793cf;
+                }
+
+                &.W {
+                  color: #00b480;
+                }
+
+                &.E {
+                  color: #f97c49;
+                }
+
+                &.R {
+                  background-color: ${props => props.theme.colors.primary};
+                  color: #fff;
+                }
               }
             }
           }
+        }
+      }
+    }
 
-          .skillList {
-            display: flex;
-            gap: 0.15rem;
-            margin-top: 0.5rem;
+    .itemGroups {
+      display: flex;
+      gap: 0.5rem;
+      margin-top: -1rem;
 
-            .item {
-              width: 26px;
-              height: 26px;
-              border-radius: 5px;
-              display: flex;
-              justify-content: center;
-              align-items: center;
-              background-color: ${props => props.theme.colors.contentBG};
-              font-size: 0.85rem;
-              font-weight: bold;
+      .imageGroup {
+        padding: 0.8rem 1rem;
+        border-radius: 8px;
+        background-color: ${props => darken(0.015, props.theme.colors.contentBG)};
 
-              span {
-                transform: translateY(1px);
-              }
+        &:nth-child(1) {
+          flex: 1;
+        }
 
-              &.Q {
-                color: #2793cf;
-              }
+        &:nth-child(2) {
+          flex: 1;
+        }
 
-              &.W {
-                color: #00b480;
-              }
+        &:nth-child(3) {
+          flex: 2;
+        }
+      }
+    }
 
-              &.E {
-                color: #f97c49;
-              }
+    .timelineWinrate {
+      flex: 1;
+      display: flex;
+      flex-direction: column;
+      padding: 0.8rem 1rem;
+      border-radius: 8px;
+      background-color: ${props => darken(0.015, props.theme.colors.contentBG)};
 
-              &.R {
-                background-color: ${props => props.theme.colors.primary};
-                color: #fff;
-              }
+      .title {
+        color: ${props => props.theme.colors.textColor2};
+        margin-bottom: 1rem;
+      }
+
+      .chartContainer {
+        flex: 1;
+
+        .recharts-default-tooltip {
+          background-color: rgba(0, 0, 0, 0.6) !important;
+          border: none !important;
+        }
+      }
+    }
+  }
+
+  .counter {
+    padding-bottom: 0;
+
+    .title {
+      margin-bottom: 0.8rem;
+    }
+
+    .championList {
+      display: flex;
+      overflow-x: auto;
+      gap: 1rem 2.5rem;
+      width: 100%;
+      padding-bottom: 1rem;
+
+      .item {
+        display: flex;
+        align-items: center;
+
+        .imageMask {
+          width: 40px;
+          height: 40px;
+          overflow: hidden;
+          border-radius: 50%;
+
+          .DataDragonImage {
+            width: 100%;
+            height: 100%;
+            transform: scale(1.1);
+          }
+        }
+
+        .texts {
+          font-size: 0.7rem;
+          margin-left: 0.5rem;
+          line-height: 1.3;
+
+          .value {
+            &.up {
+              color: ${props => props.theme.colors.blue};
+            }
+
+            &.down {
+              color: ${props => props.theme.colors.error};
             }
           }
         }
