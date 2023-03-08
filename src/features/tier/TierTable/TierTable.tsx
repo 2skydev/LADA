@@ -77,7 +77,7 @@ const TierTable = ({ className }: TierTableProps) => {
       <Table
         onRow={record => ({
           onClick: () => {
-            navigate(`/champ/${record.championId}`);
+            navigate(`/champ/${record.championId}?laneId=${laneId}`);
           },
         })}
         components={{

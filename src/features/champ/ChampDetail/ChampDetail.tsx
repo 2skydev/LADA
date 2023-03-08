@@ -1,12 +1,12 @@
-import { Fragment, useEffect } from 'react';
+import { Fragment } from 'react';
 import { Controller } from 'react-hook-form';
+import { useLocation } from 'react-router-dom';
 
-import { Result } from 'antd';
 import clsx from 'clsx';
 import { motion } from 'framer-motion';
+import QueryString from 'qs';
 import {
   CartesianGrid,
-  Legend,
   Line,
   LineChart,
   ResponsiveContainer,
@@ -24,7 +24,6 @@ import RankRangeSelect from '~/features/rank/RankRangeSelect';
 import useAPI from '~/hooks/useAPI';
 import useChampNames from '~/hooks/useChampNames';
 import { useCustomForm } from '~/hooks/useCustomForm';
-import { useDidUpdateEffect } from '~/hooks/useDidUpdateEffect';
 import useSummonerSpells from '~/hooks/useSummonerSpells';
 
 import { ChampDetailStyled } from './styled';
@@ -35,10 +34,13 @@ export interface ChampDetailProps {
 }
 
 const ChampDetail = ({ className, champId }: ChampDetailProps) => {
+  const { search } = useLocation();
+  const { laneId: defaultLaneId } = QueryString.parse(search, { ignoreQueryPrefix: true });
+
   const theme = useTheme();
   const form = useCustomForm({
     defaultValues: {
-      laneId: null,
+      laneId: defaultLaneId ? Number(defaultLaneId) : null,
       rankRangeId: 2,
     },
     onSubmit: () => {},
