@@ -260,7 +260,7 @@ const ChampDetail = ({ className, champId }: ChampDetailProps) => {
 
               <div className="championList">
                 {data.counterChampions[counterType].slice(0, 10).map((counter: any) => (
-                  <div className="item">
+                  <div className="item" key={counter.champId}>
                     <div className="imageMask">
                       <DataDragonImage type="champion" filename={champNames[counter.champId].en} />
                     </div>
