@@ -21,6 +21,7 @@ import DataDragonImage from '~/features/asset/DataDragonImage';
 import TierIcon, { HoneyIcon, OpIcon } from '~/features/asset/TierIcon';
 import LaneSelect from '~/features/lane/LaneSelect';
 import RankRangeSelect from '~/features/rank/RankRangeSelect';
+import RunePage from '~/features/rune/RunePage';
 import useAPI from '~/hooks/useAPI';
 import useChampNames from '~/hooks/useChampNames';
 import { useCustomForm } from '~/hooks/useCustomForm';
@@ -61,6 +62,8 @@ const ChampDetail = ({ className, champId }: ChampDetailProps) => {
 
   const champSummary = data ? data.summary[0] : null;
   const isNoData = data && (champSummary.spell1Id === null || !champSummary.skillMasterList.length);
+
+  // console.log(data);
 
   return (
     <ChampDetailStyled className={clsx('ChampDetail', className)}>
@@ -275,6 +278,21 @@ const ChampDetail = ({ className, champId }: ChampDetailProps) => {
               </div>
             </section>
           ))}
+
+          <RunePage
+            mainRuneIds={[
+              champSummary.mainRune1,
+              champSummary.mainRune2,
+              champSummary.mainRune3,
+              champSummary.mainRune4,
+            ]}
+            subRuneIds={[champSummary.subRune1, champSummary.subRune2]}
+            shardRuneIds={[
+              champSummary.statperk1Id,
+              champSummary.statperk2Id,
+              champSummary.statperk3Id,
+            ]}
+          />
         </motion.div>
       )}
     </ChampDetailStyled>

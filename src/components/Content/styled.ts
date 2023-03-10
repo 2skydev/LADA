@@ -1,7 +1,7 @@
 import styled from 'styled-components';
 
 export const ContentStyled = styled.div`
-  width: calc(100% - 300px);
+  width: calc(100% - 250px);
   background-color: ${props => props.theme.colors.contentBG};
   border-top-left-radius: 15px;
   border-bottom-left-radius: 15px;

@@ -9,12 +9,17 @@ export type DataDragonAssetType =
   | 'item'
   | 'profileicon'
   | 'spell'
-  | 'passive';
+  | 'passive'
+  | 'perk-images';
 
 const useDataDragonAsset = (type: DataDragonAssetType, filename: string | number) => {
   const version = useLeagueVersion();
 
-  const versionPath = type === 'champion/loading' ? '' : `/${version}`;
+  if (type === 'perk-images') {
+    filename = (filename as string).replace('perk-images/', '').replace('.png', '');
+  }
+
+  const versionPath = ['champion/loading', 'perk-images'].includes(type) ? '' : `/${version}`;
   const extension = type === 'champion/loading' ? '.jpg' : '.png';
 
   return version
