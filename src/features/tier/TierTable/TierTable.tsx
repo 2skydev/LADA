@@ -113,7 +113,7 @@ const TierTable = ({ className }: TierTableProps) => {
             align: 'right',
             sorter: (a, b) => a.opScore - b.opScore,
             defaultSortOrder: 'descend',
-            width: 150,
+            width: 120,
           },
           {
             key: 'honeyScore',
@@ -121,7 +121,7 @@ const TierTable = ({ className }: TierTableProps) => {
             title: '꿀챔 점수',
             align: 'right',
             sorter: (a, b) => a.honeyScore - b.honeyScore,
-            width: 150,
+            width: 120,
           },
           {
             key: 'winRate',
@@ -130,7 +130,7 @@ const TierTable = ({ className }: TierTableProps) => {
             align: 'right',
             sorter: (a, b) => a.winRate - b.winRate,
             render: (value: number) => value + '%',
-            width: 150,
+            width: 100,
           },
           {
             key: 'pickRate',
@@ -139,7 +139,7 @@ const TierTable = ({ className }: TierTableProps) => {
             align: 'right',
             sorter: (a, b) => a.pickRate - b.pickRate,
             render: (value: number) => value + '%',
-            width: 150,
+            width: 100,
           },
           {
             key: 'banRate',
@@ -148,7 +148,7 @@ const TierTable = ({ className }: TierTableProps) => {
             align: 'right',
             sorter: (a, b) => a.banRate - b.banRate,
             render: (value: number) => value + '%',
-            width: 150,
+            width: 100,
           },
           {
             key: 'count',
@@ -157,7 +157,7 @@ const TierTable = ({ className }: TierTableProps) => {
             align: 'right',
             sorter: (a, b) => a.count - b.count,
             render: (value: number) => Number(value).toLocaleString(),
-            width: 150,
+            width: 100,
           },
         ]}
         dataSource={data}
