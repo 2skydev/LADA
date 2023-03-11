@@ -239,7 +239,7 @@ const ChampDetail = ({ className, champId }: ChampDetailProps) => {
                     >
                       <CartesianGrid strokeDasharray="3 3" stroke={theme.colors.borderColor} />
                       <XAxis dataKey="time" minTickGap={10} tickMargin={5} />
-                      <YAxis type="number" domain={['auto', 'auto']} />
+                      <YAxis type="number" domain={[30, 65]} />
                       <Tooltip />
                       <Line
                         type="monotone"
