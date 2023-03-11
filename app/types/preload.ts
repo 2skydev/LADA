@@ -8,7 +8,7 @@ export type APICategory = 'league' | 'ps';
 export interface ElectronRendererContext {
   onUpdate: (callback: (event: UpdateEvent, data: any) => void) => void;
 
-  initlizeUpdater: () => void;
+  initializeUpdater: () => void;
   appControl: (action: AppControlAction) => void;
   openExternal: (link: string) => void;
   checkForUpdate: () => void;

@@ -6,10 +6,9 @@
   "typescript.tsdk": "node_modules/typescript/lib",
   "json.schemas": [
     {
-      "fileMatch": [
-        "/*electron-builder.json"
-      ],
+      "fileMatch": ["/*electron-builder.json"],
       "url": "https://json.schemastore.org/electron-builder"
     }
-  ]
+  ],
+  "cSpell.words": ["antd"]
 }

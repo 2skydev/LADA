@@ -50,7 +50,7 @@ const AppInner = () => {
       });
     });
 
-    window.electron.initlizeUpdater();
+    window.electron.initializeUpdater();
 
     const isReady = await window.electron.apis('league', '/is-ready');
 

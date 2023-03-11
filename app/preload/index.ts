@@ -5,7 +5,7 @@ const { contextBridge, ipcRenderer } = require('electron');
 const electronContext: ElectronRendererContext = {
   onUpdate: callback => ipcRenderer.on('update', (_, event, data) => callback(event, data)),
 
-  initlizeUpdater: () => ipcRenderer.send('initlizeUpdater'),
+  initializeUpdater: () => ipcRenderer.send('initlizeUpdater'),
   appControl: action => ipcRenderer.send('appControl', action),
   openExternal: link => ipcRenderer.send('openExternal', link),
   checkForUpdate: () => ipcRenderer.send('checkForUpdate'),
