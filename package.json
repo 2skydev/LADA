@@ -39,6 +39,7 @@
     "react-router-dom": "^6.6.2",
     "react-virtualized": "git+https://git@github.com/remorses/react-virtualized-fixed-import.git#9.22.3",
     "recoil": "^0.7.6",
+    "string-similarity": "^4.0.4",
     "styled-components": "^5.3.6",
     "swr": "^2.0.0",
     "vite-electron-plugin": "^0.8.2"
@@ -50,6 +51,7 @@
     "@types/node": "^18.11.18",
     "@types/react": "^18.0.26",
     "@types/react-dom": "^18.0.10",
+    "@types/string-similarity": "^4.0.0",
     "@types/styled-components": "^5.1.26",
     "@vitejs/plugin-react": "^3.0.1",
     "cross-env": "^7.0.3",
