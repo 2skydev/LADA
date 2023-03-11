@@ -81,7 +81,7 @@ const TeamManager = ({ className }: TeamManagerProps) => {
 
   useEffect(() => {
     const onChangeLobbyData = (lobbyData: any) => {
-      if (result && key !== createKey(lobbyData)) {
+      if (!result || (result && key !== createKey(lobbyData))) {
         setData(lobbyData);
         setResult(null);
       }
@@ -92,7 +92,7 @@ const TeamManager = ({ className }: TeamManagerProps) => {
     return () => {
       window.electron.unsubscribeLeague('lobby');
     };
-  }, [key]);
+  }, [key, result]);
 
   return (
     <TeamManagerStyled className={clsx('TeamManager', className)}>
@@ -130,9 +130,9 @@ const TeamManager = ({ className }: TeamManagerProps) => {
                         (summoner: any) => summoner.summoner_name === member.summonerName,
                       );
 
-                      const latestSeason = psData;
+                      // const latestSeason = psData;
 
-                      // console.log(psData);
+                      console.log(psData);
 
                       return (
                         <Fragment key={member.summonerId}>
@@ -156,11 +156,10 @@ const TeamManager = ({ className }: TeamManagerProps) => {
                               circle
                             />
                             <span>{member.summonerName}</span>
-                            <div className="rank">
-                              <RankIcon rank={psData?.tier || 'UNRANKED'} />
-
+                            <div className="rankProfile">
                               <span className="rank">{psData?.tier || 'UNRANKED'}</span>
                               <span className="tier">{psData?.rank}</span>
+                              <RankIcon rank={psData?.tier || 'UNRANKED'} />
                             </div>
                           </motion.div>
 
