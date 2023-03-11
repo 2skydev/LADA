@@ -1,15 +1,20 @@
+import { useState } from 'react';
 import { Controller } from 'react-hook-form';
 import { useNavigate } from 'react-router-dom';
 
 import { Table, Tooltip } from 'antd';
+import Search from 'antd/es/input/Search';
 import clsx from 'clsx';
 import dayjs from 'dayjs';
+import { uniqBy } from 'lodash';
 
 import RankingVariation from '~/components/RankingVariation';
 import ChampionProfileSmall from '~/features/asset/ChampionProfileSmall';
 import LaneSelect from '~/features/lane/LaneSelect';
-import useAPI from '~/hooks/useAPI';
 import { useCustomForm } from '~/hooks/useCustomForm';
+import { useLaneTiers } from '~/repositories/tier/useLaneTiers';
+import { useTiers } from '~/repositories/tier/useTiers';
+import { compareChampionName, isEqualChampionName } from '~/utils/champion';
 
 import { TierTableStyled } from './styled';
 
@@ -29,11 +34,21 @@ const TierTable = ({ className }: TierTableProps) => {
 
   const lane = form.watch('lane');
 
-  const { data = [], isLoading } = useAPI<any[]>('ps', `/tiers/${lane}`, {
-    dedupingInterval: 1000 * 60 * 5,
-  });
+  const { data, isLoading } = useLaneTiers(lane);
+  const { data: tiers } = useTiers();
+
+  const [inputtedChampionName, setInputtedChampionName] = useState('');
+
+  const searchedTiers = uniqBy(
+    tiers
+      .filter(tier => isEqualChampionName(tier.championInfo.nameKr, inputtedChampionName))
+      .sort(tier => compareChampionName(tier.championInfo.nameKr, inputtedChampionName)),
+    tier => tier.championId,
+  );
 
   const updatedAt = data[0]?.updatedAt;
+
+  const viewingData = inputtedChampionName === '' ? data : searchedTiers;
 
   return (
     <TierTableStyled className={clsx('TierTable', className)}>
@@ -55,7 +70,27 @@ const TierTable = ({ className }: TierTableProps) => {
       <Controller
         control={form.control}
         name="lane"
-        render={({ field }) => <LaneSelect {...field} />}
+        render={({ field }) => (
+          <div className="lane-selection">
+            <LaneSelect {...field} />
+            <div className="champion-search">
+              <Search
+                onChange={e => {
+                  setInputtedChampionName(e.target.value);
+                }}
+                onSearch={_ => {
+                  const highScoreTier = searchedTiers[0];
+
+                  if (highScoreTier === undefined) {
+                    return;
+                  }
+
+                  navigate(`/champ/${highScoreTier.championId}`);
+                }}
+              />
+            </div>
+          </div>
+        )}
       />
 
       <br />
@@ -160,8 +195,8 @@ const TierTable = ({ className }: TierTableProps) => {
             width: 100,
           },
         ]}
-        dataSource={data}
-        rowKey={record => record.ranking}
+        dataSource={viewingData}
+        rowKey={record => String(record.championId + record.laneId + record.championInfo.nameKr)}
         loading={isLoading}
         pagination={false}
         scroll={{ y: 600 }}

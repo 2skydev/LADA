@@ -74,4 +74,17 @@ export const TierTableStyled = styled.div`
       }
     }
   }
+
+  .lane-selection {
+    display: flex;
+    justify-content: space-between;
+    align-items: center;
+  }
+
+  .champion-search {
+    max-width: 400px;
+  }
+  .champion-search .ant-input {
+    padding: 4px 12px;
+  }
 `;
