@@ -24,6 +24,12 @@ export const TierTableStyled = styled.div`
     }
   }
 
+  .argments {
+    display: flex;
+    align-items: center;
+    gap: 0.5rem;
+  }
+
   .ant-table {
     td {
       border-top: none !important;

@@ -1,21 +1,29 @@
-import axios from 'axios';
-import useSWRImmutable from 'swr/immutable';
-
 import logoImage from '~/assets/images/logo@256.png';
 
-const useDataDragonAsset = (type: string, asset: string | number) => {
-  const { data: versions } = useSWRImmutable(
-    'https://ddragon.leagueoflegends.com/api/versions.json',
-    async url => {
-      const { data } = await axios.get(url);
-      return data;
-    },
-  );
+import useLeagueVersion from './useLeagueVersion';
 
-  const latestVersion = versions?.[0];
+export type DataDragonAssetType =
+  | 'champion'
+  | 'champion/splash'
+  | 'champion/loading'
+  | 'item'
+  | 'profileicon'
+  | 'spell'
+  | 'passive'
+  | 'perk-images';
 
-  return latestVersion
-    ? `https://ddragon.leagueoflegends.com/cdn/${latestVersion}/img/${type}/${asset}.png`
+const useDataDragonAsset = (type: DataDragonAssetType, filename: string | number) => {
+  const version = useLeagueVersion();
+
+  if (type === 'perk-images') {
+    filename = (filename as string).replace('perk-images/', '').replace('.png', '');
+  }
+
+  const versionPath = ['champion/loading', 'perk-images'].includes(type) ? '' : `/${version}`;
+  const extension = type === 'champion/loading' ? '.jpg' : '.png';
+
+  return version
+    ? `https://ddragon.leagueoflegends.com/cdn${versionPath}/img/${type}/${filename}${extension}`
     : logoImage;
 };
 
