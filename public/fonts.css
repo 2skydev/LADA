@@ -33,6 +33,20 @@
   font-display: swap;
 }
 
+@font-face {
+  src: url('./fonts/BeaufortforLOL/BeaufortforLOL-Regular.woff2');
+  font-family: 'BeaufortforLOL';
+  font-weight: normal;
+  font-display: swap;
+}
+
+@font-face {
+  src: url('./fonts/BeaufortforLOL/BeaufortforLOL-Bold.woff2');
+  font-family: 'BeaufortforLOL';
+  font-weight: bold;
+  font-display: swap;
+}
+
 * {
   margin: 0;
   padding: 0;

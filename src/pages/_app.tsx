@@ -1,5 +1,5 @@
 import { useEffect, useMemo } from 'react';
-import { Outlet } from 'react-router-dom';
+import { Outlet, useLocation } from 'react-router-dom';
 
 import { ConfigProvider, GlobalToken, theme } from 'antd';
 import antdLocaleKR from 'antd/locale/ko_KR';
@@ -33,6 +33,7 @@ const App = () => {
 };
 
 const AppInner = () => {
+  const { pathname } = useLocation();
   const antdToken = theme.useToken();
 
   const [update, setUpdate] = useRecoilState(updateStore);
@@ -81,6 +82,8 @@ const AppInner = () => {
     [],
   );
 
+  const isOverlay = pathname.includes('/overlays');
+
   useEffect(() => {
     bootstrap();
   }, []);
@@ -89,13 +92,17 @@ const AppInner = () => {
     <ThemeProvider theme={styledTheme}>
       <InitGlobalStyled />
 
-      <div id="app">
-        <Titlebar />
+      {isOverlay && <Outlet />}
 
-        <Layout>
-          <Outlet />
-        </Layout>
-      </div>
+      {!isOverlay && (
+        <div id="app">
+          <Titlebar />
+
+          <Layout>
+            <Outlet />
+          </Layout>
+        </div>
+      )}
     </ThemeProvider>
   );
 };

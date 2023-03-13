@@ -19,6 +19,7 @@ const _colors = {
   error: '#FE6968',
   relic: '#ff6000',
   ancient: '#c9a472',
+  gold: '#e0b667',
 };
 
 _colors.selectedBG = rgba(_colors.primary, 0.1);

@@ -1,3 +1,6 @@
+import { BrowserWindow } from 'electron';
+import { OverlayController, OVERLAY_WINDOW_OPTS } from 'electron-overlay-window';
+
 import { ModuleFunction } from '@app/app';
 import { configStore } from '@app/stores/config';
 import IPCServer from '@app/utils/IPCServer';
@@ -39,6 +42,18 @@ const LeagueModule: ModuleFunction = async context => {
   });
 
   client.on('ready', () => {
+    const clientOverlay = new BrowserWindow({
+      ...OVERLAY_WINDOW_OPTS,
+      webPreferences: {
+        preload: context.PRELOAD_PATH,
+      },
+    });
+
+    clientOverlay.loadURL('http://localhost:3000/#/overlays/client');
+
+    OverlayController.attachByTitle(clientOverlay, 'League of Legends');
+    OverlayController.activateOverlay();
+
     context.window?.webContents.send('league/connect-change', 'connect');
 
     client.subscribe('/lol-champ-select/v1/session', data => {
@@ -54,10 +69,27 @@ const LeagueModule: ModuleFunction = async context => {
     });
 
     client.subscribe('/lol-matchmaking/v1/ready-check', async data => {
-      if (data?.playerResponse === 'None' && configStore.get('game').autoAccept) {
+      console.log(data);
+
+      if (data?.playerResponse === 'None') {
+        const { autoAccept = false, autoAcceptDelaySeconds = 0 } = configStore.get('game');
+
+        if (!autoAccept) return;
+        if (data?.timer < autoAcceptDelaySeconds) return;
+
+        context.window?.webContents.send('league/auto-accept', {
+          timer: data.timer,
+          playerResponse: data.playerResponse,
+          autoAcceptDelaySeconds,
+        });
+
         await client.request({
           method: 'POST',
           url: '/lol-matchmaking/v1/ready-check/accept',
+        });
+      } else {
+        context.window?.webContents.send('league/auto-accept', {
+          playerResponse: data.playerResponse,
         });
       }
     });
