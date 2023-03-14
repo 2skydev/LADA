@@ -14,7 +14,7 @@ const ReadyTimerOverlay = ({ className }: ReadyTimerOverlayProps) => {
   const [data, setData] = useState<AutoAcceptData | null>(null);
 
   useEffect(() => {
-    window.electron.subscribeLeague('league/auto-accept', (data: AutoAcceptData) => {
+    window.electron.subscribeLeague('auto-accept', (data: AutoAcceptData) => {
       if (data.playerResponse === 'None') {
         setData(data);
       } else {
@@ -23,7 +23,7 @@ const ReadyTimerOverlay = ({ className }: ReadyTimerOverlayProps) => {
     });
 
     return () => {
-      window.electron.unsubscribeLeague('league/auto-accept');
+      window.electron.unsubscribeLeague('auto-accept');
     };
   }, []);
 

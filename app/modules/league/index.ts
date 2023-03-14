@@ -42,16 +42,16 @@ const LeagueModule: ModuleFunction = async context => {
   });
 
   client.on('ready', () => {
-    const clientOverlay = new BrowserWindow({
+    const clientOverlayWindow = new BrowserWindow({
       ...OVERLAY_WINDOW_OPTS,
       webPreferences: {
         preload: context.PRELOAD_PATH,
       },
     });
 
-    clientOverlay.loadURL('http://localhost:3000/#/overlays/client');
+    clientOverlayWindow.loadURL('http://localhost:3000/#/overlays/client');
 
-    OverlayController.attachByTitle(clientOverlay, 'League of Legends');
+    OverlayController.attachByTitle(clientOverlayWindow, 'League of Legends');
     OverlayController.activateOverlay();
 
     context.window?.webContents.send('league/connect-change', 'connect');
@@ -69,26 +69,27 @@ const LeagueModule: ModuleFunction = async context => {
     });
 
     client.subscribe('/lol-matchmaking/v1/ready-check', async data => {
-      console.log(data);
+      if (!data) return;
 
-      if (data?.playerResponse === 'None') {
+      if (data.playerResponse === 'None') {
         const { autoAccept = false, autoAcceptDelaySeconds = 0 } = configStore.get('game');
 
         if (!autoAccept) return;
-        if (data?.timer < autoAcceptDelaySeconds) return;
 
-        context.window?.webContents.send('league/auto-accept', {
+        clientOverlayWindow.webContents.send('league/auto-accept', {
           timer: data.timer,
           playerResponse: data.playerResponse,
           autoAcceptDelaySeconds,
         });
+
+        if (data.timer < autoAcceptDelaySeconds) return;
 
         await client.request({
           method: 'POST',
           url: '/lol-matchmaking/v1/ready-check/accept',
         });
       } else {
-        context.window?.webContents.send('league/auto-accept', {
+        clientOverlayWindow.webContents.send('league/auto-accept', {
           playerResponse: data.playerResponse,
         });
       }
