@@ -10,6 +10,7 @@ export interface ConfigStoreValues {
   };
   game: {
     autoAccept: boolean;
+    autoAcceptDelaySeconds: number;
   };
 }
 
@@ -23,6 +24,7 @@ export const configStore = new Store<ConfigStoreValues>({
     },
     game: {
       autoAccept: false,
+      autoAcceptDelaySeconds: 0,
     },
   },
 });

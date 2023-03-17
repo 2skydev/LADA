@@ -79,8 +79,10 @@ export const InitGlobalStyled = memo(createGlobalStyle`
   }
 
   #app {
+    width: 100vw;
     height: 100vh;
     color: ${props => props.theme.colors.textColor1};
+    background-color: ${props => props.theme.colors.sidebarBG};
   }
 
   html {
@@ -89,8 +91,6 @@ export const InitGlobalStyled = memo(createGlobalStyle`
 
   body {
     font-size: 14px;
-    background-color: ${props => props.theme.colors.sidebarBG};
-    color: ${props => props.theme.colors.textColor1};
 
     .ant-switch {
       height: 28px;
@@ -207,6 +207,13 @@ export const InitGlobalStyled = memo(createGlobalStyle`
 
     .ant-input-number-handler {
       border-color: ${props => props.theme.colors.borderColor};
+      background-color: ${props => props.theme.colors.sidebarBG};
+      color: white;
+
+      .ant-input-number-handler-up-inner,
+      .ant-input-number-handler-down-inner {
+        color: ${props => props.theme.colors.textColor2};
+      }
 
       &:active {
         background-color: ${props => props.theme.colors.sidebarBG};

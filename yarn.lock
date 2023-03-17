@@ -1970,6 +1970,14 @@ electron-osx-sign@^0.6.0:
     minimist "^1.2.0"
     plist "^3.0.1"
 
+electron-overlay-window@^3.2.0:
+  version "3.2.0"
+  resolved "https://registry.yarnpkg.com/electron-overlay-window/-/electron-overlay-window-3.2.0.tgz#caedec2b9418e8260c9b9debdda4ab00e242f76d"
+  integrity sha512-EqUucgLJw3QnnMn0S2yEDC3MVcAEE7Aa87VSdhnepeCvKKKc7nwgo/Trfl6ritLXrbH3lSIdOGdMcS9g3M4jGA==
+  dependencies:
+    node-gyp-build "4.x.x"
+    throttle-debounce "5.x.x"
+
 electron-publish@23.6.0:
   version "23.6.0"
   resolved "https://registry.yarnpkg.com/electron-publish/-/electron-publish-23.6.0.tgz#ac9b469e0b07752eb89357dd660e5fb10b3d1ce9"
@@ -3449,6 +3457,11 @@ node-fetch@^2.6.7:
   dependencies:
     whatwg-url "^5.0.0"
 
+node-gyp-build@4.x.x:
+  version "4.6.0"
+  resolved "https://registry.yarnpkg.com/node-gyp-build/-/node-gyp-build-4.6.0.tgz#0c52e4cbf54bbd28b709820ef7b6a3c2d6209055"
+  integrity sha512-NTZVKn9IylLwUzaKjkas1e4u2DLNcV4rdYagA4PWdPwW87Bi7z+BznyKSRwS/761tV/lzCGXplWsiaMjLqP2zQ==
+
 node-releases@^2.0.8:
   version "2.0.10"
   resolved "https://registry.yarnpkg.com/node-releases/-/node-releases-2.0.10.tgz#c311ebae3b6a148c89b1813fd7c4d3c024ef537f"
@@ -4718,7 +4731,7 @@ text-table@^0.2.0:
   resolved "https://registry.yarnpkg.com/text-table/-/text-table-0.2.0.tgz#7f5ee823ae805207c00af2df4a84ec3fcfa570b4"
   integrity sha512-N+8UisAXDGk8PFXP4HAzVR9nbfmVJ3zYLAWiTIoqC5v5isinhr+r5uaO8+7r3BMfuNIufIsA7RdpVgacC2cSpw==
 
-throttle-debounce@^5.0.0:
+throttle-debounce@5.x.x, throttle-debounce@^5.0.0:
   version "5.0.0"
   resolved "https://registry.yarnpkg.com/throttle-debounce/-/throttle-debounce-5.0.0.tgz#a17a4039e82a2ed38a5e7268e4132d6960d41933"
   integrity sha512-2iQTSgkkc1Zyk0MeVrt/3BvuOXYPl/R8Z0U2xxo9rjwNciaHDG3R+Lm6dh4EeUci49DanvBnuqI6jshoQQRGEg==
