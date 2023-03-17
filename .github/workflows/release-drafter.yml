@@ -20,7 +20,6 @@ jobs:
           config-name: release-drafter-config.yml
         env:
           GITHUB_TOKEN: ${{ secrets.GITHUB_TOKEN }}
-      - uses: cardinalby/git-get-release-action@v1
 
   # build_release:
   #   runs-on: windows-latest
