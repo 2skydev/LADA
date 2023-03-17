@@ -3,6 +3,8 @@ import Store from 'electron-store';
 
 import AutoLaunch from 'auto-launch';
 
+const IS_DEV = process.env.NODE_ENV === 'development';
+
 export interface ConfigStoreValues {
   general: {
     autoLaunch: boolean;
@@ -20,7 +22,7 @@ export const configStore = new Store<ConfigStoreValues>({
   defaults: {
     general: {
       autoLaunch: false,
-      developerMode: false,
+      developerMode: IS_DEV,
     },
     game: {
       autoAccept: false,
