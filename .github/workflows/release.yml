@@ -1,0 +1,9 @@
+name: build & release
+
+on:
+  release:
+    types: [unpublished]
+
+jobs:
+  test:
+    - run: echo ${{ github.ref }}
