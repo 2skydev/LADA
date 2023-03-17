@@ -1,6 +1,6 @@
-import { BrowserWindow } from 'electron';
-import { OverlayController, OVERLAY_WINDOW_OPTS } from 'electron-overlay-window';
-
+// import { BrowserWindow } from 'electron';
+// import { OverlayController, OVERLAY_WINDOW_OPTS } from 'electron-overlay-window';
+// import { windowManager } from 'node-window-manager';
 import { ModuleFunction } from '@app/app';
 import { configStore } from '@app/stores/config';
 import IPCServer from '@app/utils/IPCServer';
@@ -42,17 +42,20 @@ const LeagueModule: ModuleFunction = async context => {
   });
 
   client.on('ready', () => {
-    const clientOverlayWindow = new BrowserWindow({
-      ...OVERLAY_WINDOW_OPTS,
-      webPreferences: {
-        preload: context.PRELOAD_PATH,
-      },
-    });
+    // const clientOverlayWindow = new BrowserWindow({
+    //   ...OVERLAY_WINDOW_OPTS,
+    //   alwaysOnTop: true,
+    //   hasShadow: false,
+    //   webPreferences: {
+    //     preload: context.PRELOAD_PATH,
+    //   },
+    // });
 
-    clientOverlayWindow.loadURL('http://localhost:3000/#/overlays/client');
+    // clientOverlayWindow.loadURL('http://localhost:3000/#/overlays/client');
+    // clientOverlayWindow.webContents.openDevTools({ mode: 'detach', activate: false });
 
-    OverlayController.attachByTitle(clientOverlayWindow, 'League of Legends');
-    OverlayController.activateOverlay();
+    // OverlayController.attachByTitle(clientOverlayWindow, 'League of Legends');
+    // OverlayController.activateOverlay();
 
     context.window?.webContents.send('league/connect-change', 'connect');
 
@@ -76,11 +79,14 @@ const LeagueModule: ModuleFunction = async context => {
 
         if (!autoAccept) return;
 
-        clientOverlayWindow.webContents.send('league/auto-accept', {
-          timer: data.timer,
-          playerResponse: data.playerResponse,
-          autoAcceptDelaySeconds,
-        });
+        // clientOverlayWindow.show();
+        // clientOverlayWindow.focus();
+        // OverlayController.focusTarget();
+        // clientOverlayWindow.webContents.send('league/auto-accept', {
+        //   timer: data.timer,
+        //   playerResponse: data.playerResponse,
+        //   autoAcceptDelaySeconds,
+        // });
 
         if (data.timer < autoAcceptDelaySeconds) return;
 
@@ -89,9 +95,9 @@ const LeagueModule: ModuleFunction = async context => {
           url: '/lol-matchmaking/v1/ready-check/accept',
         });
       } else {
-        clientOverlayWindow.webContents.send('league/auto-accept', {
-          playerResponse: data.playerResponse,
-        });
+        // clientOverlayWindow.webContents.send('league/auto-accept', {
+        //   playerResponse: data.playerResponse,
+        // });
       }
     });
   });
