@@ -47,28 +47,28 @@ jobs:
           git merge main
           git push --all
 
-  # build_release:
-  #   runs-on: windows-latest
-  #   needs: release_draft
-  #   steps:
-  #     - name: Checkout
-  #       uses: actions/checkout@v3
-  #       with:
-  #         fetch-depth: 0
+  build_release:
+    runs-on: windows-latest
+    needs: release_draft
+    steps:
+      - name: Checkout
+        uses: actions/checkout@v3
+        with:
+          fetch-depth: 0
 
-  #     - name: Setup Node.js
-  #       uses: actions/setup-node@v3
-  #       with:
-  #         node-version: 18
-  #         cache: 'yarn'
+      - name: Setup Node.js
+        uses: actions/setup-node@v3
+        with:
+          node-version: 18
+          cache: 'yarn'
 
-  #     - name: Install dependencies
-  #       run: yarn
+      - name: Install dependencies
+        run: yarn
 
-  #     - name: Build vite
-  #       run: yarn build:vite
+      - name: Build vite
+        run: yarn build:vite
 
-  #     - name: Build electron
-  #       run: yarn run electron-builder
-  #       env:
-  #         GITHUB_TOKEN: ${{ secrets.GITHUB_TOKEN }}
+      - name: Build electron
+        run: yarn run electron-builder
+        env:
+          GITHUB_TOKEN: ${{ secrets.GITHUB_TOKEN }}
