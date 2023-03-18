@@ -30,7 +30,9 @@ jobs:
 
       - name: Update package.json version
         run: |
-          echo "Latest release: ${${{ steps.get_latest_release.outputs.release }}/v/}"
+          version=${{ steps.get_latest_release.outputs.release }}
+          version=${version#v}
+          echo "Latest release: $version"
 
   # build_release:
   #   runs-on: windows-latest
