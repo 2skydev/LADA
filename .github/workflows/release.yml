@@ -33,6 +33,12 @@ jobs:
           version=${{ steps.get_latest_release.outputs.release }}
           version=${version#v}
           echo "Latest release: $version"
+          yarn version --new-version $version --no-git-tag-version
+          git add package.json
+          git commit -m "Update package.json version"
+          git checkout dev
+          git merge main
+          git push --all
 
   # build_release:
   #   runs-on: windows-latest
