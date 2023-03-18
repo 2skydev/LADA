@@ -28,6 +28,9 @@ jobs:
           repository: ${{ github.repository }}
           token: ${{ secrets.GITHUB_TOKEN }}
 
+      - name: Checkout
+        uses: actions/checkout@v3
+
       - name: Update package.json version
         run: |
           version=${{ steps.get_latest_release.outputs.release }}
