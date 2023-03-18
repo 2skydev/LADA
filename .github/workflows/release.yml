@@ -72,6 +72,6 @@ jobs:
         run: yarn build:vite
 
       - name: Build electron
-        run: yarn run electron-builder -p onTagOrDraft
+        run: yarn run electron-builder -p always
         env:
           GITHUB_TOKEN: ${{ secrets.GITHUB_TOKEN }}
