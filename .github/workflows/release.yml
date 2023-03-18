@@ -1,11 +1,59 @@
-name: build & release
+name: Release Drafter
 
 on:
-  release:
-    types: [unpublished]
+  push:
+    branches:
+      - main
+
+permissions:
+  contents: read
 
 jobs:
-  test:
+  release_draft:
+    permissions:
+      contents: write
     runs-on: ubuntu-latest
     steps:
-      - run: echo '${{ github.ref }}'
+      - name: Release Drafter
+        uses: release-drafter/release-drafter@v5
+        with:
+          config-name: release-drafter-config.yml
+        env:
+          GITHUB_TOKEN: ${{ secrets.GITHUB_TOKEN }}
+
+      - name: Get latest release
+        id: get_latest_release
+        uses: pozetroninc/github-action-get-latest-release@master
+        with:
+          repository: ${{ github.repository }}
+          token: ${{ secrets.GITHUB_TOKEN }}
+
+      - name: package.json version update
+        run: |
+          echo "Latest release: ${{ steps.get_latest_release.outputs.release }}"
+
+  # build_release:
+  #   runs-on: windows-latest
+  #   needs: release_draft
+  #   steps:
+  #     - name: Checkout
+  #       uses: actions/checkout@v3
+  #       with:
+  #         fetch-depth: 0
+
+  #     - name: Setup Node.js
+  #       uses: actions/setup-node@v3
+  #       with:
+  #         node-version: 18
+  #         cache: 'yarn'
+
+  #     - name: Install dependencies
+  #       run: yarn
+
+  #     - name: Build vite
+  #       run: yarn build:vite
+
+  #     - name: Build electron
+  #       run: yarn run electron-builder
+  #       env:
+  #         GITHUB_TOKEN: ${{ secrets.GITHUB_TOKEN }}
