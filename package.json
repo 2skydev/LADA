@@ -4,6 +4,16 @@
   "description": "LADA - League of Legends Assistant Desktop App",
   "main": "dist-electron/index.js",
   "license": "MIT",
+  "author": {
+    "email": "2skydev@gmail.com",
+    "name": "2skydev"
+  },
+  "contributors": [
+    {
+      "email": "webd200@gmail.com",
+      "name": "jong-hui"
+    }
+  ],
   "scripts": {
     "dev": "vite",
     "build": "tsc && vite build && electron-builder",
