@@ -78,4 +78,4 @@ jobs:
       - name: Build electron
         run: yarn run electron-builder
         env:
-          GITHUB_TOKEN: ${{ PERSONAL_TOKEN }} # electron-builder은 자동 인증 토큰을 지원하지 않음
+          GITHUB_TOKEN: ${{ secrets.PERSONAL_TOKEN }} # electron-builder은 자동 인증 토큰을 지원하지 않음
