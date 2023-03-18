@@ -14,7 +14,7 @@ jobs:
       contents: write
     runs-on: ubuntu-latest
     steps:
-      - name: Release Drafter
+      - name: Release drafter
         uses: release-drafter/release-drafter@v5
         with:
           config-name: release-drafter-config.yml
@@ -28,9 +28,9 @@ jobs:
           repository: ${{ github.repository }}
           token: ${{ secrets.GITHUB_TOKEN }}
 
-      - name: package.json version update
+      - name: Update package.json version
         run: |
-          echo "Latest release: ${{ steps.get_latest_release.outputs.release }}"
+          echo "Latest release: ${${{ steps.get_latest_release.outputs.release }}/v/}"
 
   # build_release:
   #   runs-on: windows-latest
