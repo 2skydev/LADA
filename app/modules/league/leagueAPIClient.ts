@@ -57,6 +57,7 @@ class LeagueAPIClient {
       await this.waitLCUReady();
       await this.connectWS();
       this.emitter.emit('connect');
+      this.emitter.emit('ready');
     });
 
     client.on('disconnect', () => {
