@@ -20,6 +20,7 @@ const _colors = {
   relic: '#ff6000',
   ancient: '#c9a472',
   blue: '#00a1ff',
+  gold: '#e0b667',
 };
 
 _colors.selectedBG = rgba(_colors.primary, 0.1);

@@ -36,12 +36,12 @@ export const TeamManagerStyled = styled.div`
             color: ${props => props.theme.colors.textColor2};
           }
 
-          .rank {
+          .rankProfile {
             margin-left: auto;
 
             .RankIcon {
               height: 40px;
-              margin-right: 1rem;
+              margin-left: 1rem;
             }
 
             .tier {

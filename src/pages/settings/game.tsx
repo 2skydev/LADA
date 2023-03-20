@@ -1,6 +1,7 @@
 import { Controller } from 'react-hook-form';
 
-import { Switch } from 'antd';
+import { InputNumber, Switch } from 'antd';
+import clsx from 'clsx';
 import { useRecoilState } from 'recoil';
 
 import LayoutConfig from '~/components/LayoutConfig';
@@ -23,6 +24,8 @@ const GameSettings = () => {
     },
   });
 
+  const isAutoAccept = form.watch('autoAccept');
+
   return (
     <SettingsPageStyled>
       <LayoutConfig breadcrumbs={['설정', '게임 설정']} />
@@ -36,18 +39,38 @@ const GameSettings = () => {
           </div>
         }
       >
-        <Controller
-          name="autoAccept"
-          control={form.control}
-          render={({ field }) => (
-            <Switch
-              checked={field.value}
-              onChange={checked => field.onChange(checked)}
-              checkedChildren={<i className="bx bx-check" />}
-              unCheckedChildren={<i className="bx bx-x" />}
+        <div className="autoAcceptField">
+          <Controller
+            name="autoAccept"
+            control={form.control}
+            render={({ field }) => (
+              <Switch
+                checked={field.value}
+                onChange={checked => field.onChange(checked)}
+                checkedChildren={<i className="bx bx-check" />}
+                unCheckedChildren={<i className="bx bx-x" />}
+              />
+            )}
+          />
+
+          <div className={clsx('delay', !isAutoAccept && 'disabled')}>
+            <div>자동 수락까지 대기시간</div>
+            <Controller
+              name="autoAcceptDelaySeconds"
+              control={form.control}
+              render={({ field }) => (
+                <InputNumber
+                  min={0}
+                  max={8}
+                  value={field.value}
+                  onChange={value => field.onChange(value)}
+                />
+              )}
             />
-          )}
-        />
+
+            <div>초</div>
+          </div>
+        </div>
       </Section>
 
       <SaveButton defaultValues={config.game} form={form} />

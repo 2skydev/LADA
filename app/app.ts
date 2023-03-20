@@ -37,6 +37,9 @@ class AppContext {
     `${this.RESOURCES_PATH}/icons/${this.IS_MAC ? 'logo@512.png' : 'logo@256.ico'}`,
   );
 
+  // preload script path
+  readonly PRELOAD_PATH = join(__dirname, 'preload/index.js');
+
   // electron window
   window: BrowserWindow | null = null;
 
@@ -86,7 +89,7 @@ class AppContext {
       frame: false,
       icon: this.ICON,
       webPreferences: {
-        preload: join(__dirname, 'preload/index.js'),
+        preload: this.PRELOAD_PATH,
       },
     });
 

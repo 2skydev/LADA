@@ -7,6 +7,14 @@
 
 <br />
 
+## Github workflow
+
+> 이미지 클릭시 figma로 이동합니다
+
+[![image](https://user-images.githubusercontent.com/43225384/226127143-bdfe4f6a-dd3a-4cf5-a9ea-f9ced9698d68.png)](https://www.figma.com/file/qJrFt4YVAZX5UdbeKLx6xA/LADA-flows?t=nikt7H1DQ6dTKM96-1)
+
+<br />
+
 ## Todo
 
 - [x] 챔피언 티어 리스트

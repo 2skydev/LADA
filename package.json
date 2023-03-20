@@ -1,9 +1,19 @@
 {
   "name": "lada",
-  "version": "0.0.2",
+  "version": "0.0.3",
   "description": "LADA - League of Legends Assistant Desktop App",
   "main": "dist-electron/index.js",
   "license": "MIT",
+  "author": {
+    "email": "2skydev@gmail.com",
+    "name": "2skydev"
+  },
+  "contributors": [
+    {
+      "email": "webd200@gmail.com",
+      "name": "jong-hui"
+    }
+  ],
   "scripts": {
     "dev": "vite",
     "build": "tsc && vite build && electron-builder",
@@ -23,6 +33,7 @@
     "clsx": "^1.2.1",
     "dayjs": "^1.11.7",
     "electron-log": "^4.4.8",
+    "electron-overlay-window": "^3.2.0",
     "electron-store": "^8.1.0",
     "electron-updater": "^5.3.0",
     "fast-deep-equal": "^3.1.3",
