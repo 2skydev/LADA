@@ -23,22 +23,25 @@ class LeagueAPIClient {
   }
 
   private async initlizeConnection() {
-    const [credentials, ws] = await Promise.all([
-      authenticate({
-        awaitConnection: true,
-      }),
-      createWebSocketConnection({
-        authenticationOptions: {
-          awaitConnection: true,
-        },
-      }),
-    ]);
+    await Promise.all([this.connectAuth(), this.connectWS()]);
 
-    this.ws = ws;
-    this.credentials = credentials;
     this.registerCredentialsListener();
-    await this.waitLCU();
+    await this.waitLCUReady();
     this.emitter.emit('ready');
+  }
+
+  private async connectAuth() {
+    this.credentials = await authenticate({
+      awaitConnection: true,
+    });
+  }
+
+  private async connectWS() {
+    this.ws = await createWebSocketConnection({
+      authenticationOptions: {
+        awaitConnection: true,
+      },
+    });
   }
 
   /**
@@ -51,7 +54,8 @@ class LeagueAPIClient {
 
     client.on('connect', async newCredentials => {
       this.credentials = newCredentials;
-      await this.waitLCU();
+      await this.waitLCUReady();
+      await this.connectWS();
       this.emitter.emit('connect');
     });
 
@@ -66,7 +70,7 @@ class LeagueAPIClient {
   /**
    * LCU가 사용 가능한 상태가 될 때까지 대기해주는 함수입니다.
    */
-  private async waitLCU() {
+  private async waitLCUReady() {
     if (!this.credentials) throw new Error('Credentials not found');
 
     await pRetry(
