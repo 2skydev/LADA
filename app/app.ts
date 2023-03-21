@@ -1,4 +1,4 @@
-import { app, BrowserWindow, Menu, nativeImage, Tray } from 'electron';
+import { app, BrowserWindow, Menu, nativeImage, shell, Tray } from 'electron';
 
 import { join } from 'path';
 
@@ -104,6 +104,14 @@ class AppContext {
 
     this.window.on('ready-to-show', () => {
       this.window?.show();
+    });
+
+    this.window.webContents.setWindowOpenHandler(({ url }) => {
+      if (url.startsWith('https:')) {
+        shell.openExternal(url);
+      }
+
+      return { action: 'deny' };
     });
   }
 
