@@ -1,3 +1,4 @@
+import { useState } from 'react';
 import { Controller } from 'react-hook-form';
 
 import { Switch } from 'antd';
@@ -8,6 +9,7 @@ import SaveButton from '~/components/SaveButton';
 import Section from '~/components/Section';
 import UpdateStatus from '~/components/UpdateStatus';
 import { useCustomForm } from '~/hooks/useCustomForm';
+import { useUpdateContentModal } from '~/hooks/useUpdateContentModal';
 import { configStore } from '~/stores/config';
 import { updateStore } from '~/stores/update';
 import { SettingsPageStyled } from '~/styles/pageStyled/settingsPageStyled';
@@ -15,6 +17,7 @@ import { SettingsPageStyled } from '~/styles/pageStyled/settingsPageStyled';
 const Settings = () => {
   const [config, setConfig] = useRecoilState(configStore);
   const { version, status } = useRecoilValue(updateStore);
+  const { open } = useUpdateContentModal();
 
   const form = useCustomForm({
     defaultValues: config.general,
@@ -81,8 +84,12 @@ const Settings = () => {
             아래 링크를 통해 변경된 사항을 확인하실 수 있습니다.
             <br />
             <div className="spacing" />
-            <a href="https://github.com/2skydev/LADA/releases" target="_blank" rel="noreferrer">
+            <a href="https://github.com/2skydev/LADA/releases" target="_blank">
               앱 릴리즈 목록
+            </a>{' '}
+            /{' '}
+            <a onClick={open} style={{ cursor: 'pointer' }}>
+              업데이트 내역
             </a>
           </div>
         }

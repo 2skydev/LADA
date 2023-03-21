@@ -8,6 +8,7 @@ import { ThemeProvider } from 'styled-components';
 
 import Layout from '~/components/Layout';
 import Titlebar from '~/components/Titlebar';
+import { useUpdateContentModal } from '~/hooks/useUpdateContentModal';
 import { appStateStore } from '~/stores/app';
 import { updateStore } from '~/stores/update';
 import { InitGlobalStyled } from '~/styles/init';
@@ -38,6 +39,8 @@ const AppInner = () => {
 
   const [update, setUpdate] = useRecoilState(updateStore);
   const [appState, setAppState] = useRecoilState(appStateStore);
+
+  useUpdateContentModal({ autoOpen: true });
 
   const bootstrap = async () => {
     window.electron.onUpdate((event, data) => {
