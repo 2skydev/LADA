@@ -119,9 +119,9 @@ class AppContext {
     let tray = new Tray(this.ICON.resize({ width: 20, height: 20 }));
 
     const contextMenu = Menu.buildFromTemplate([
-      { label: 'view app screen', type: 'normal', click: () => this.createWindow() },
+      { label: 'LADA 홈 화면 보기', type: 'normal', click: () => this.createWindow() },
       { type: 'separator' },
-      { label: 'quit', role: 'quit', type: 'normal' },
+      { label: '앱 끄기', role: 'quit', type: 'normal' },
     ]);
 
     tray.on('double-click', () => this.createWindow());
