@@ -1,4 +1,4 @@
-import { app, BrowserWindow, Menu, nativeImage, Tray } from 'electron';
+import { app, BrowserWindow, Menu, nativeImage, shell, Tray } from 'electron';
 
 import { join } from 'path';
 
@@ -105,15 +105,23 @@ class AppContext {
     this.window.on('ready-to-show', () => {
       this.window?.show();
     });
+
+    this.window.webContents.setWindowOpenHandler(({ url }) => {
+      if (url.startsWith('https:')) {
+        shell.openExternal(url);
+      }
+
+      return { action: 'deny' };
+    });
   }
 
   async createTray() {
     let tray = new Tray(this.ICON.resize({ width: 20, height: 20 }));
 
     const contextMenu = Menu.buildFromTemplate([
-      { label: 'view app screen', type: 'normal', click: () => this.createWindow() },
+      { label: 'LADA 홈 화면 보기', type: 'normal', click: () => this.createWindow() },
       { type: 'separator' },
-      { label: 'quit', role: 'quit', type: 'normal' },
+      { label: '앱 끄기', role: 'quit', type: 'normal' },
     ]);
 
     tray.on('double-click', () => this.createWindow());

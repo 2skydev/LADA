@@ -3,13 +3,13 @@ name-template: 'v$RESOLVED_VERSION 🌈'
 tag-template: 'v$RESOLVED_VERSION'
 
 categories:
-  - title: '🚀 Features'
+  - title: '🚀 새로운 기능'
     labels:
       - 'enhancement'
       - 'feature'
-  - title: '🐛 Bug Fixes'
+  - title: '🐛 버그 수정'
     labels: 'bug'
-  - title: '🧰 Maintenance'
+  - title: '🧰 유지 보수'
     label: 'chore'
 
 version-resolver:

@@ -46,9 +46,7 @@ jobs:
           git config --global user.name "github-actions[bot]"
           git config --global user.email "41898282+github-actions[bot]@users.noreply.github.com"
           yarn version --new-version $version --no-git-tag-version
-          git diff --exit-code
-          if [ $? -eq 1 ]
-          then
+          if ! git diff --exit-code; then
             git add package.json
             git commit -m "Update package.json version"
             git checkout dev
