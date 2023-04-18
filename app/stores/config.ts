@@ -38,6 +38,7 @@ configStore.onDidChange('general', async (newValue, oldValue) => {
   const ladaAutoLauncher = new AutoLaunch({
     name: 'LADA',
     path: app.getPath('exe'),
+    isHidden: true,
   });
 
   const isEnabled = await ladaAutoLauncher.isEnabled();
