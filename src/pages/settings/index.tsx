@@ -34,8 +34,8 @@ const Settings = () => {
       <LayoutConfig breadcrumbs={['설정', '일반 설정']} />
 
       <Section
-        title="컴퓨터 부팅시 자동 시작"
-        description={<div>컴퓨터가 켜진 후 자동으로 앱이 시작되도록 설정합니다.</div>}
+        title="컴퓨터 부팅시 최소화로 자동 시작"
+        description={<div>컴퓨터가 켜진 후 자동으로 앱이 최소화 모드로 시작되도록 설정합니다.</div>}
       >
         <Controller
           name="autoLaunch"

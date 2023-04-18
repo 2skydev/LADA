@@ -7,6 +7,14 @@
   "useTabs": false,
   "printWidth": 100,
   "semi": true,
-  "importOrder": ["^electron", "^react", "^[^.~@]+", "^@app", "^~.+$", "^\\..+$"],
+  "importOrder": [
+    "^reflect",
+    "^electron",
+    "^react",
+    "<THIRD_PARTY_MODULES>",
+    "^@app",
+    "^~.+$",
+    "^\\..+$"
+  ],
   "importOrderSeparation": true
 }
