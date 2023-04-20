@@ -1,52 +1,52 @@
-import { ipcMain, shell } from 'electron';
+import { ipcMain, shell } from 'electron'
 
-import { ModuleFunction } from '@app/app';
-import { configStore } from '@app/stores/config';
+import { ModuleFunction } from '@app/app'
+import { configStore } from '@app/stores/config'
 
-export type AppControlAction = 'devtools' | 'minimize' | 'maximize' | 'close';
+export type AppControlAction = 'devtools' | 'minimize' | 'maximize' | 'close'
 
 const GeneralModule: ModuleFunction = context => {
   // 창 닫기, 최대화, 최소화 같은 컨트롤 기능
   ipcMain.on('appControl', async (_, action: AppControlAction) => {
-    const { window } = context;
+    const { window } = context
 
-    if (!window) return;
+    if (!window) return
 
     switch (action) {
       case 'devtools': {
-        window.webContents.toggleDevTools();
-        break;
+        window.webContents.toggleDevTools()
+        break
       }
 
       case 'minimize': {
-        window.minimize();
-        break;
+        window.minimize()
+        break
       }
 
       case 'maximize': {
-        window.isMaximized() ? window.unmaximize() : window.maximize();
-        break;
+        window.isMaximized() ? window.unmaximize() : window.maximize()
+        break
       }
 
       case 'close': {
-        window.close();
-        break;
+        window.close()
+        break
       }
     }
-  });
+  })
 
   // 링크 열기
   ipcMain.on('openExternal', async (_, link) => {
-    return shell.openExternal(link);
-  });
+    return shell.openExternal(link)
+  })
 
   ipcMain.handle('getConfig', async () => {
-    return configStore.store;
-  });
+    return configStore.store
+  })
 
   ipcMain.handle('setConfig', async (e, config) => {
-    return (configStore.store = config);
-  });
-};
+    return (configStore.store = config)
+  })
+}
 
-export default GeneralModule;
+export default GeneralModule

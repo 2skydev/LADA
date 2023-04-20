@@ -1,14 +1,14 @@
-import { app, ipcMain } from 'electron';
-import log from 'electron-log';
-import { autoUpdater } from 'electron-updater';
+import { app, ipcMain } from 'electron'
+import log from 'electron-log'
+import { autoUpdater } from 'electron-updater'
 
-import { ModuleFunction } from '@app/app';
-import { updateStore } from '@app/stores/update';
+import { ModuleFunction } from '@app/app'
+import { updateStore } from '@app/stores/update'
 
 export interface UpdateStatus {
-  event: UpdateEvent;
-  data: any;
-  time: number;
+  event: UpdateEvent
+  data: any
+  time: number
 }
 
 export type UpdateEvent =
@@ -17,7 +17,7 @@ export type UpdateEvent =
   | 'update-not-available'
   | 'error'
   | 'download-progress'
-  | 'update-downloaded';
+  | 'update-downloaded'
 
 const UpdateModule: ModuleFunction = context => {
   const handleUpdateEvent = (event: UpdateEvent) => {
@@ -27,45 +27,45 @@ const UpdateModule: ModuleFunction = context => {
           event,
           data,
           time: new Date().getTime(),
-        });
+        })
       }
 
       if (context.window) {
-        context.window.webContents.send('update', event, data);
+        context.window.webContents.send('update', event, data)
       }
-    };
-  };
+    }
+  }
 
   ipcMain.handle('getVersion', async () => {
-    return app.getVersion();
-  });
+    return app.getVersion()
+  })
 
   ipcMain.handle('getUpdaterStatus', async () => {
-    return updateStore.get('status');
-  });
+    return updateStore.get('status')
+  })
 
   ipcMain.on('checkForUpdate', async () => {
-    autoUpdater.checkForUpdates();
-  });
+    autoUpdater.checkForUpdates()
+  })
 
   ipcMain.on('quitAndInstall', async () => {
-    autoUpdater.quitAndInstall();
-  });
+    autoUpdater.quitAndInstall()
+  })
 
   ipcMain.once('initlizeUpdater', async () => {
-    autoUpdater.logger = log;
-    autoUpdater.autoInstallOnAppQuit = true;
-    autoUpdater.fullChangelog = true;
+    autoUpdater.logger = log
+    autoUpdater.autoInstallOnAppQuit = true
+    autoUpdater.fullChangelog = true
 
-    autoUpdater.on('checking-for-update', handleUpdateEvent('checking-for-update'));
-    autoUpdater.on('update-available', handleUpdateEvent('update-available'));
-    autoUpdater.on('update-not-available', handleUpdateEvent('update-not-available'));
-    autoUpdater.on('download-progress', handleUpdateEvent('download-progress'));
-    autoUpdater.on('update-downloaded', handleUpdateEvent('update-downloaded'));
-    autoUpdater.on('error', handleUpdateEvent('error'));
+    autoUpdater.on('checking-for-update', handleUpdateEvent('checking-for-update'))
+    autoUpdater.on('update-available', handleUpdateEvent('update-available'))
+    autoUpdater.on('update-not-available', handleUpdateEvent('update-not-available'))
+    autoUpdater.on('download-progress', handleUpdateEvent('download-progress'))
+    autoUpdater.on('update-downloaded', handleUpdateEvent('update-downloaded'))
+    autoUpdater.on('error', handleUpdateEvent('error'))
 
-    autoUpdater.checkForUpdates();
-  });
-};
+    autoUpdater.checkForUpdates()
+  })
+}
 
-export default UpdateModule;
+export default UpdateModule

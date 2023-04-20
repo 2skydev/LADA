@@ -1,82 +1,82 @@
-import { app, BrowserWindow, Menu, nativeImage, shell, Tray } from 'electron';
+import { app, BrowserWindow, Menu, nativeImage, shell, Tray } from 'electron'
 
-import { join } from 'path';
+import { join } from 'path'
 
-import { globImport } from './utils/import';
+import { globImport } from './utils/import'
 
-export type AppContextType = InstanceType<typeof AppContext>;
-export type ModuleFunction = (context: AppContextType) => void | Promise<void>;
+export type AppContextType = InstanceType<typeof AppContext>
+export type ModuleFunction = (context: AppContextType) => void | Promise<void>
 
-app.commandLine.appendSwitch(`--enable-smooth-scrolling`);
+app.commandLine.appendSwitch(`--enable-smooth-scrolling`)
 
 const { productName, protocols } = require(app.isPackaged
   ? './app.json'
-  : '../electron-builder.json');
+  : '../electron-builder.json')
 
 class AppContext {
   // deep link protocol
-  readonly PROTOCOL = protocols.name;
+  readonly PROTOCOL = protocols.name
 
   // is mac os
-  readonly IS_MAC = process.platform === 'darwin';
+  readonly IS_MAC = process.platform === 'darwin'
 
   // dev mode - url
-  readonly DEV_URL = `http://localhost:3000/#`;
+  readonly DEV_URL = `http://localhost:3000/#`
 
   // production mode - load file
-  readonly PROD_LOAD_FILE_PATH = join(__dirname, '../dist/index.html');
-  readonly PROD_LOAD_FILE_HASH = '#';
+  readonly PROD_LOAD_FILE_PATH = join(__dirname, '../dist/index.html')
+  readonly PROD_LOAD_FILE_HASH = '#'
 
   // resources directory
   readonly RESOURCES_PATH = app.isPackaged
     ? join(process.resourcesPath, 'resources')
-    : join(app.getAppPath(), 'resources');
+    : join(app.getAppPath(), 'resources')
 
   // native icon
   readonly ICON = nativeImage.createFromPath(
     `${this.RESOURCES_PATH}/icons/${this.IS_MAC ? 'logo@512.png' : 'logo@256.ico'}`,
-  );
+  )
 
   // preload script path
-  readonly PRELOAD_PATH = join(__dirname, 'preload/index.js');
+  readonly PRELOAD_PATH = join(__dirname, 'preload/index.js')
 
   // electron window
-  window: BrowserWindow | null = null;
+  window: BrowserWindow | null = null
 
   async bootstrap() {
-    await this.initliazeElectron();
-    await this.autoload();
-    await this.createWindow();
+    await this.initliazeElectron()
+    await this.autoload()
+    await this.createWindow()
   }
 
   async initliazeElectron() {
-    const gotTheLock = app.requestSingleInstanceLock();
+    const gotTheLock = app.requestSingleInstanceLock()
 
     if (!gotTheLock) {
-      app.quit();
-      process.exit(0);
+      app.quit()
+      process.exit(0)
     }
 
-    app.setAsDefaultProtocolClient(this.PROTOCOL);
+    app.setAsDefaultProtocolClient(this.PROTOCOL)
 
     app.on('activate', () => {
-      this.createWindow();
-    });
+      this.createWindow()
+    })
 
     app.on('window-all-closed', () => {
-      this.window = null;
-    });
+      this.window = null
+    })
 
-    await app.whenReady();
-    await this.createTray();
+    await app.whenReady()
+    await this.createTray()
   }
 
   // create electron window
   async createWindow() {
     if (this.window) {
-      if (this.window.isMinimized()) this.window.restore();
-      this.window.focus();
-      return;
+      if (this.window.isMinimized()) this.window.restore()
+      this.window.focus()
+      return
     }
 
     this.window = new BrowserWindow({
@@ -91,53 +91,53 @@ class AppContext {
       webPreferences: {
         preload: this.PRELOAD_PATH,
       },
-    });
+    })
 
     if (app.isPackaged) {
       this.window.loadFile(this.PROD_LOAD_FILE_PATH, {
         hash: this.PROD_LOAD_FILE_HASH,
-      });
+      })
     } else {
-      await this.window.loadURL(this.DEV_URL);
-      this.window.webContents.openDevTools();
+      await this.window.loadURL(this.DEV_URL)
+      this.window.webContents.openDevTools()
     }
 
     this.window.on('ready-to-show', () => {
-      this.window?.show();
-    });
+      this.window?.show()
+    })
 
     this.window.webContents.setWindowOpenHandler(({ url }) => {
       if (url.startsWith('https:')) {
-        shell.openExternal(url);
+        shell.openExternal(url)
       }
 
-      return { action: 'deny' };
-    });
+      return { action: 'deny' }
+    })
   }
 
   async createTray() {
-    let tray = new Tray(this.ICON.resize({ width: 20, height: 20 }));
+    let tray = new Tray(this.ICON.resize({ width: 20, height: 20 }))
 
     const contextMenu = Menu.buildFromTemplate([
       { label: 'LADA 홈 화면 보기', type: 'normal', click: () => this.createWindow() },
       { type: 'separator' },
       { label: '앱 끄기', role: 'quit', type: 'normal' },
-    ]);
+    ])
 
-    tray.on('double-click', () => this.createWindow());
-    tray.setToolTip(productName);
-    tray.setContextMenu(contextMenu);
+    tray.on('double-click', () => this.createWindow())
+    tray.setToolTip(productName)
+    tray.setContextMenu(contextMenu)
   }
 
   private async register(module: ModuleFunction) {
-    await module(this);
+    await module(this)
   }
 
   private async autoload() {
-    const modules = await globImport('./modules/**/index.js', { cwd: __dirname });
+    const modules = await globImport('./modules/**/index.js', { cwd: __dirname })
 
-    await Promise.all(modules.map(({ default: module }) => this.register(module)));
+    await Promise.all(modules.map(({ default: module }) => this.register(module)))
   }
 }
 
-export default AppContext;
+export default AppContext

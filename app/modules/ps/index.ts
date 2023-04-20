@@ -1,18 +1,17 @@
-import axios from 'axios';
-import * as cheerio from 'cheerio';
-
-import { ModuleFunction } from '@app/app';
-import IPCServer from '@app/utils/IPCServer';
+import { ModuleFunction } from '@app/app'
+import IPCServer from '@app/utils/IPCServer'
+import axios from 'axios'
+import * as cheerio from 'cheerio'
 
 interface Version {
-  id: number;
-  label: string;
-  date: string;
+  id: number
+  label: string
+  date: string
 }
 
 const getLatestVersion = async (): Promise<Version> => {
-  const { data: html } = await axios.get('https://lol.ps/statistics');
-  const $ = cheerio.load(html);
+  const { data: html } = await axios.get('https://lol.ps/statistics')
+  const $ = cheerio.load(html)
 
   const [
     ,
@@ -23,22 +22,22 @@ const getLatestVersion = async (): Promise<Version> => {
         versionInfo: [latestVersion],
       },
     },
-  ] = JSON.parse($('script[sveltekit\\:data-type="server_data"]').text());
+  ] = JSON.parse($('script[sveltekit\\:data-type="server_data"]').text())
 
   return {
     id: latestVersion.versionId,
     label: latestVersion.description,
     date: latestVersion.patchDate,
-  };
-};
+  }
+}
 
 const PSModule: ModuleFunction = async () => {
-  const version = await getLatestVersion();
+  const version = await getLatestVersion()
 
-  const server = new IPCServer('apis/ps');
+  const server = new IPCServer('apis/ps')
 
   server.add('/tiers/:lane', async ({ params }) => {
-    const { lane } = params;
+    const { lane } = params
 
     const {
       data: { data },
@@ -49,18 +48,18 @@ const PSModule: ModuleFunction = async () => {
         tier: 2,
         lane: Number(lane),
       },
-    });
+    })
 
-    return data;
-  });
+    return data
+  })
 
   server.add('/summoners', async ({ payload }) => {
-    const { names = [] } = payload;
+    const { names = [] } = payload
 
     const promises = names.map((name: string) =>
       (async () => {
-        const { data: html } = await axios.get(`https://lol.ps/summoner/${name}`);
-        const $ = cheerio.load(html);
+        const { data: html } = await axios.get(`https://lol.ps/summoner/${name}`)
+        const $ = cheerio.load(html)
 
         const [
           ,
@@ -69,25 +68,25 @@ const PSModule: ModuleFunction = async () => {
           {
             data: { summary },
           },
-        ] = JSON.parse($('script[sveltekit\\:data-type="server_data"]').text());
+        ] = JSON.parse($('script[sveltekit\\:data-type="server_data"]').text())
 
-        return summary;
+        return summary
       })(),
-    );
+    )
 
-    return Promise.all(promises);
-  });
+    return Promise.all(promises)
+  })
 
   server.add('/champ/:id', async ({ params, payload }) => {
-    const { id } = params;
-    const { laneId, tierId } = payload;
+    const { id } = params
+    const { laneId, tierId } = payload
 
     const {
       data: { data: champArguments },
-    } = await axios.get(`https://lol.ps/api/champ/${id}/arguments.json`);
+    } = await axios.get(`https://lol.ps/api/champ/${id}/arguments.json`)
 
-    const selectedLaneId = Number(laneId || champArguments.laneId);
-    const selectedTierId = Number(tierId || champArguments.tierId);
+    const selectedLaneId = Number(laneId || champArguments.laneId)
+    const selectedTierId = Number(tierId || champArguments.tierId)
 
     const {
       data: {
@@ -100,7 +99,7 @@ const PSModule: ModuleFunction = async () => {
         tier: selectedTierId,
         lane: selectedLaneId,
       },
-    });
+    })
 
     const {
       data: { data: skill },
@@ -111,7 +110,7 @@ const PSModule: ModuleFunction = async () => {
         tier: selectedTierId,
         lane: selectedLaneId,
       },
-    });
+    })
 
     const {
       data: { data: runestatperk },
@@ -122,10 +121,10 @@ const PSModule: ModuleFunction = async () => {
         tier: selectedTierId,
         lane: selectedLaneId,
       },
-    });
+    })
 
-    return { item, spell, skill, runestatperk };
-  });
-};
+    return { item, spell, skill, runestatperk }
+  })
+}
 
-export default PSModule;
+export default PSModule

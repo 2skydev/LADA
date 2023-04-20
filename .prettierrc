@@ -6,15 +6,17 @@
   "tabWidth": 2,
   "useTabs": false,
   "printWidth": 100,
-  "semi": true,
+  "semi": false,
   "importOrder": [
     "^reflect",
     "^electron",
     "^react",
     "<THIRD_PARTY_MODULES>",
-    "^@app",
+    "^@main",
+    "^@renderer",
     "^~.+$",
     "^\\..+$"
   ],
-  "importOrderSeparation": true
+  "importOrderSeparation": true,
+  "importOrderParserPlugins": ["typescript", "decorators", "jsx"]
 }

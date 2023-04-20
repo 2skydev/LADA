@@ -1,9 +1,9 @@
-import Store from 'electron-store';
+import Store from 'electron-store'
 
-import { UpdateStatus } from '@app/modules/update';
+import { UpdateStatus } from '@app/modules/update'
 
 export interface UpdateStoreValues {
-  status: UpdateStatus;
+  status: UpdateStatus
 }
 
 export const updateStore = new Store<UpdateStoreValues>({
@@ -16,4 +16,4 @@ export const updateStore = new Store<UpdateStoreValues>({
       time: new Date().getTime(),
     },
   },
-});
+})

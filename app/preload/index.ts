@@ -1,6 +1,6 @@
-import { ElectronRendererContext } from '@app/types/preload';
+import { ElectronRendererContext } from '@app/types/preload'
 
-const { contextBridge, ipcRenderer } = require('electron');
+const { contextBridge, ipcRenderer } = require('electron')
 
 const electronContext: ElectronRendererContext = {
   onUpdate: callback => ipcRenderer.on('update', (_, event, data) => callback(event, data)),
@@ -28,6 +28,6 @@ const electronContext: ElectronRendererContext = {
   unsubscribeLeague: path => ipcRenderer.removeAllListeners(`league/${path}`),
 
   off: (channel, listener) => ipcRenderer.off(channel, listener),
-};
+}
 
-contextBridge.exposeInMainWorld('electron', electronContext);
+contextBridge.exposeInMainWorld('electron', electronContext)
