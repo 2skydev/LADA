@@ -1,9 +1,10 @@
 import { useEffect, useState } from 'react'
 
-import { UpdateStatus as UpdateStatusType } from '@app/modules/update'
 import { Button } from 'antd'
 import clsx from 'clsx'
 import dayjs from 'dayjs'
+
+import { UpdateStatus as UpdateStatusType } from '@main/modules/update/stores/update.store'
 
 import { UpdateStatusStyled } from './styled'
 

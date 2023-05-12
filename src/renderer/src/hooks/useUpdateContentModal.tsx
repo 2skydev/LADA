@@ -6,7 +6,7 @@ import { useRecoilValue } from 'recoil'
 import styled from 'styled-components'
 import useSWRImmutable from 'swr/immutable'
 
-import { publish } from '@renderer/../electron-builder.json'
+import { publish } from '@renderer/../../../electron-builder.json'
 import { updateStore } from '@renderer/stores/update'
 
 const UpdateContentModalStyled = styled.div`

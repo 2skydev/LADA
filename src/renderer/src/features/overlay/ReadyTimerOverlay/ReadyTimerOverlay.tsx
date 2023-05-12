@@ -1,12 +1,17 @@
 import { useEffect, useState } from 'react'
 
-import { AutoAcceptData } from '@app/types'
 import clsx from 'clsx'
 
 import { ReadyTimerOverlayStyled } from './styled'
 
 export interface ReadyTimerOverlayProps {
   className?: string
+}
+
+interface AutoAcceptData {
+  timer?: number
+  playerResponse: string
+  autoAcceptDelaySeconds?: number
 }
 
 const ReadyTimerOverlay = ({ className }: ReadyTimerOverlayProps) => {

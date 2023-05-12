@@ -19,10 +19,10 @@ class LeagueAPIClient {
   private emitter = new EventEmitter()
 
   constructor() {
-    this.initlizeConnection()
+    this.initializeConnection()
   }
 
-  private async initlizeConnection() {
+  private async initializeConnection() {
     await Promise.all([this.connectAuth(), this.connectWS()])
 
     this.registerCredentialsListener()

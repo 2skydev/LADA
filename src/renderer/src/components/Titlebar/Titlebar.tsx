@@ -1,6 +1,7 @@
-import { AppControlAction } from '@app/modules/general'
 import clsx from 'clsx'
 import { useRecoilValue } from 'recoil'
+
+import { AppControlAction } from '@main/modules/app/app.module'
 
 import { configStore } from '@renderer/stores/config'
 

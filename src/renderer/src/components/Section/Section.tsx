@@ -1,7 +1,6 @@
 import { ReactNode } from 'react'
 
 import 'antd'
-import { Col, Row } from 'antd'
 import clsx from 'clsx'
 
 import { SectionStyled } from './styled'

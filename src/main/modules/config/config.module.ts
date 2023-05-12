@@ -1,20 +1,18 @@
-import { ipcMain } from 'electron'
+import { singleton } from '@launchtray/tsyringe-async'
 
-import { injectable } from 'tsyringe'
-
+import { IPCHandle } from '@main/core/decorators/ipcHandle'
+import type { ConfigStoreValues } from '@main/modules/config/stores/config.store'
 import { configStore } from '@main/modules/config/stores/config.store'
 
-@injectable()
+@singleton()
 export class ConfigModule {
-  public
+  @IPCHandle()
+  async getConfig() {
+    return configStore.store
+  }
 
-  constructor() {
-    ipcMain.handle('getConfig', async () => {
-      return configStore.store
-    })
-
-    ipcMain.handle('setConfig', async (_, config) => {
-      return (configStore.store = config)
-    })
+  @IPCHandle()
+  async setConfig(config: ConfigStoreValues) {
+    return (configStore.store = config)
   }
 }

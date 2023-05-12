@@ -1,9 +1,7 @@
 import { Fragment } from 'react'
-import { useRoutes, RouteObject, RouterProvider, createHashRouter } from 'react-router-dom'
+import { RouteObject, RouterProvider, createHashRouter } from 'react-router-dom'
 
 type Element = () => JSX.Element
-
-interface FileSystemRoutesProps {}
 
 interface Module {
   default: Element
@@ -84,7 +82,7 @@ const router = createHashRouter([
   },
 ])
 
-const FileSystemRoutes = (props: FileSystemRoutesProps) => {
+const FileSystemRoutes = () => {
   return <RouterProvider router={router} />
 }
 

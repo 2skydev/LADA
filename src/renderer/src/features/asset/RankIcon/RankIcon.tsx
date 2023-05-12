@@ -1,5 +1,3 @@
-import { ReactNode } from 'react'
-
 import clsx from 'clsx'
 
 import bronzeImage from '@renderer/assets/images/rank/bronze.png'

@@ -1,15 +1,15 @@
-import { app, BrowserWindow, ipcMain, Menu, nativeImage, shell, Tray } from 'electron'
+import { app, BrowserWindow, Menu, nativeImage, shell, Tray } from 'electron'
 
+import { singleton } from '@launchtray/tsyringe-async'
 import { join } from 'path'
-import { injectable } from 'tsyringe'
+import { match } from 'path-to-regexp'
 
-const { productName, protocols } = require(app.isPackaged
-  ? './app.json'
-  : '../../electron-builder.json')
+import { productName, protocols } from '@main/../../electron-builder.json'
+import { IPCHandle } from '@main/core/decorators/ipcHandle'
 
 export type AppControlAction = 'devtools' | 'minimize' | 'maximize' | 'close'
 
-@injectable()
+@singleton()
 export class AppModule {
   readonly APP_PATH = app.getAppPath()
   readonly PROTOCOL = protocols.name
@@ -25,16 +25,15 @@ export class AppModule {
     `${this.RESOURCES_PATH}/icons/${this.IS_MAC ? 'logo@512.png' : 'logo@256.ico'}`,
   )
 
+  // main window
   window: BrowserWindow | null = null
+
+  // deep link handlers
+  deepLinkHandlers: Record<string, (params: object) => void> = {}
 
   constructor() {
     app.commandLine.appendSwitch(`--enable-smooth-scrolling`)
-    this.bootstrap()
-  }
-
-  async bootstrap() {
-    await this.initialize()
-    await this.createWindow()
+    this.initialize()
   }
 
   async initialize() {
@@ -55,34 +54,21 @@ export class AppModule {
       this.window = null
     })
 
-    ipcMain.on('appControl', async (_, action: AppControlAction) => {
-      if (!this.window) return
-
-      switch (action) {
-        case 'devtools': {
-          this.window.webContents.toggleDevTools()
-          break
-        }
-
-        case 'minimize': {
-          this.window.minimize()
-          break
-        }
-
-        case 'maximize': {
-          this.window.isMaximized() ? this.window.unmaximize() : this.window.maximize()
-          break
-        }
-
-        case 'close': {
-          this.window.close()
-          break
-        }
+    app.on('second-instance', (_, argv) => {
+      if (!this.IS_MAC) {
+        const url = argv.find(arg => arg.startsWith(`${this.PROTOCOL}://`))
+        if (url) this.resolveDeepLink(url)
       }
     })
 
+    app.on('open-url', (_, url) => {
+      this.resolveDeepLink(url)
+    })
+
     await app.whenReady()
-    await this.createTray()
+    this.createTray()
+
+    await this.createWindow()
   }
 
   async createWindow() {
@@ -128,7 +114,7 @@ export class AppModule {
     })
   }
 
-  async createTray() {
+  createTray() {
     let tray = new Tray(this.ICON.resize({ width: 20, height: 20 }))
 
     const contextMenu = Menu.buildFromTemplate([
@@ -140,5 +126,45 @@ export class AppModule {
     tray.on('double-click', () => this.createWindow())
     tray.setToolTip(productName)
     tray.setContextMenu(contextMenu)
+  }
+
+  resolveDeepLink(url: string) {
+    const pathname = url.replace(`${this.PROTOCOL}://`, '/')
+
+    for (const path in this.deepLinkHandlers) {
+      const data = match(path)(pathname)
+
+      if (data) {
+        this.deepLinkHandlers[path](data.params)
+        break
+      }
+    }
+  }
+
+  @IPCHandle({ type: 'on' })
+  appControl(action: AppControlAction) {
+    if (!this.window) return
+
+    switch (action) {
+      case 'devtools': {
+        this.window.webContents.toggleDevTools()
+        break
+      }
+
+      case 'minimize': {
+        this.window.minimize()
+        break
+      }
+
+      case 'maximize': {
+        this.window.isMaximized() ? this.window.unmaximize() : this.window.maximize()
+        break
+      }
+
+      case 'close': {
+        this.window.close()
+        break
+      }
+    }
   }
 }

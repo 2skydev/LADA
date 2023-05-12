@@ -1,5 +1,6 @@
-import { UpdateStoreValues } from '@app/stores/update'
 import { atom } from 'recoil'
+
+import { UpdateStoreValues } from '@main/modules/update/stores/update.store'
 
 export const updateStore = atom<UpdateStoreValues & { version: string }>({
   key: 'update',

@@ -3,7 +3,9 @@
   "productName": "LADA",
   "protocols": {
     "name": "lada",
-    "schemes": ["lada"]
+    "schemes": [
+      "lada"
+    ]
   },
   "publish": [
     {
@@ -26,9 +28,13 @@
     "artifactName": "LADA-Setup-${version}.${ext}",
     "uninstallDisplayName": "LADA"
   },
-  "extraResources": ["./resources/**"],
+  "extraResources": [
+    "./resources/**"
+  ],
   "directories": {
     "output": "release/"
   },
-  "files": ["dist/**/*", "dist-electron/**/*"]
+  "files": [
+    "out/**/*"
+  ]
 }

@@ -1,6 +1,5 @@
 import { useEffect, useState } from 'react'
 
-import { APICategory } from '@app/types/preload'
 import { useRecoilValue } from 'recoil'
 import useSWR, { SWRConfiguration, useSWRConfig } from 'swr'
 import { serialize } from 'swr/_internal'
@@ -13,6 +12,8 @@ export interface useAPIOptions extends SWRConfiguration {
   payload?: any
   revalidateOnLeagueReconnect?: boolean
 }
+
+type APICategory = 'league' | 'ps'
 
 const useAPI = <T = any>(category: APICategory, url: string, options: useAPIOptions = {}) => {
   const { payload, revalidateOnLeagueReconnect = false, ...swrOptions } = options

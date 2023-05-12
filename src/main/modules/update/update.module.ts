@@ -1,51 +1,36 @@
-import { app, ipcMain } from 'electron'
+import { app } from 'electron'
 import log from 'electron-log'
 import { autoUpdater } from 'electron-updater'
 
-import { injectable } from 'tsyringe'
+import { singleton } from '@launchtray/tsyringe-async'
 
+import { IPCHandle } from '@main/core/decorators/ipcHandle'
 import { AppModule } from '@main/modules/app/app.module'
 import { UpdateEvent, updateStore } from '@main/modules/update/stores/update.store'
 
-@injectable()
+@singleton()
 export class UpdateModule {
+  private listenEvents = [
+    'checking-for-update',
+    'update-available',
+    'update-not-available',
+    'download-progress',
+    'update-downloaded',
+    'error',
+  ] as const
+
   constructor(private appModule: AppModule) {
-    console.log('UpdateModule')
+    autoUpdater.logger = log
+    autoUpdater.autoInstallOnAppQuit = true
+    autoUpdater.fullChangelog = true
 
-    ipcMain.handle('getVersion', async () => {
-      return app.getVersion()
-    })
-
-    ipcMain.handle('getUpdaterStatus', async () => {
-      return updateStore.get('status')
-    })
-
-    ipcMain.on('checkForUpdate', async () => {
-      autoUpdater.checkForUpdates()
-    })
-
-    ipcMain.on('quitAndInstall', async () => {
-      autoUpdater.quitAndInstall()
-    })
-
-    ipcMain.once('initializeUpdater', async () => {
-      autoUpdater.logger = log
-      autoUpdater.autoInstallOnAppQuit = true
-      autoUpdater.fullChangelog = true
-
-      autoUpdater.on('checking-for-update', this.handleUpdateEvent('checking-for-update'))
-      autoUpdater.on('update-available', this.handleUpdateEvent('update-available'))
-      autoUpdater.on('update-not-available', this.handleUpdateEvent('update-not-available'))
-      autoUpdater.on('download-progress', this.handleUpdateEvent('download-progress'))
-      autoUpdater.on('update-downloaded', this.handleUpdateEvent('update-downloaded'))
-      autoUpdater.on('error', this.handleUpdateEvent('error'))
-
-      autoUpdater.checkForUpdates()
+    this.listenEvents.forEach(event => {
+      autoUpdater.on(event, this.handleUpdateEvent(event))
     })
   }
 
   handleUpdateEvent(event: UpdateEvent) {
-    return (data?: any) => {
+    return (data: any) => {
       if (event !== 'download-progress') {
         updateStore.set('status', {
           event,
@@ -58,5 +43,30 @@ export class UpdateModule {
         this.appModule.window.webContents.send('update', event, data)
       }
     }
+  }
+
+  @IPCHandle()
+  async getVersion() {
+    return app.getVersion()
+  }
+
+  @IPCHandle()
+  async getUpdaterStatus() {
+    return updateStore.get('status')
+  }
+
+  @IPCHandle({ type: 'on' })
+  async checkForUpdate() {
+    autoUpdater.checkForUpdates()
+  }
+
+  @IPCHandle({ type: 'on' })
+  async quitAndInstall() {
+    autoUpdater.quitAndInstall()
+  }
+
+  @IPCHandle({ type: 'once' })
+  async initializeUpdater() {
+    autoUpdater.checkForUpdates()
   }
 }

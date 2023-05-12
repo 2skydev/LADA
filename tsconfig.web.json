@@ -1,15 +1,27 @@
 {
-  "extends": "@electron-toolkit/tsconfig/tsconfig.web.json",
+  "extends": "./tsconfig.base.json",
   "include": [
     "src/renderer/src/env.d.ts",
     "src/renderer/src/**/*",
     "src/renderer/src/**/*.tsx",
-    "src/preload/*.d.ts"
+    "src/main/**/*"
   ],
   "compilerOptions": {
     "composite": true,
-    "jsx": "react-jsx",
     "baseUrl": ".",
+    "jsx": "react-jsx",
+    "experimentalDecorators": true,
+    "emitDecoratorMetadata": true,
+    "strictPropertyInitialization": false,
+    "lib": [
+      "ESNext",
+      "DOM",
+      "DOM.Iterable"
+    ],
+    "types": [
+      "vite/client",
+      "./src/preload/electron"
+    ],
     "paths": {
       "@renderer/*": [
         "src/renderer/src/*"

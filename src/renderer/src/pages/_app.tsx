@@ -54,7 +54,7 @@ const AppInner = () => {
       })
     })
 
-    window.electron.initlizeUpdater()
+    window.electron.initializeUpdater()
 
     const isReady = await window.electron.apis('league', '/is-ready')
 
@@ -64,16 +64,15 @@ const AppInner = () => {
     })
 
     window.electron.subscribeLeague('connect-change', state => {
-      console.log('connect-change', state)
       setAppState({
         ...appState,
         leagueIsReady: state === 'connect',
       })
     })
 
-    window.electron.subscribeLeague('room/session', data => {
-      console.log('room/session', data)
-    })
+    // window.electron.subscribeLeague('room/session', data => {
+    //   console.log('room/session', data)
+    // })
   }
 
   const styledTheme = useMemo(

@@ -1,5 +1,5 @@
 {
-  "extends": "@electron-toolkit/tsconfig/tsconfig.node.json",
+  "extends": "./tsconfig.base.json",
   "include": [
     "electron.vite.config.*",
     "src/main/**/*",
@@ -8,15 +8,17 @@
   "compilerOptions": {
     "composite": true,
     "baseUrl": ".",
+    "experimentalDecorators": true,
+    "emitDecoratorMetadata": true,
+    "strictPropertyInitialization": false,
     "types": [
+      "node",
       "electron-vite/node"
     ],
     "paths": {
       "@main/*": [
         "src/main/*"
       ]
-    },
-    "experimentalDecorators": true,
-    "emitDecoratorMetadata": true
+    }
   }
 }
