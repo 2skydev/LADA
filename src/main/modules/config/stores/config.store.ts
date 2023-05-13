@@ -9,6 +9,7 @@ export interface ConfigStoreValues {
   general: {
     autoLaunch: boolean
     developerMode: boolean
+    openWindowWhenLeagueClientLaunch: boolean
   }
   game: {
     autoAccept: boolean
@@ -18,11 +19,12 @@ export interface ConfigStoreValues {
 
 export const configStore = new Store<ConfigStoreValues>({
   name: 'config',
-  accessPropertiesByDotNotation: false,
+  accessPropertiesByDotNotation: true,
   defaults: {
     general: {
       autoLaunch: false,
       developerMode: IS_DEV,
+      openWindowWhenLeagueClientLaunch: true,
     },
     game: {
       autoAccept: false,

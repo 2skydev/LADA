@@ -49,6 +49,11 @@ export class LeagueModule {
     })
 
     this.client.on('ready', () => {
+      // 리그 클라이언트 실행 시 LADA 창 열기
+      if (configStore.get('general.openWindowWhenLeagueClientLaunch') && !this.appModule.window) {
+        this.appModule.createWindow()
+      }
+
       // const clientOverlayWindow = new BrowserWindow({
       //   ...OVERLAY_WINDOW_OPTS,
       //   alwaysOnTop: true,

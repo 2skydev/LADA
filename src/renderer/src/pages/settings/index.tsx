@@ -51,6 +51,30 @@ const Settings = () => {
       </Section>
 
       <Section
+        title="LADA 자동 창 열기"
+        description={
+          <div>
+            롤 클라이언트가 켜지면 자동으로 LADA 창이 열립니다.
+            <br />
+            LADA가 최소화 모드로 실행되어 있어야 합니다.
+          </div>
+        }
+      >
+        <Controller
+          name="openWindowWhenLeagueClientLaunch"
+          control={form.control}
+          render={({ field }) => (
+            <Switch
+              checked={field.value}
+              onChange={checked => field.onChange(checked)}
+              checkedChildren={<i className="bx bx-check" />}
+              unCheckedChildren={<i className="bx bx-x" />}
+            />
+          )}
+        />
+      </Section>
+
+      <Section
         title="개발자모드 설정"
         description={
           <div>
