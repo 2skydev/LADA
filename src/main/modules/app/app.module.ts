@@ -24,6 +24,7 @@ export class AppModule {
   readonly ICON = nativeImage.createFromPath(
     `${this.RESOURCES_PATH}/icons/${this.IS_MAC ? 'logo@512.png' : 'logo@256.ico'}`,
   )
+  readonly IS_HIDDEN_LAUNCH = process.argv.includes('--hidden')
 
   // main window
   window: BrowserWindow | null = null
@@ -68,7 +69,10 @@ export class AppModule {
     await app.whenReady()
     this.createTray()
 
-    await this.createWindow()
+    // 자동 시작으로 실행되었을 때는 창을 띄우지 않음
+    if (!this.IS_HIDDEN_LAUNCH) {
+      await this.createWindow()
+    }
   }
 
   async createWindow() {
