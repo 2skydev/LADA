@@ -1,6 +1,6 @@
 import { app, BrowserWindow, Menu, nativeImage, shell, Tray } from 'electron'
 
-import { singleton } from '@launchtray/tsyringe-async'
+import { initializer, singleton } from '@launchtray/tsyringe-async'
 import { join } from 'path'
 import { match } from 'path-to-regexp'
 
@@ -34,10 +34,13 @@ export class AppModule {
 
   constructor() {
     app.commandLine.appendSwitch(`--enable-smooth-scrolling`)
-    this.initialize()
+    app.setAsDefaultProtocolClient(this.PROTOCOL)
   }
 
-  async initialize() {
+  @initializer()
+  async init() {
+    await app.whenReady()
+
     const gotTheLock = app.requestSingleInstanceLock()
 
     if (!gotTheLock) {
@@ -45,31 +48,11 @@ export class AppModule {
       process.exit(0)
     }
 
-    app.setAsDefaultProtocolClient(this.PROTOCOL)
-
-    app.on('activate', () => {
-      this.createWindow()
-    })
-
-    app.on('window-all-closed', () => {
-      this.window = null
-    })
-
-    app.on('second-instance', (_, argv) => {
-      if (!this.IS_MAC) {
-        const url = argv.find(arg => arg.startsWith(`${this.PROTOCOL}://`))
-        if (url) this.resolveDeepLink(url)
-      }
-    })
-
-    app.on('open-url', (_, url) => {
-      this.resolveDeepLink(url)
-    })
-
-    await app.whenReady()
+    this.registerEvents()
     this.createTray()
+  }
 
-    // 자동 시작으로 실행되었을 때는 창을 띄우지 않음
+  async start() {
     if (!this.IS_HIDDEN_LAUNCH) {
       await this.createWindow()
     }
@@ -115,6 +98,27 @@ export class AppModule {
       }
 
       return { action: 'deny' }
+    })
+  }
+
+  registerEvents() {
+    app.on('activate', () => {
+      this.createWindow()
+    })
+
+    app.on('window-all-closed', () => {
+      this.window = null
+    })
+
+    app.on('second-instance', (_, argv) => {
+      if (!this.IS_MAC) {
+        const url = argv.find(arg => arg.startsWith(`${this.PROTOCOL}://`))
+        if (url) this.resolveDeepLink(url)
+      }
+    })
+
+    app.on('open-url', (_, url) => {
+      this.resolveDeepLink(url)
     })
   }
 

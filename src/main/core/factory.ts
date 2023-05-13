@@ -15,7 +15,10 @@ export class AppFactoryStatic {
   async create(_AppModule: typeof AppModule, modules: constructor<object>[]) {
     this.appModule = await container.resolve(_AppModule)
     this.modules = [_AppModule, ...modules]
+
     await this.createInstances()
+
+    return this.appModule
   }
 
   private async createInstances() {
