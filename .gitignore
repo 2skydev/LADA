@@ -4,8 +4,7 @@ index.node
 **/.DS_Store
 yarn-debug.log*
 yarn-error.log*
-dist
 /resources/windows/chromium
 chrome_data
+out
 release
-dist-electron
