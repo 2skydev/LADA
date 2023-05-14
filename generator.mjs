@@ -6,10 +6,10 @@ import inquirerPrompt from 'inquirer-autocomplete-prompt'
 
 inquirer.registerPrompt('autocomplete', inquirerPrompt)
 
-const PAGE_DIR = './src/pages'
-const PAGE_STYLED_DIR = './src/styles/pageStyled'
-const COMPONENT_DIR = './src/components'
-const FEATURES_DIR = './src/features'
+const PAGE_DIR = './src/renderer/src/pages'
+const PAGE_STYLED_DIR = './src/renderer/src/styles/pageStyled'
+const COMPONENT_DIR = './src/renderer/src/components'
+const FEATURES_DIR = './src/renderer/src/features'
 
 const capitalize = str => {
   return str.charAt(0).toUpperCase() + str.slice(1)
