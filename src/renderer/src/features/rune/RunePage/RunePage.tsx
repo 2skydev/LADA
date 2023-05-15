@@ -17,10 +17,7 @@ const RunePage = ({ className, mainRuneIds, subRuneIds, shardRuneIds }: RunePage
 
       <div className="right">
         <RuneGroup type="sub" activeRuneIds={subRuneIds} />
-
-        <div className="stat">
-          <RuneGroup type="shard" activeRuneIds={shardRuneIds} />
-        </div>
+        <RuneGroup type="shard" activeRuneIds={shardRuneIds} />
       </div>
     </RunePageStyled>
   )

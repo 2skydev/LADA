@@ -2,7 +2,7 @@ import { ReactNode } from 'react'
 
 import clsx from 'clsx'
 
-import DataDragonImage from '@renderer/features/asset/DataDragonImage'
+import RuneIcon from '@renderer/features/rune/RuneIcon/RuneIcon'
 import useRuneData from '@renderer/hooks/useRuneData'
 
 import { RuneGroupStyled } from './styled'
@@ -18,24 +18,26 @@ const RuneGroup = ({ className, type, activeRuneIds }: RuneGroupProps) => {
   const data = useRuneData()
   if (!data) return null
 
-  const categoryData = data[Math.floor(activeRuneIds[0] / 100) * 100]
+  const categoryData = data.categories[data.categoryFindMap[activeRuneIds[0]]]
 
   return (
     <RuneGroupStyled
       className={clsx('RuneGroup', type, className)}
       data-category={categoryData.key}
     >
-      {categoryData.slots.slice(type === 'sub' ? 1 : 0).map((rules, i) => (
+      {categoryData.slots.slice(type === 'sub' ? 1 : 0).map((runes, i) => (
         <div className="slot" key={i}>
-          {rules.map(rune => (
-            <div
-              className={clsx('rune', activeRuneIds[i] === rune.id && 'active')}
+          {runes.map(rune => (
+            <RuneIcon
               key={`${i}.${rune.id}`}
-            >
-              <DataDragonImage type="perk-images" filename={rune.icon} circle />
-              <div className="ring" />
-              <div className="ring hover" />
-            </div>
+              runeId={rune.id}
+              size={type === 'shard' ? '28px' : '38px'}
+              largeImage={type === 'main' && !i}
+              active={
+                type === 'sub' ? activeRuneIds.includes(rune.id) : activeRuneIds[i] === rune.id
+              }
+              onClick={() => {}}
+            />
           ))}
         </div>
       ))}

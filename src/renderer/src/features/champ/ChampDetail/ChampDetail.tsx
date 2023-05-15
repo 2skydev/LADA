@@ -2,25 +2,17 @@ import { Fragment } from 'react'
 import { Controller } from 'react-hook-form'
 import { useLocation } from 'react-router-dom'
 
+import { Progress } from 'antd'
 import clsx from 'clsx'
 import { motion } from 'framer-motion'
 import QueryString from 'qs'
-import {
-  CartesianGrid,
-  Line,
-  LineChart,
-  ResponsiveContainer,
-  Tooltip,
-  XAxis,
-  YAxis,
-} from 'recharts'
-import { useTheme } from 'styled-components'
 
 import LoadingIcon from '@renderer/components/LoadingIcon'
 import DataDragonImage from '@renderer/features/asset/DataDragonImage'
 import TierIcon, { HoneyIcon, OpIcon } from '@renderer/features/asset/TierIcon'
 import LaneSelect from '@renderer/features/lane/LaneSelect'
 import RankRangeSelect from '@renderer/features/rank/RankRangeSelect'
+import RuneIcon from '@renderer/features/rune/RuneIcon'
 import RunePage from '@renderer/features/rune/RunePage'
 import useAPI from '@renderer/hooks/useAPI'
 import useChampNames from '@renderer/hooks/useChampNames'
@@ -34,21 +26,30 @@ export interface ChampDetailProps {
   champId: number
 }
 
+interface RuneStyle {
+  mainRuneIds: [number, number, number, number]
+  subRuneIds: [number, number]
+  winRate: number
+  pickRate: number
+  count: number
+}
+
 const ChampDetail = ({ className, champId }: ChampDetailProps) => {
   const { search } = useLocation()
   const { laneId: defaultLaneId } = QueryString.parse(search, { ignoreQueryPrefix: true })
 
-  const theme = useTheme()
   const form = useCustomForm({
     defaultValues: {
       laneId: defaultLaneId ? Number(defaultLaneId) : null,
       rankRangeId: 2,
+      runeStyleId: 0,
     },
     onSubmit: () => {},
   })
 
   const laneId = form.watch('laneId')
   const rankRangeId = form.watch('rankRangeId')
+  const selectedRuneStyleId = form.watch('runeStyleId')
 
   const champNames = useChampNames()
   const summonerSpells = useSummonerSpells()
@@ -62,8 +63,19 @@ const ChampDetail = ({ className, champId }: ChampDetailProps) => {
 
   const champSummary = data ? data.summary[0] : null
   const isNoData = data && (champSummary.spell1Id === null || !champSummary.skillMasterList.length)
+  const runeStyles: RuneStyle[] = data
+    ? data.runestatperk.runeWinrates.total.reduce((acc, item) => {
+        acc.push({
+          mainRuneIds: item.category1RuneIdList,
+          subRuneIds: item.category2RuneIdList,
+          winRate: item.winRate,
+          pickRate: item.pickRate,
+          count: item.count,
+        })
 
-  // console.log(data);
+        return acc
+      }, [])
+    : []
 
   return (
     <ChampDetailStyled className={clsx('ChampDetail', className)}>
@@ -225,35 +237,53 @@ const ChampDetail = ({ className, champId }: ChampDetailProps) => {
               )}
             </div>
 
-            <div className="right timelineWinrate">
-              <div className="title">시간대별 예측 승률</div>
-
-              <div className="chartContainer">
-                {!isNoData && (
-                  <ResponsiveContainer width="100%" height="100%">
-                    <LineChart
-                      data={data.timelineWinrates.map((winRate: number, min: number) => ({
-                        time: min + '분',
-                        winRate,
-                      }))}
-                    >
-                      <CartesianGrid strokeDasharray="3 3" stroke={theme.colors.borderColor} />
-                      <XAxis dataKey="time" minTickGap={10} tickMargin={5} />
-                      <YAxis type="number" domain={['auto', 'auto']} />
-                      <Tooltip />
-                      <Line
-                        type="monotone"
-                        dataKey="winRate"
-                        stroke={theme.colors.primary}
-                        fill={theme.colors.primary}
-                        dot={false}
-                        name="예측 승률"
-                        unit="%"
+            <div className="right rune">
+              <div className="runeStyles">
+                {runeStyles.map((runeStyle, i) => (
+                  <div
+                    className={clsx('item', selectedRuneStyleId === i && 'active')}
+                    key={i}
+                    onClick={() => {
+                      form.setValue('runeStyleId', i)
+                    }}
+                  >
+                    <div className="runeIconBox">
+                      <RuneIcon
+                        className="main"
+                        runeId={runeStyle.mainRuneIds[0]}
+                        size="38px"
+                        imageOnly
                       />
-                    </LineChart>
-                  </ResponsiveContainer>
-                )}
+                      <RuneIcon
+                        className="sub"
+                        runeId={runeStyle.subRuneIds[0]}
+                        size="18px"
+                        useCategoryImage
+                      />
+                    </div>
+
+                    <div className="texts">
+                      <div>
+                        <span>W/R</span> {runeStyle.winRate}%
+                      </div>
+                      <div className="pickRate">
+                        <span>수집량</span> {runeStyle.count.toLocaleString()}{' '}
+                        <Progress type="circle" percent={runeStyle.pickRate} size={12} />
+                      </div>
+                    </div>
+                  </div>
+                ))}
               </div>
+
+              <RunePage
+                mainRuneIds={runeStyles[selectedRuneStyleId].mainRuneIds}
+                subRuneIds={runeStyles[selectedRuneStyleId].subRuneIds}
+                shardRuneIds={[
+                  champSummary.statperk1Id,
+                  champSummary.statperk2Id,
+                  champSummary.statperk3Id,
+                ]}
+              />
             </div>
           </section>
 
@@ -278,21 +308,6 @@ const ChampDetail = ({ className, champId }: ChampDetailProps) => {
               </div>
             </section>
           ))}
-
-          <RunePage
-            mainRuneIds={[
-              champSummary.mainRune1,
-              champSummary.mainRune2,
-              champSummary.mainRune3,
-              champSummary.mainRune4,
-            ]}
-            subRuneIds={[champSummary.subRune1, champSummary.subRune2]}
-            shardRuneIds={[
-              champSummary.statperk1Id,
-              champSummary.statperk2Id,
-              champSummary.statperk3Id,
-            ]}
-          />
         </motion.div>
       )}
     </ChampDetailStyled>
