@@ -1,4 +1,4 @@
-import { darken, lighten } from 'polished'
+import { darken } from 'polished'
 import styled from 'styled-components'
 
 export const ChampDetailStyled = styled.div`
@@ -262,78 +262,13 @@ export const ChampDetailStyled = styled.div`
       }
     }
 
-    > .rune {
+    > .runeContainer {
       flex: 1;
       display: flex;
+      align-items: center;
       padding: 1rem;
       border-radius: 8px;
       background-color: ${props => darken(0.015, props.theme.colors.contentBG)};
-
-      .RunePage {
-        padding-top: 2rem;
-      }
-    }
-
-    .runeStyles {
-      flex: 1;
-      margin-right: 2rem;
-      height: 400px;
-      overflow-y: auto;
-      padding-right: 0.5rem;
-
-      .item {
-        display: flex;
-        align-items: center;
-        padding: 0.5rem;
-        border-radius: 8px;
-        background-color: ${props => darken(0.1, props.theme.colors.contentBG)};
-        cursor: pointer;
-        border: 1px solid transparent;
-
-        + .item {
-          margin-top: 0.3rem;
-        }
-
-        &.active {
-          background-color: ${props => lighten(0.04, props.theme.colors.contentBG)};
-          border: 1px solid ${props => props.theme.colors.primary};
-        }
-
-        .runeIconBox {
-          position: relative;
-          margin-right: 0.5rem;
-
-          .sub {
-            position: absolute;
-            left: 20px;
-            top: 20px;
-            z-index: 1;
-            background-color: ${props => darken(0.1, props.theme.colors.contentBG)};
-            padding: 2px;
-          }
-        }
-
-        .texts {
-          font-size: 12px;
-
-          > div > span {
-            color: ${props => props.theme.colors.textColor2};
-          }
-
-          .ant-progress {
-            transform: translateY(1px);
-          }
-
-          .ant-progress-circle-path,
-          .ant-progress-circle-trail {
-            stroke: ${props => props.theme.colors.primary};
-          }
-
-          .ant-progress-circle-trail {
-            opacity: 0.1;
-          }
-        }
-      }
     }
   }
 

@@ -2,7 +2,6 @@ import { Fragment } from 'react'
 import { Controller } from 'react-hook-form'
 import { useLocation } from 'react-router-dom'
 
-import { Progress } from 'antd'
 import clsx from 'clsx'
 import { motion } from 'framer-motion'
 import QueryString from 'qs'
@@ -12,8 +11,8 @@ import DataDragonImage from '@renderer/features/asset/DataDragonImage'
 import TierIcon, { HoneyIcon, OpIcon } from '@renderer/features/asset/TierIcon'
 import LaneSelect from '@renderer/features/lane/LaneSelect'
 import RankRangeSelect from '@renderer/features/rank/RankRangeSelect'
-import RuneIcon from '@renderer/features/rune/RuneIcon'
 import RunePage from '@renderer/features/rune/RunePage'
+import RuneStyleButtonRadioList from '@renderer/features/rune/RuneStyleButtonRadioList'
 import useAPI from '@renderer/hooks/useAPI'
 import useChampNames from '@renderer/hooks/useChampNames'
 import { useCustomForm } from '@renderer/hooks/useCustomForm'
@@ -237,43 +236,18 @@ const ChampDetail = ({ className, champId }: ChampDetailProps) => {
               )}
             </div>
 
-            <div className="right rune">
-              <div className="runeStyles">
-                {runeStyles.map((runeStyle, i) => (
-                  <div
-                    className={clsx('item', selectedRuneStyleId === i && 'active')}
-                    key={i}
-                    onClick={() => {
-                      form.setValue('runeStyleId', i)
-                    }}
-                  >
-                    <div className="runeIconBox">
-                      <RuneIcon
-                        className="main"
-                        runeId={runeStyle.mainRuneIds[0]}
-                        size="38px"
-                        imageOnly
-                      />
-                      <RuneIcon
-                        className="sub"
-                        runeId={runeStyle.subRuneIds[0]}
-                        size="18px"
-                        useCategoryImage
-                      />
-                    </div>
-
-                    <div className="texts">
-                      <div>
-                        <span>W/R</span> {runeStyle.winRate}%
-                      </div>
-                      <div className="pickRate">
-                        <span>수집량</span> {runeStyle.count.toLocaleString()}{' '}
-                        <Progress type="circle" percent={runeStyle.pickRate} size={12} />
-                      </div>
-                    </div>
-                  </div>
-                ))}
-              </div>
+            <div className="right runeContainer">
+              <RuneStyleButtonRadioList
+                items={runeStyles.map(runeStyle => ({
+                  mainRuneId: runeStyle.mainRuneIds[0],
+                  subRuneId: runeStyle.subRuneIds[0],
+                  winRate: runeStyle.winRate,
+                  pickRate: runeStyle.pickRate,
+                  count: runeStyle.count,
+                }))}
+                value={selectedRuneStyleId}
+                onChange={value => form.setValue('runeStyleId', value)}
+              />
 
               <RunePage
                 mainRuneIds={runeStyles[selectedRuneStyleId].mainRuneIds}
