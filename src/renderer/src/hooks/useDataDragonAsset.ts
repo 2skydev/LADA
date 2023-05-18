@@ -11,11 +11,15 @@ export type DataDragonAssetType =
   | 'passive'
   | 'perk-images'
 
-const useDataDragonAsset = (type: DataDragonAssetType, filename: string | number) => {
+const useDataDragonAsset = (type: DataDragonAssetType, filename: any) => {
   const version = useDataDragonVersion()
 
   if (type === 'perk-images') {
-    filename = (filename as string).replace('perk-images/', '').replace('.png', '')
+    filename = String(filename).replace('perk-images/', '').replace('.png', '')
+  }
+
+  if (type === 'item') {
+    filename = String(filename).replace('.png', '')
   }
 
   const versionPath = ['champion/loading', 'perk-images'].includes(type) ? '' : `/${version}`

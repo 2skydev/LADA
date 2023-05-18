@@ -2,6 +2,8 @@ import { darken } from 'polished'
 import styled from 'styled-components'
 
 export const ChampDetailStyled = styled.div`
+  margin-top: -1rem;
+
   .loadingArea {
     display: flex;
     justify-content: center;
@@ -25,13 +27,14 @@ export const ChampDetailStyled = styled.div`
     align-items: center;
     justify-content: center;
     gap: 1rem;
-    margin-bottom: 2rem;
+    margin-bottom: 1rem;
   }
 
   .summary {
     display: flex;
     gap: 1rem;
     position: relative;
+    align-items: flex-start;
 
     .loadingOverlay {
       position: absolute;
@@ -52,6 +55,7 @@ export const ChampDetailStyled = styled.div`
       .title {
         color: ${props => props.theme.colors.textColor2};
         margin-bottom: 0.5rem;
+        font-size: 0.85rem;
       }
 
       .images {
@@ -241,7 +245,7 @@ export const ChampDetailStyled = styled.div`
     .itemGroups {
       display: flex;
       gap: 0.5rem;
-      margin-top: -1rem;
+      margin-top: -1.8rem;
 
       .imageGroup {
         padding: 0.8rem 1rem;
@@ -269,6 +273,34 @@ export const ChampDetailStyled = styled.div`
       padding: 1rem;
       border-radius: 8px;
       background-color: ${props => darken(0.015, props.theme.colors.contentBG)};
+    }
+
+    /* 아이템 빌드 */
+    .itemBuildContainer {
+      margin-top: 0.5rem;
+      padding: 0.8rem 1rem;
+      border-radius: 8px;
+      background-color: ${props => darken(0.015, props.theme.colors.contentBG)};
+
+      .title {
+        color: ${props => props.theme.colors.textColor2};
+        margin-bottom: 0.5rem;
+        font-size: 0.85rem;
+      }
+
+      .ButtonRadioList {
+        width: 200px;
+        height: 250px;
+        overflow-y: auto;
+        padding-right: 0.5rem;
+
+        .itemImage {
+          margin-right: 0.5rem;
+          .DataDragonImage {
+            border: 1px solid ${props => props.theme.colors.error};
+          }
+        }
+      }
     }
   }
 
