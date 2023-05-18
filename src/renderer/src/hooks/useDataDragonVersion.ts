@@ -1,16 +1,11 @@
-import axios from 'axios'
 import useSWRImmutable from 'swr/immutable'
 
 const useDataDragonVersion = (): string | null => {
-  const { data: versions } = useSWRImmutable(
-    'https://ddragon.leagueoflegends.com/api/versions.json',
-    async url => {
-      const { data } = await axios.get(url)
-      return data
-    },
-  )
+  const { data } = useSWRImmutable('getLeagueVersion', () => {
+    return window.electron.getLeagueVersion()
+  })
 
-  return versions?.[0] || null
+  return data || null
 }
 
 export default useDataDragonVersion

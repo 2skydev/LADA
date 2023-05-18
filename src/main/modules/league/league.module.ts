@@ -1,8 +1,10 @@
 // import { BrowserWindow } from 'electron';
 // import { OverlayController, OVERLAY_WINDOW_OPTS } from 'electron-overlay-window';
 // import { windowManager } from 'node-window-manager';
-import { singleton } from '@launchtray/tsyringe-async'
+import { initializer, singleton } from '@launchtray/tsyringe-async'
+import axios from 'axios'
 
+import { IPCHandle } from '@main/core/decorators/ipcHandle'
 import { AppModule } from '@main/modules/app/app.module'
 import { configStore } from '@main/modules/config/stores/config.store'
 import IPCServer from '@main/utils/IPCServer'
@@ -13,6 +15,7 @@ import LeagueAPIClient from './leagueAPIClient'
 export class LeagueModule {
   server: IPCServer
   client: LeagueAPIClient
+  version: string
 
   constructor(private appModule: AppModule) {
     this.server = new IPCServer('apis/league')
@@ -113,5 +116,19 @@ export class LeagueModule {
         }
       })
     })
+  }
+
+  @initializer()
+  async init() {
+    const { data: versions } = await axios.get(
+      `https://ddragon.leagueoflegends.com/api/versions.json`,
+    )
+
+    this.version = versions[0]
+  }
+
+  @IPCHandle()
+  getLeagueVersion() {
+    return this.version
   }
 }
