@@ -2,7 +2,7 @@ import clsx from 'clsx'
 
 import DataDragonImage from '@renderer/features/asset/DataDragonImage'
 import { RuneIconStyled } from '@renderer/features/rune/RuneIcon/styled'
-import useRuneData from '@renderer/hooks/useRuneData'
+import useDataDragonRunes from '@renderer/hooks/useDataDragonRunes'
 
 export interface RuneIconProps {
   className?: string
@@ -25,7 +25,7 @@ const RuneIcon = ({
   useCategoryImage,
   onClick,
 }: RuneIconProps) => {
-  const data = useRuneData()
+  const data = useDataDragonRunes()
   if (!data) return null
 
   const imageOnly = _imageOnly || useCategoryImage

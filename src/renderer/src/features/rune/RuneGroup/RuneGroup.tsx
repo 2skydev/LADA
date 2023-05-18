@@ -3,7 +3,7 @@ import { ReactNode } from 'react'
 import clsx from 'clsx'
 
 import RuneIcon from '@renderer/features/rune/RuneIcon/RuneIcon'
-import useRuneData from '@renderer/hooks/useRuneData'
+import useDataDragonRunes from '@renderer/hooks/useDataDragonRunes'
 
 import { RuneGroupStyled } from './styled'
 
@@ -15,7 +15,7 @@ export interface RuneGroupProps {
 }
 
 const RuneGroup = ({ className, type, activeRuneIds }: RuneGroupProps) => {
-  const data = useRuneData()
+  const data = useDataDragonRunes()
   if (!data) return null
 
   const categoryData = data.categories[data.categoryFindMap[activeRuneIds[0]]]

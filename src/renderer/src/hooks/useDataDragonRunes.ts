@@ -1,7 +1,7 @@
 import axios from 'axios'
 import useSWRImmutable from 'swr/immutable'
 
-import useLeagueVersion from './useLeagueVersion'
+import useDataDragonVersion from '@renderer/hooks/useDataDragonVersion'
 
 export interface Rune {
   id: number
@@ -62,8 +62,8 @@ const ShardRunes: Rune[] = [
   },
 ]
 
-const useRuneData = () => {
-  const version = useLeagueVersion()
+const useDataDragonRunes = () => {
+  const version = useDataDragonVersion()
 
   const { data } = useSWRImmutable(
     version
@@ -149,4 +149,4 @@ const useRuneData = () => {
   return data
 }
 
-export default useRuneData
+export default useDataDragonRunes

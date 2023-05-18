@@ -14,9 +14,9 @@ import RankRangeSelect from '@renderer/features/rank/RankRangeSelect'
 import RunePage from '@renderer/features/rune/RunePage'
 import RuneStyleButtonRadioList from '@renderer/features/rune/RuneStyleButtonRadioList'
 import useAPI from '@renderer/hooks/useAPI'
-import useChampNames from '@renderer/hooks/useChampNames'
 import { useCustomForm } from '@renderer/hooks/useCustomForm'
-import useSummonerSpells from '@renderer/hooks/useSummonerSpells'
+import useDataDragonChampNames from '@renderer/hooks/useDataDragonChampNames'
+import useDataDragonSummonerSpells from '@renderer/hooks/useDataDragonSummonerSpells'
 
 import { ChampDetailStyled } from './styled'
 
@@ -50,8 +50,8 @@ const ChampDetail = ({ className, champId }: ChampDetailProps) => {
   const rankRangeId = form.watch('rankRangeId')
   const selectedRuneStyleId = form.watch('runeStyleId')
 
-  const champNames = useChampNames()
-  const summonerSpells = useSummonerSpells()
+  const champNames = useDataDragonChampNames()
+  const summonerSpells = useDataDragonSummonerSpells()
 
   const { data, isValidating } = useAPI('ps', `/champ/${champId}`, {
     payload: {

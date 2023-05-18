@@ -1,6 +1,5 @@
 import logoImage from '@renderer/assets/images/logo@256.png'
-
-import useLeagueVersion from './useLeagueVersion'
+import useDataDragonVersion from '@renderer/hooks/useDataDragonVersion'
 
 export type DataDragonAssetType =
   | 'champion'
@@ -13,7 +12,7 @@ export type DataDragonAssetType =
   | 'perk-images'
 
 const useDataDragonAsset = (type: DataDragonAssetType, filename: string | number) => {
-  const version = useLeagueVersion()
+  const version = useDataDragonVersion()
 
   if (type === 'perk-images') {
     filename = (filename as string).replace('perk-images/', '').replace('.png', '')
