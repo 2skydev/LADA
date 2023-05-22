@@ -1,6 +1,8 @@
 import { darken } from 'polished'
 import styled from 'styled-components'
 
+const maxHeight = '220px'
+
 export const ItemBuildsStyled = styled.div`
   margin-top: 0.5rem;
   padding: 0.8rem 1rem;
@@ -18,7 +20,7 @@ export const ItemBuildsStyled = styled.div`
 
     .ButtonRadioList {
       width: 200px;
-      height: 260px;
+      height: ${maxHeight};
       padding-right: 0.5rem;
       overflow-y: auto;
       margin-right: 1rem;
@@ -44,7 +46,7 @@ export const ItemBuildsStyled = styled.div`
     }
 
     .list {
-      height: 260px;
+      height: ${maxHeight};
       overflow-y: auto;
       padding-right: 0.5rem;
       flex: 1;
