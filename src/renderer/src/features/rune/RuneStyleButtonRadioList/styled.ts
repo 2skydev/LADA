@@ -22,26 +22,5 @@ export const RuneStyleButtonRadioListStyled = styled.div`
         padding: 2px;
       }
     }
-
-    .texts {
-      font-size: 12px;
-
-      > div > span {
-        color: ${props => props.theme.colors.textColor2};
-      }
-
-      .ant-progress {
-        transform: translateY(1px);
-      }
-
-      .ant-progress-circle-path,
-      .ant-progress-circle-trail {
-        stroke: ${props => props.theme.colors.primary};
-      }
-
-      .ant-progress-circle-trail {
-        opacity: 0.1;
-      }
-    }
   }
 `

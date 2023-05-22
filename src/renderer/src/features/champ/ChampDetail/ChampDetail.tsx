@@ -1,4 +1,4 @@
-import { Fragment } from 'react'
+import { Fragment, useMemo } from 'react'
 import { Controller } from 'react-hook-form'
 import { useLocation } from 'react-router-dom'
 
@@ -6,10 +6,10 @@ import clsx from 'clsx'
 import { motion } from 'framer-motion'
 import QueryString from 'qs'
 
-import ButtonRadioList from '@renderer/components/ButtonRadioList/ButtonRadioList'
 import LoadingIcon from '@renderer/components/LoadingIcon'
 import DataDragonImage from '@renderer/features/asset/DataDragonImage'
 import TierIcon, { HoneyIcon, OpIcon } from '@renderer/features/asset/TierIcon'
+import ItemBuilds from '@renderer/features/item/ItemBuilds'
 import LaneSelect from '@renderer/features/lane/LaneSelect'
 import RankRangeSelect from '@renderer/features/rank/RankRangeSelect'
 import RunePage from '@renderer/features/rune/RunePage'
@@ -17,7 +17,6 @@ import RuneStyleButtonRadioList from '@renderer/features/rune/RuneStyleButtonRad
 import useAPI from '@renderer/hooks/useAPI'
 import { useCustomForm } from '@renderer/hooks/useCustomForm'
 import useDataDragonChampNames from '@renderer/hooks/useDataDragonChampNames'
-import useDataDragonItems from '@renderer/hooks/useDataDragonItems'
 import useDataDragonSummonerSpells from '@renderer/hooks/useDataDragonSummonerSpells'
 
 import { ChampDetailStyled } from './styled'
@@ -44,7 +43,6 @@ const ChampDetail = ({ className, champId }: ChampDetailProps) => {
       laneId: defaultLaneId ? Number(defaultLaneId) : null,
       rankRangeId: 2,
       runeStyleId: 0,
-      itemBuildId: 0,
     },
     onSubmit: () => {},
   })
@@ -52,11 +50,9 @@ const ChampDetail = ({ className, champId }: ChampDetailProps) => {
   const laneId = form.watch('laneId')
   const rankRangeId = form.watch('rankRangeId')
   const selectedRuneStyleId = form.watch('runeStyleId')
-  const selectedItemBuildId = form.watch('itemBuildId')
 
   const champNames = useDataDragonChampNames()
   const summonerSpells = useDataDragonSummonerSpells()
-  const leagueItems = useDataDragonItems()
 
   const { data, isValidating } = useAPI('ps', `/champ/${champId}`, {
     payload: {
@@ -81,21 +77,18 @@ const ChampDetail = ({ className, champId }: ChampDetailProps) => {
       }, [])
     : []
 
-  const itemBuilds = data
-    ? [...data.item.till2, ...data.item.till3, ...data.item.till4, ...data.item.till5]
-    : []
-
-  const itemBuildGroups = new Set<number>()
-
-  itemBuilds.forEach((itemBuild: any) => {
-    itemBuild.itemIdList.forEach((itemId: any) => {
-      if (leagueItems?.[itemId].isMythicalLevel) {
-        itemBuildGroups.add(itemId)
-      }
-    })
-  })
-
-  console.log(itemBuildGroups, itemBuilds)
+  const itemBuilds = useMemo(
+    () =>
+      data
+        ? [...data.item.till2, ...data.item.till3, ...data.item.till4, ...data.item.till5].map(
+            itemBuild => ({
+              ...itemBuild,
+              itemIdList: itemBuild.itemIdList.map(itemId => String(itemId)),
+            }),
+          )
+        : [],
+    [data],
+  )
 
   return (
     <ChampDetailStyled className={clsx('ChampDetail', className)}>
@@ -107,7 +100,7 @@ const ChampDetail = ({ className, champId }: ChampDetailProps) => {
 
       {data && champNames && summonerSpells && (
         <motion.div initial={{ opacity: 0 }} animate={{ opacity: 1 }}>
-          <div className="argments">
+          <div className="arguments">
             <Controller
               control={form.control}
               name="laneId"
@@ -256,37 +249,7 @@ const ChampDetail = ({ className, champId }: ChampDetailProps) => {
                 </div>
               )}
 
-              {!isNoData && leagueItems && (
-                <div className="itemBuildContainer">
-                  <div className="title">추천 아이템 빌드</div>
-
-                  <div className="list">
-                    <ButtonRadioList
-                      value={selectedItemBuildId}
-                      onChange={value => form.setValue('itemBuildId', value)}
-                      options={[...itemBuildGroups].map((itemId, i) => {
-                        return {
-                          value: i,
-                          label: (
-                            <>
-                              <div className="itemImage">
-                                <DataDragonImage
-                                  type="item"
-                                  filename={leagueItems[itemId].image}
-                                  size="34px"
-                                  circle
-                                />
-                              </div>
-
-                              <div className="texts">테스트</div>
-                            </>
-                          ),
-                        }
-                      })}
-                    />
-                  </div>
-                </div>
-              )}
+              {!isNoData && <ItemBuilds itemBuilds={itemBuilds} />}
             </div>
 
             {!isNoData && (

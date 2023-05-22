@@ -19,7 +19,7 @@ export const ButtonRadioListStyled = styled.div`
 
     &.checked {
       background-color: ${props => lighten(0.04, props.theme.colors.contentBG)};
-      border-color: ${props => props.theme.colors.primary};
+      border-color: ${props => props.theme.colors.textColor2};
 
       > .radioIcon {
         opacity: 1;

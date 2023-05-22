@@ -1,9 +1,9 @@
-import { Progress } from 'antd'
 import clsx from 'clsx'
 
 import ButtonRadioList, {
   ButtonRadioListProps,
 } from '@renderer/components/ButtonRadioList/ButtonRadioList'
+import PickWinRate from '@renderer/components/PickWinRate'
 import RuneIcon from '@renderer/features/rune/RuneIcon'
 
 import { RuneStyleButtonRadioListStyled } from './styled'
@@ -41,13 +41,7 @@ const RuneStyleButtonRadioList = ({
               </div>
 
               <div className="texts">
-                <div>
-                  <span>W/R</span> {item.winRate}%
-                </div>
-                <div className="pickRate">
-                  <span>수집량</span> {item.count.toLocaleString()}{' '}
-                  <Progress type="circle" percent={item.pickRate} size={12} />
-                </div>
+                <PickWinRate winRate={item.winRate} pickRate={item.pickRate} count={item.count} />
               </div>
             </>
           ),

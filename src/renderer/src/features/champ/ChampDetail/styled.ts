@@ -22,7 +22,7 @@ export const ChampDetailStyled = styled.div`
     }
   }
 
-  .argments {
+  .arguments {
     display: flex;
     align-items: center;
     justify-content: center;
@@ -171,7 +171,7 @@ export const ChampDetailStyled = styled.div`
           display: flex;
 
           .spell {
-            margin-right: 5rem;
+            margin-right: 4rem;
           }
 
           .skill {
@@ -273,34 +273,6 @@ export const ChampDetailStyled = styled.div`
       padding: 1rem;
       border-radius: 8px;
       background-color: ${props => darken(0.015, props.theme.colors.contentBG)};
-    }
-
-    /* 아이템 빌드 */
-    .itemBuildContainer {
-      margin-top: 0.5rem;
-      padding: 0.8rem 1rem;
-      border-radius: 8px;
-      background-color: ${props => darken(0.015, props.theme.colors.contentBG)};
-
-      .title {
-        color: ${props => props.theme.colors.textColor2};
-        margin-bottom: 0.5rem;
-        font-size: 0.85rem;
-      }
-
-      .ButtonRadioList {
-        width: 200px;
-        height: 250px;
-        overflow-y: auto;
-        padding-right: 0.5rem;
-
-        .itemImage {
-          margin-right: 0.5rem;
-          .DataDragonImage {
-            border: 1px solid ${props => props.theme.colors.error};
-          }
-        }
-      }
     }
   }
 
