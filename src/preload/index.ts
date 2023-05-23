@@ -31,6 +31,8 @@ const electronContext = {
   subscribeLeague: (path: string, callback: (data: any) => void) =>
     ipcRenderer.on(`league/${path}`, (_, data) => callback(data)),
   unsubscribeLeague: (path: string) => ipcRenderer.removeAllListeners(`league/${path}`),
+
+  getLeagueVersion: (): Promise<string> => ipcRenderer.invoke('getLeagueVersion'),
 }
 
 export type ElectronContext = typeof electronContext

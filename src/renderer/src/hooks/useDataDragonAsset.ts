@@ -1,21 +1,32 @@
-import axios from 'axios'
-import useSWRImmutable from 'swr/immutable'
-
 import logoImage from '@renderer/assets/images/logo@256.png'
+import useDataDragonVersion from '@renderer/hooks/useDataDragonVersion'
 
-const useDataDragonAsset = (type: string, asset: string | number) => {
-  const { data: versions } = useSWRImmutable(
-    'https://ddragon.leagueoflegends.com/api/versions.json',
-    async url => {
-      const { data } = await axios.get(url)
-      return data
-    },
-  )
+export type DataDragonAssetType =
+  | 'champion'
+  | 'champion/splash'
+  | 'champion/loading'
+  | 'item'
+  | 'profileicon'
+  | 'spell'
+  | 'passive'
+  | 'perk-images'
 
-  const latestVersion = versions?.[0]
+const useDataDragonAsset = (type: DataDragonAssetType, filename: any) => {
+  const version = useDataDragonVersion()
 
-  return latestVersion
-    ? `https://ddragon.leagueoflegends.com/cdn/${latestVersion}/img/${type}/${asset}.png`
+  if (type === 'perk-images') {
+    filename = String(filename).replace('perk-images/', '').replace('.png', '')
+  }
+
+  if (type === 'item') {
+    filename = String(filename).replace('.png', '')
+  }
+
+  const versionPath = ['champion/loading', 'perk-images'].includes(type) ? '' : `/${version}`
+  const extension = type === 'champion/loading' ? '.jpg' : '.png'
+
+  return version
+    ? `https://ddragon.leagueoflegends.com/cdn${versionPath}/img/${type}/${filename}${extension}`
     : logoImage
 }
 

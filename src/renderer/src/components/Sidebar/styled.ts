@@ -1,8 +1,8 @@
 import styled from 'styled-components'
 
 export const SidebarStyled = styled.div`
-  min-width: 300px;
-  width: 300px;
+  min-width: 250px;
+  width: 250px;
   background-color: ${props => props.theme.colors.sidebarBG};
   color: ${props => props.theme.colors.textColor2};
 
@@ -10,27 +10,27 @@ export const SidebarStyled = styled.div`
     margin-bottom: 2rem;
     padding: 2rem 2rem 0 2rem;
     font-family: 'Aquatico';
-    font-size: 1.6rem;
+    font-size: 1.3rem;
     display: flex;
     align-items: center;
     font-weight: bold;
 
     img {
-      width: 3.5rem;
+      width: 2rem;
       margin-right: 1rem;
     }
   }
 
   .menus {
     .menuGroup {
-      padding: 1.5rem 2rem;
+      padding: 1rem 1.5rem;
 
       & + .menuGroup {
         border-top: 1px solid ${props => props.theme.colors.borderColor};
       }
 
       .title {
-        font-size: 0.9rem;
+        font-size: 0.85rem;
         margin-bottom: 1.5rem;
         font-weight: bold;
       }

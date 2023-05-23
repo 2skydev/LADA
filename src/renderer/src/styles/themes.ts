@@ -19,6 +19,7 @@ const _colors = {
   error: '#FE6968',
   relic: '#ff6000',
   ancient: '#c9a472',
+  blue: '#00a1ff',
   gold: '#e0b667',
 }
 

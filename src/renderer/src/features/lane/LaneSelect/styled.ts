@@ -2,17 +2,11 @@ import styled from 'styled-components'
 
 export const LaneSelectStyled = styled.div`
   .ant-radio-button-wrapper {
-    padding-right: 1.4rem;
     height: 2.6rem;
     display: inline-flex;
     align-items: center;
     justify-content: center;
     border: none;
-
-    small {
-      font-size: 0.85rem;
-      transform: translateY(1px);
-    }
 
     span {
       display: flex;
@@ -23,8 +17,14 @@ export const LaneSelectStyled = styled.div`
 
       svg {
         width: 20px;
-        margin-right: 0.5rem;
       }
+    }
+
+    small {
+      font-size: 0.85rem;
+      transform: translateY(1px);
+      padding-right: 0.2rem;
+      margin-left: 0.5rem;
     }
 
     &:hover {

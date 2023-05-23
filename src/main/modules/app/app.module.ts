@@ -74,6 +74,7 @@ export class AppModule {
       autoHideMenuBar: true,
       frame: false,
       icon: this.ICON,
+      resizable: false,
       webPreferences: {
         preload: this.PRELOAD_PATH,
       },

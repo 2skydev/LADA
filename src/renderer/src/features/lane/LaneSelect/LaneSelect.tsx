@@ -9,22 +9,25 @@ import { LaneSelectStyled } from './styled'
 
 export interface LaneSelectProps extends RadioGroupProps {
   className?: string
+  hideLabel?: boolean
 }
 
-const lanes = ['탑', '정글', '미드', '원딜', '서폿']
+export const LANE_LABELS = ['탑', '정글', '미드', '원딜', '서폿']
 
-const LaneSelect = forwardRef<HTMLDivElement>(({ className, ...props }: LaneSelectProps, ref) => {
-  return (
-    <LaneSelectStyled className={clsx('LaneSelect', className)}>
-      <Radio.Group ref={ref} {...props}>
-        {lanes.map((lane, index) => (
-          <Radio.Button key={index} value={index}>
-            <LaneIcon laneId={index} /> <small>{lane}</small>
-          </Radio.Button>
-        ))}
-      </Radio.Group>
-    </LaneSelectStyled>
-  )
-})
+const LaneSelect = forwardRef<HTMLDivElement, LaneSelectProps>(
+  ({ className, hideLabel = false, ...props }, ref) => {
+    return (
+      <LaneSelectStyled className={clsx('LaneSelect', className)}>
+        <Radio.Group ref={ref} {...props}>
+          {LANE_LABELS.map((lane, index) => (
+            <Radio.Button key={index} value={index}>
+              <LaneIcon laneId={index} /> {!hideLabel && <small>{lane}</small>}
+            </Radio.Button>
+          ))}
+        </Radio.Group>
+      </LaneSelectStyled>
+    )
+  },
+)
 
 export default LaneSelect

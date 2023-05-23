@@ -7,6 +7,10 @@ export interface DataDragonImageStyledProps extends Pick<DataDragonImageProps, '
 export const DataDragonImageStyled = styled.img<DataDragonImageStyledProps>`
   display: block;
   ${props => props.circle && 'border-radius: 50%;'}
-  width: ${props => props.size || '50px'};
-  height: ${props => props.size || '50px'};
+  ${props =>
+    props.size &&
+    `
+    width: ${props.size};
+    height: ${props.size};
+  `}
 `

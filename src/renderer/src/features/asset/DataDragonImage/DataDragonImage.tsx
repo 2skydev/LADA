@@ -1,15 +1,13 @@
 import clsx from 'clsx'
 
-import useDataDragonAsset from '@renderer/hooks/useDataDragonAsset'
+import useDataDragonAsset, { DataDragonAssetType } from '@renderer/hooks/useDataDragonAsset'
 
 import { DataDragonImageStyled } from './styled'
 
-export type DataDragonImageType = 'champion' | 'item' | 'profileicon' | 'summoner' | 'passive'
-
 export interface DataDragonImageProps {
   className?: string
-  type: DataDragonImageType
-  filename: string
+  type: DataDragonAssetType
+  filename: string | number
   size?: string
   circle?: boolean
 }
