@@ -1,8 +1,9 @@
+import { Fragment } from 'react'
 import { useLocation } from 'react-router-dom'
 
 import { Button } from 'antd'
 import clsx from 'clsx'
-import { motion } from 'framer-motion'
+import { AnimatePresence, motion } from 'framer-motion'
 import { useRecoilValue } from 'recoil'
 
 import DataDragonImage from '@renderer/features/asset/DataDragonImage'
@@ -32,16 +33,28 @@ const Content = ({ className, children }: ContentProps) => {
         <div className="left">
           <i className="bx bx-hash" />
 
-          <motion.span
-            initial={{ opacity: 0, x: 3 }}
-            animate={{ opacity: 1, x: 0 }}
-            transition={{ duration: 0.3 }}
-            key={pathname}
-          >
+          <div className="breadcrumb">
             {breadcrumbs.map((text, i) => (
-              <span key={text + i}>{text}</span>
+              <Fragment key={i}>
+                <div className="item">
+                  <AnimatePresence mode="wait">
+                    <motion.span
+                      initial={{ y: 20 }}
+                      animate={{ y: 0 }}
+                      exit={{ y: -20 }}
+                      transition={{ duration: 0.15 }}
+                      key={text + i}
+                      className="text"
+                    >
+                      {text}
+                    </motion.span>
+                  </AnimatePresence>
+                </div>
+
+                {i !== breadcrumbs.length - 1 && <div className="divider" />}
+              </Fragment>
             ))}
-          </motion.span>
+          </div>
         </div>
 
         {displayName && (
