@@ -8,6 +8,7 @@ import { ThemeProvider } from 'styled-components'
 
 import Layout from '@renderer/components/Layout'
 import Titlebar from '@renderer/components/Titlebar'
+import NeedUpdateLaterNotification from '@renderer/features/update/NeedUpdateLaterNotification'
 import { useUpdateContentModal } from '@renderer/hooks/useUpdateContentModal'
 import { appStateStore } from '@renderer/stores/app'
 import { updateStore } from '@renderer/stores/update'
@@ -33,14 +34,14 @@ const App = () => {
   )
 }
 
+const noLayoutPaths = [/\/windows\/.+/, /\/overlays\/.+/]
+
 const AppInner = () => {
   const { pathname } = useLocation()
   const antdToken = theme.useToken()
 
   const [update, setUpdate] = useRecoilState(updateStore)
   const [appState, setAppState] = useRecoilState(appStateStore)
-
-  useUpdateContentModal({ autoOpen: true })
 
   const bootstrap = async () => {
     window.electron.onUpdate((event, data) => {
@@ -53,8 +54,6 @@ const AppInner = () => {
         },
       })
     })
-
-    window.electron.initializeUpdater()
 
     const isReady = await window.electron.apis('league', '/is-ready')
 
@@ -84,7 +83,9 @@ const AppInner = () => {
     [],
   )
 
-  const isOverlay = pathname.includes('/overlays')
+  const isNoLayout = noLayoutPaths.some(path => path.test(pathname))
+
+  useUpdateContentModal({ autoOpen: !isNoLayout })
 
   useEffect(() => {
     bootstrap()
@@ -94,10 +95,12 @@ const AppInner = () => {
     <ThemeProvider theme={styledTheme}>
       <InitGlobalStyled />
 
-      {isOverlay && <Outlet />}
+      {isNoLayout && <Outlet />}
 
-      {!isOverlay && (
+      {!isNoLayout && (
         <div id="app">
+          <NeedUpdateLaterNotification />
+
           <Titlebar />
 
           <Layout>

@@ -14,9 +14,8 @@ export class AppModule {
   readonly APP_PATH = app.getAppPath()
   readonly PROTOCOL = protocols.name
   readonly IS_MAC = process.platform === 'darwin'
-  readonly DEV_URL = `http://localhost:3000/#`
+  readonly DEV_URL = `http://localhost:3000/`
   readonly PROD_LOAD_FILE_PATH = join(this.APP_PATH, 'out/renderer/index.html')
-  readonly PROD_LOAD_FILE_HASH = '#'
   readonly PRELOAD_PATH = join(this.APP_PATH, 'out/preload/index.js')
   readonly RESOURCES_PATH = app.isPackaged
     ? join(process.resourcesPath, 'resources')
@@ -31,6 +30,12 @@ export class AppModule {
 
   // deep link handlers
   deepLinkHandlers: Record<string, (params: object) => void> = {}
+
+  // update.module.ts -> autoUpdate() 참고
+  isNeedUpdate = false
+  isNeedUpdateLater = false
+
+  isStarted = false
 
   constructor() {
     app.commandLine.appendSwitch(`--enable-smooth-scrolling`)
@@ -53,52 +58,64 @@ export class AppModule {
   }
 
   async start() {
-    if (!this.IS_HIDDEN_LAUNCH) {
+    if (!this.IS_HIDDEN_LAUNCH && !this.isNeedUpdate) {
       await this.createWindow()
+
+      if (!this.isNeedUpdateLater) {
+        setTimeout(() => {
+          this.window?.webContents.send('needUpdateLater')
+        }, 3000)
+      }
     }
+
+    this.isStarted = true
   }
 
   async createWindow() {
-    if (this.window) {
-      if (this.window.isMinimized()) this.window.restore()
-      this.window.focus()
-      return
-    }
-
-    this.window = new BrowserWindow({
-      width: 1800,
-      height: 1000,
-      backgroundColor: '#36393F',
-      darkTheme: true,
-      show: false,
-      autoHideMenuBar: true,
-      frame: false,
-      icon: this.ICON,
-      resizable: false,
-      webPreferences: {
-        preload: this.PRELOAD_PATH,
-      },
-    })
-
-    if (app.isPackaged) {
-      this.window.loadFile(this.PROD_LOAD_FILE_PATH, {
-        hash: this.PROD_LOAD_FILE_HASH,
-      })
-    } else {
-      await this.window.loadURL(this.DEV_URL)
-      this.window.webContents.openDevTools()
-    }
-
-    this.window.on('ready-to-show', () => {
-      this.window?.show()
-    })
-
-    this.window.webContents.setWindowOpenHandler(({ url }) => {
-      if (url.startsWith('https:')) {
-        shell.openExternal(url)
+    return new Promise<void>(async resolve => {
+      if (this.window) {
+        if (this.window.isMinimized()) this.window.restore()
+        this.window.focus()
+        return
       }
 
-      return { action: 'deny' }
+      this.window = new BrowserWindow({
+        width: 1800,
+        height: 1000,
+        backgroundColor: '#36393F',
+        darkTheme: true,
+        show: false,
+        autoHideMenuBar: true,
+        frame: false,
+        icon: this.ICON,
+        resizable: false,
+        webPreferences: {
+          preload: this.PRELOAD_PATH,
+        },
+      })
+
+      if (app.isPackaged) {
+        await this.window.loadFile(this.PROD_LOAD_FILE_PATH, {
+          hash: '#',
+        })
+        this.window.webContents.openDevTools()
+      } else {
+        await this.window.loadURL(this.DEV_URL + '#')
+        this.window.webContents.openDevTools()
+      }
+
+      this.window.on('ready-to-show', () => {
+        this.window?.show()
+        resolve()
+      })
+
+      this.window.webContents.setWindowOpenHandler(({ url }) => {
+        if (url.startsWith('https:')) {
+          shell.openExternal(url)
+        }
+
+        return { action: 'deny' }
+      })
     })
   }
 
