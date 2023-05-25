@@ -61,7 +61,7 @@ export class AppModule {
     if (!this.IS_HIDDEN_LAUNCH && !this.isNeedUpdate) {
       await this.createWindow()
 
-      if (!this.isNeedUpdateLater) {
+      if (this.isNeedUpdateLater) {
         setTimeout(() => {
           this.window?.webContents.send('needUpdateLater')
         }, 3000)
