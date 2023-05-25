@@ -98,7 +98,6 @@ export class AppModule {
         await this.window.loadFile(this.PROD_LOAD_FILE_PATH, {
           hash: '#',
         })
-        this.window.webContents.openDevTools()
       } else {
         await this.window.loadURL(this.DEV_URL + '#')
         this.window.webContents.openDevTools()
