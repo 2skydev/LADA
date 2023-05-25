@@ -54,8 +54,8 @@ export class UpdateModule {
 
           if (isLeagueChampSelecting) {
             // 챔피언 선택 중이면 업데이트 안함
-            stopAutoUpdate()
             this.appModule.isNeedUpdateLater = true
+            stopAutoUpdate()
           } else {
             this.appModule.isNeedUpdate = true
             await this.openUpdateLoadingWindow()
@@ -68,7 +68,6 @@ export class UpdateModule {
       }
 
       const handleUpdateDownloaded = () => {
-        stopAutoUpdate()
         autoUpdater.quitAndInstall(true, true)
         resolve(true)
       }
