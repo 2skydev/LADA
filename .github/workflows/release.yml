@@ -72,10 +72,7 @@ jobs:
       - name: Install dependencies
         run: yarn
 
-      - name: Build vite
-        run: yarn build:vite
-
-      - name: Build electron
-        run: yarn run electron-builder
+      - name: Build
+        run: yarn build
         env:
           GITHUB_TOKEN: ${{ secrets.PERSONAL_TOKEN }} # electron-builder은 자동 인증 토큰을 지원하지 않음
