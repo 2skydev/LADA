@@ -1,24 +1,24 @@
-import { exec } from 'child_process';
-import fs from 'fs';
-import { readdir } from 'fs/promises';
-import inquirer from 'inquirer';
-import inquirerPrompt from 'inquirer-autocomplete-prompt';
+import { exec } from 'child_process'
+import fs from 'fs'
+import { readdir } from 'fs/promises'
+import inquirer from 'inquirer'
+import inquirerPrompt from 'inquirer-autocomplete-prompt'
 
-inquirer.registerPrompt('autocomplete', inquirerPrompt);
+inquirer.registerPrompt('autocomplete', inquirerPrompt)
 
-const PAGE_DIR = './src/pages';
-const PAGE_STYLED_DIR = './src/styles/pageStyled';
-const COMPONENT_DIR = './src/components';
-const FEATURES_DIR = './src/features';
+const PAGE_DIR = './src/renderer/src/pages'
+const PAGE_STYLED_DIR = './src/renderer/src/styles/pageStyled'
+const COMPONENT_DIR = './src/renderer/src/components'
+const FEATURES_DIR = './src/renderer/src/features'
 
 const capitalize = str => {
-  return str.charAt(0).toUpperCase() + str.slice(1);
-};
+  return str.charAt(0).toUpperCase() + str.slice(1)
+}
 
 const getDirectories = async source =>
   (await readdir(source, { withFileTypes: true }))
     .filter(dirent => dirent.isDirectory())
-    .map(dirent => dirent.name);
+    .map(dirent => dirent.name)
 
 const createIndexFileText = name => {
   return [
@@ -26,8 +26,8 @@ const createIndexFileText = name => {
     `export * from './${name}';`,
     `export { default } from './${name}';`,
     ``,
-  ].join('\n');
-};
+  ].join('\n')
+}
 
 const createComponentFileText = name => {
   return [
@@ -52,8 +52,8 @@ const createComponentFileText = name => {
     ``,
     `export default ${name};`,
     ``,
-  ].join('\n');
-};
+  ].join('\n')
+}
 
 const createStyledFileText = name => {
   return [
@@ -63,13 +63,13 @@ const createStyledFileText = name => {
     `  `,
     `\`;`,
     ``,
-  ].join('\n');
-};
+  ].join('\n')
+}
 
 const createPageFileText = name => {
   return [
     // prettier-ignore
-    `import { ${capitalize(name)}PageStyled } from '~/styles/pageStyled/${name}PageStyled';`,
+    `import { ${capitalize(name)}PageStyled } from '@renderer/styles/pageStyled/${name}PageStyled';`,
     ``,
     `const ${capitalize(name)} = () => {`,
     `  return (`,
@@ -81,38 +81,38 @@ const createPageFileText = name => {
     ``,
     `export default ${capitalize(name)};`,
     ``,
-  ].join('\n');
-};
+  ].join('\n')
+}
 
 const createPromptInput = options => {
-  const { name = 'name', label } = options;
+  const { name = 'name', label } = options
 
   return {
     type: 'input',
     name,
     message: `${label}:`,
     validate: input => {
-      return String(input).trim().length > 0 || `${label} is required`;
+      return String(input).trim().length > 0 || `${label} is required`
     },
-  };
-};
+  }
+}
 
 const editParentComponentExportFile = async parentComponentName => {
-  const parentComponentDir = `${COMPONENT_DIR}/${parentComponentName}`;
-  const parentComponentExportFile = `${parentComponentDir}/index.ts`;
+  const parentComponentDir = `${COMPONENT_DIR}/${parentComponentName}`
+  const parentComponentExportFile = `${parentComponentDir}/index.ts`
 
-  const subComponentNames = await getDirectories(parentComponentDir);
+  const subComponentNames = await getDirectories(parentComponentDir)
 
   let texts = [
     `// === Automatically generated file. Don't edit it. ===`,
     `import _${parentComponentName} from './${parentComponentName}';`,
-  ];
+  ]
 
   texts.push(
     ...subComponentNames.map(
       subComponentName => `import ${subComponentName} from './${subComponentName}';`,
     ),
-  );
+  )
 
   texts.push(
     ...[
@@ -134,22 +134,22 @@ const editParentComponentExportFile = async parentComponentName => {
       `export default ${parentComponentName};`,
       ``,
     ],
-  );
+  )
 
-  fs.writeFileSync(parentComponentExportFile, texts.join('\n'));
-};
+  fs.writeFileSync(parentComponentExportFile, texts.join('\n'))
+}
 
 const createComponentAndFileOpen = (dir, name) => {
-  fs.mkdirSync(dir, { recursive: true });
-  fs.writeFileSync(`${dir}/styled.ts`, createStyledFileText(name));
-  fs.writeFileSync(`${dir}/${name}.tsx`, createComponentFileText(name));
-  fs.writeFileSync(`${dir}/index.ts`, createIndexFileText(name));
+  fs.mkdirSync(dir, { recursive: true })
+  fs.writeFileSync(`${dir}/styled.ts`, createStyledFileText(name))
+  fs.writeFileSync(`${dir}/${name}.tsx`, createComponentFileText(name))
+  fs.writeFileSync(`${dir}/index.ts`, createIndexFileText(name))
 
-  console.log(`🎉 Component [${name}] created`);
-  console.log(`📂 Open file...`);
+  console.log(`🎉 Component [${name}] created`)
+  console.log(`📂 Open file...`)
 
-  exec(`code -g ${dir}/${name}.tsx:15:17`);
-};
+  exec(`code -g ${dir}/${name}.tsx:15:17`)
+}
 
 const start = async () => {
   const { type } = await inquirer.prompt([
@@ -160,7 +160,7 @@ const start = async () => {
       choices: ['feature', 'page', 'component', 'sub-component'],
       default: 'feature',
     },
-  ]);
+  ])
 
   switch (type) {
     case 'feature': {
@@ -170,24 +170,24 @@ const start = async () => {
           name: 'componentName',
           label: 'Component name (PascalCase)',
         }),
-      ]);
+      ])
 
-      const featureDir = `${FEATURES_DIR}/${featureName}`;
-      const componentDir = `${featureDir}/${componentName}`;
+      const featureDir = `${FEATURES_DIR}/${featureName}`
+      const componentDir = `${featureDir}/${componentName}`
 
       // check component dir already exists
       if (fs.existsSync(componentDir)) {
-        console.log(`🛑 Component [${componentName}] already exists`);
-        process.exit(0);
+        console.log(`🛑 Component [${componentName}] already exists`)
+        process.exit(0)
       }
 
       // not found feature dir -> create dir
       if (!fs.existsSync(featureDir)) {
-        fs.mkdirSync(featureDir, { recursive: true });
+        fs.mkdirSync(featureDir, { recursive: true })
       }
 
-      createComponentAndFileOpen(componentDir, componentName);
-      break;
+      createComponentAndFileOpen(componentDir, componentName)
+      break
     }
 
     case 'component': {
@@ -196,23 +196,23 @@ const start = async () => {
           name: 'componentName',
           label: 'Component name (PascalCase)',
         }),
-      ]);
+      ])
 
-      const componentDir = `${COMPONENT_DIR}/${componentName}`;
+      const componentDir = `${COMPONENT_DIR}/${componentName}`
 
       // check component dir already exists
       if (fs.existsSync(componentDir)) {
-        console.log(`🛑 Component [${componentName}] already exists`);
-        process.exit(0);
+        console.log(`🛑 Component [${componentName}] already exists`)
+        process.exit(0)
       }
 
-      createComponentAndFileOpen(componentDir, componentName);
+      createComponentAndFileOpen(componentDir, componentName)
 
-      break;
+      break
     }
 
     case 'sub-component': {
-      const componentNames = await getDirectories(COMPONENT_DIR);
+      const componentNames = await getDirectories(COMPONENT_DIR)
 
       const { parentComponentName } = await inquirer.prompt([
         {
@@ -222,30 +222,30 @@ const start = async () => {
           source: (_, input) => {
             return componentNames.filter(name =>
               name.toLowerCase().includes((input || '').toLowerCase()),
-            );
+            )
           },
         },
-      ]);
+      ])
 
       const { componentName } = await inquirer.prompt([
         createPromptInput({
           name: 'componentName',
           label: 'Sub component name (PascalCase)',
         }),
-      ]);
+      ])
 
-      const componentDir = `${COMPONENT_DIR}/${parentComponentName}/${componentName}`;
+      const componentDir = `${COMPONENT_DIR}/${parentComponentName}/${componentName}`
 
       // check component dir already exists
       if (fs.existsSync(componentDir)) {
-        console.log(`🛑 Component [${componentName}] already exists`);
-        process.exit(0);
+        console.log(`🛑 Component [${componentName}] already exists`)
+        process.exit(0)
       }
 
-      createComponentAndFileOpen(componentDir, componentName);
-      await editParentComponentExportFile(parentComponentName);
+      createComponentAndFileOpen(componentDir, componentName)
+      await editParentComponentExportFile(parentComponentName)
 
-      break;
+      break
     }
 
     case 'page': {
@@ -254,67 +254,67 @@ const start = async () => {
           name: 'pagePathInput',
           label: 'Page path (ex: sign/in = sign/in.tsx) (lowercase)',
         }),
-      ]);
+      ])
 
-      pagePathInput = String(pagePathInput.replace(/\.tsx?/, '')).toLowerCase();
+      pagePathInput = String(pagePathInput.replace(/\.tsx?/, '')).toLowerCase()
 
-      const pagePath = `${PAGE_DIR}/${pagePathInput}.tsx`;
-      const dir = pagePath.split('/').slice(0, -1).join('/');
-      const nameArray = pagePathInput.split('/');
+      const pagePath = `${PAGE_DIR}/${pagePathInput}.tsx`
+      const dir = pagePath.split('/').slice(0, -1).join('/')
+      const nameArray = pagePathInput.split('/')
 
       // processing camelCase
       let name = nameArray
         .reduce((acc, item, i) => {
-          if (i === 0) return [item];
+          if (i === 0) return [item]
 
           if (i === nameArray.length - 1) {
             if (item === 'index' && dir !== './pages') {
-              const name = dir.split('/').pop();
+              const name = dir.split('/').pop()
 
-              return [...acc.slice(0, -1), nameArray.length === 2 ? name : capitalize(name)];
+              return [...acc.slice(0, -1), nameArray.length === 2 ? name : capitalize(name)]
             }
           }
 
-          return [...acc, capitalize(item)];
+          return [...acc, capitalize(item)]
         }, [])
-        .join('');
+        .join('')
 
       // check page file already exists
       if (fs.existsSync(pagePath)) {
-        console.log(`🛑 [${pagePath}] already exists`);
-        process.exit(0);
+        console.log(`🛑 [${pagePath}] already exists`)
+        process.exit(0)
       }
 
       // check page styled file already exists
       if (fs.existsSync(`${PAGE_STYLED_DIR}/${name}PageStyled.ts`)) {
-        console.log(`🛑 [${PAGE_STYLED_DIR}/${name}PageStyled.ts] already exists`);
-        process.exit(0);
+        console.log(`🛑 [${PAGE_STYLED_DIR}/${name}PageStyled.ts] already exists`)
+        process.exit(0)
       }
 
       // not found page dir -> create dir
       if (!fs.existsSync(dir)) {
-        fs.mkdirSync(dir, { recursive: true });
+        fs.mkdirSync(dir, { recursive: true })
       }
 
       // not found styled dir -> create dir
       if (!fs.existsSync(PAGE_STYLED_DIR)) {
-        fs.mkdirSync(PAGE_STYLED_DIR, { recursive: true });
+        fs.mkdirSync(PAGE_STYLED_DIR, { recursive: true })
       }
 
       fs.writeFileSync(
         `${PAGE_STYLED_DIR}/${name}PageStyled.ts`,
         createStyledFileText(capitalize(name) + 'Page'),
-      );
+      )
 
-      fs.writeFileSync(pagePath, createPageFileText(name));
+      fs.writeFileSync(pagePath, createPageFileText(name))
 
-      console.log(`🎉 Page [${name}] created`);
-      console.log(`📂 Open file...`);
+      console.log(`🎉 Page [${name}] created`)
+      console.log(`📂 Open file...`)
 
-      exec(`code -g ${pagePath}:6:7`);
-      break;
+      exec(`code -g ${pagePath}:6:7`)
+      break
     }
   }
-};
+}
 
-start();
+start()

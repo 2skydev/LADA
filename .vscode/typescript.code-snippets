@@ -1,8 +1,6 @@
 {
   "Styled Components Export": {
-    "prefix": [
-      "sc"
-    ],
+    "prefix": ["sc"],
     "body": [
       "import styled from 'styled-components';",
       "\n",
@@ -13,18 +11,12 @@
     "description": "Styled Components 내보내기"
   },
   "Styled Components Props Theme": {
-    "prefix": [
-      "pro"
-    ],
-    "body": [
-      "${props => props.theme${0}}"
-    ],
+    "prefix": ["pro"],
+    "body": ["${props => props.theme${0}}"],
     "description": "Styled Components Props 자동완성"
   },
   "Component styled": {
-    "prefix": [
-      "cs"
-    ],
+    "prefix": ["cs"],
     "body": [
       "import clsx from 'clsx';\n",
       "import { ${TM_DIRECTORY/^.+\\/(.*)$/$1/}Styled } from './styled';\n",
