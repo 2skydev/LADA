@@ -16,6 +16,7 @@ export class LeagueModule {
   server: IPCServer
   client: LeagueAPIClient
   version: string
+  isConnected = false
 
   constructor(private appModule: AppModule) {
     this.server = new IPCServer('apis/league')
@@ -42,18 +43,24 @@ export class LeagueModule {
     })
 
     this.client.on('connect', () => {
+      this.isConnected = true
       this.appModule.window?.webContents.send('league/connect')
       this.appModule.window?.webContents.send('league/connect-change', 'connect')
     })
 
     this.client.on('disconnect', () => {
+      this.isConnected = false
       this.appModule.window?.webContents.send('league/disconnect')
       this.appModule.window?.webContents.send('league/connect-change', 'disconnect')
     })
 
     this.client.on('ready', () => {
       // 리그 클라이언트 실행 시 LADA 창 열기
-      if (configStore.get('general.openWindowWhenLeagueClientLaunch') && !this.appModule.window) {
+      if (
+        configStore.get('general.openWindowWhenLeagueClientLaunch') &&
+        !this.appModule.window &&
+        this.appModule.isStarted
+      ) {
         this.appModule.createWindow()
       }
 
@@ -120,11 +127,25 @@ export class LeagueModule {
 
   @initializer()
   async init() {
+    this.isConnected = await this.client.initialize()
+
     const { data: versions } = await axios.get(
       `https://ddragon.leagueoflegends.com/api/versions.json`,
     )
 
     this.version = versions[0]
+  }
+
+  // 현재 롤 클라이언트가 챔피언 선택 중인지 확인
+  async isLeagueChampSelecting() {
+    if (!this.isConnected) return false
+
+    const { status } = await this.client.request({
+      method: 'GET',
+      url: '/lol-champ-select/v1/session',
+    })
+
+    return status === 200
   }
 
   @IPCHandle()

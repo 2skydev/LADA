@@ -1,5 +1,7 @@
 import 'reflect-metadata'
 
+import { container } from '@launchtray/tsyringe-async'
+
 import { AppFactory } from '@main/core/factory'
 import { AppModule } from '@main/modules/app/app.module'
 import { ConfigModule } from '@main/modules/config/config.module'
@@ -19,5 +21,8 @@ import { UpdateModule } from '@main/modules/update/update.module'
     PSModule,
   ])
 
+  const updateModule = await container.resolve(UpdateModule)
+
+  await updateModule.autoUpdate()
   await appModule.start()
 })()

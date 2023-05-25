@@ -46,5 +46,8 @@ export const antdTheme: ThemeConfig = {
     Popover: {
       colorBgElevated: colors.sidebarBG,
     },
+    Notification: {
+      colorBgElevated: colors.sidebarBG,
+    },
   },
 }

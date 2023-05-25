@@ -18,12 +18,31 @@ class LeagueAPIClient {
   private ws: LeagueWebSocket | null = null
   private emitter = new EventEmitter()
 
-  constructor() {
-    this.initializeConnection()
+  /**
+   * LeagueAPIClient를 초기화합니다.
+   *
+   * 현재 롤 클라이언트가 켜져있어서 API 연결이 되었다면 true, 아니면 false를 반환합니다.
+   * (반환값이 false인 경우 나중에 롤 클라이언트가 켜지면 'ready' 이벤트가 발생합니다.)
+   *
+   * @returns 롤 클라이언트 API 연결 여부
+   */
+  public async initialize() {
+    try {
+      await Promise.all([this.connectAuth(), this.connectWS()])
+
+      this.registerCredentialsListener()
+      await this.waitLCUReady()
+      this.emitter.emit('ready')
+
+      return true
+    } catch {
+      this.initializePollConnections()
+      return false
+    }
   }
 
-  private async initializeConnection() {
-    await Promise.all([this.connectAuth(), this.connectWS()])
+  private async initializePollConnections() {
+    await Promise.all([this.pollConnectionAuth(), this.pollConnectionWS()])
 
     this.registerCredentialsListener()
     await this.waitLCUReady()
@@ -31,12 +50,20 @@ class LeagueAPIClient {
   }
 
   private async connectAuth() {
+    this.credentials = await authenticate()
+  }
+
+  private async connectWS() {
+    this.ws = await createWebSocketConnection()
+  }
+
+  private async pollConnectionAuth() {
     this.credentials = await authenticate({
       awaitConnection: true,
     })
   }
 
-  private async connectWS() {
+  private async pollConnectionWS() {
     this.ws = await createWebSocketConnection({
       authenticationOptions: {
         awaitConnection: true,
@@ -55,7 +82,7 @@ class LeagueAPIClient {
     client.on('connect', async newCredentials => {
       this.credentials = newCredentials
       await this.waitLCUReady()
-      await this.connectWS()
+      await this.pollConnectionWS()
       this.emitter.emit('connect')
       this.emitter.emit('ready')
     })
@@ -112,8 +139,12 @@ class LeagueAPIClient {
     this.ws.subscribe(path, effect)
   }
 
-  public async on(event: LeagueAPIClientEvents, effect: EventCallback) {
+  public on(event: LeagueAPIClientEvents, effect: EventCallback) {
     this.emitter.on(event, effect)
+  }
+
+  public off(event: LeagueAPIClientEvents, effect: EventCallback) {
+    this.emitter.off(event, effect)
   }
 }
 
