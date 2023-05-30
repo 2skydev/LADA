@@ -35,7 +35,7 @@ const ReadyTimerOverlay = ({ className }: ReadyTimerOverlayProps) => {
 
   return (
     <ReadyTimerOverlayStyled className={clsx('ReadyTimerOverlay', className)}>
-      자동 수락까지 {data.autoAcceptDelaySeconds! - data.timer!}초 남았습니다
+      자동 수락까지 <span>{data.autoAcceptDelaySeconds! - data.timer!}</span>초 남았습니다
     </ReadyTimerOverlayStyled>
   )
 }

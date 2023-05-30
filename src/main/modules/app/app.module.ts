@@ -108,6 +108,10 @@ export class AppModule {
         resolve()
       })
 
+      this.window.on('close', () => {
+        this.window = null
+      })
+
       this.window.webContents.setWindowOpenHandler(({ url }) => {
         if (url.startsWith('https:')) {
           shell.openExternal(url)
@@ -121,10 +125,6 @@ export class AppModule {
   registerEvents() {
     app.on('activate', () => {
       this.createWindow()
-    })
-
-    app.on('window-all-closed', () => {
-      this.window = null
     })
 
     app.on('second-instance', (_, argv) => {
