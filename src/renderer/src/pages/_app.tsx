@@ -9,11 +9,15 @@ import { ThemeProvider } from 'styled-components'
 import Layout from '@renderer/components/Layout'
 import Titlebar from '@renderer/components/Titlebar'
 import NeedUpdateLaterNotification from '@renderer/features/update/NeedUpdateLaterNotification'
+import useNavigateToTierList from '@renderer/hooks/useNavigateToTierList'
 import { useUpdateContentModal } from '@renderer/hooks/useUpdateContentModal'
 import { appStateStore } from '@renderer/stores/app'
+import { champSelectSessionStore } from '@renderer/stores/champSelectSession'
+import { currentSummonerStore } from '@renderer/stores/currentSummoner'
 import { updateStore } from '@renderer/stores/update'
 import { InitGlobalStyled } from '@renderer/styles/init'
 import { antdTheme, colors, sizes } from '@renderer/styles/themes'
+import { leagueChampSelectLaneStringToLane } from '@renderer/utils/league'
 
 type Sizes = typeof sizes
 type Colors = typeof colors
@@ -42,6 +46,8 @@ const AppInner = () => {
 
   const [update, setUpdate] = useRecoilState(updateStore)
   const [appState, setAppState] = useRecoilState(appStateStore)
+  const [champSelectSession, setChampSelectSession] = useRecoilState(champSelectSessionStore)
+  const [currentSummoner, setCurrentSummoner] = useRecoilState(currentSummonerStore)
 
   const bootstrap = async () => {
     window.electron.onUpdate((event, data) => {
@@ -69,9 +75,32 @@ const AppInner = () => {
       })
     })
 
-    // window.electron.subscribeLeague('room/session', data => {
-    //   console.log('room/session', data)
-    // })
+    window.electron.subscribeLeague('summoner/current', data => {
+      console.log('summoner/current', data)
+      if (data) {
+        setCurrentSummoner({
+          id: data.summonerId,
+          name: data.displayName,
+          profileIconId: data.profileIconId,
+        })
+      } else {
+        setCurrentSummoner(null)
+      }
+    })
+
+    window.electron.subscribeLeague('champ-select/session', data => {
+      const currentSummonerId = currentSummoner!.id
+      const currentLane =
+        data.myTeam.find(player => player.summonerId === currentSummonerId)?.assignedPosition ||
+        null
+
+      setChampSelectSession({
+        gameId: data.gameId,
+        lane: leagueChampSelectLaneStringToLane(currentLane),
+      })
+
+      console.log('champ-select/session', data, currentLane)
+    })
   }
 
   const styledTheme = useMemo(
@@ -86,10 +115,16 @@ const AppInner = () => {
   const isNoLayout = noLayoutPaths.some(path => path.test(pathname))
 
   useUpdateContentModal({ autoOpen: !isNoLayout })
+  useNavigateToTierList()
 
   useEffect(() => {
     bootstrap()
   }, [])
+
+  useEffect(() => {
+    if (champSelectSession?.gameId) {
+    }
+  }, [champSelectSession?.gameId, champSelectSession?.lane])
 
   return (
     <ThemeProvider theme={styledTheme}>

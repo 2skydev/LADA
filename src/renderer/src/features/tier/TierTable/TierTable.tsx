@@ -11,6 +11,8 @@ import LaneSelect from '@renderer/features/lane/LaneSelect'
 import RankRangeSelect from '@renderer/features/rank/RankRangeSelect'
 import useAPI from '@renderer/hooks/useAPI'
 import { useCustomForm } from '@renderer/hooks/useCustomForm'
+import { useDidUpdateEffect } from '@renderer/hooks/useDidUpdateEffect'
+import useQS from '@renderer/hooks/useQS'
 
 import { TierTableStyled } from './styled'
 
@@ -20,10 +22,11 @@ export interface TierTableProps {
 
 const TierTable = ({ className }: TierTableProps) => {
   const navigate = useNavigate()
+  const query = useQS<{ laneId?: string }>()
 
   const form = useCustomForm({
     defaultValues: {
-      laneId: 0,
+      laneId: Number(query.laneId || 0),
       rankRangeId: 2,
     },
     onSubmit: () => {},
@@ -40,6 +43,12 @@ const TierTable = ({ className }: TierTableProps) => {
   })
 
   const updatedAt = data[0]?.updatedAt
+
+  useDidUpdateEffect(() => {
+    if (query.laneId) {
+      form.setValue('laneId', Number(query.laneId))
+    }
+  }, [query.laneId])
 
   return (
     <TierTableStyled className={clsx('TierTable', className)}>
