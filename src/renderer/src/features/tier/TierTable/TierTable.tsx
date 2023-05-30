@@ -67,7 +67,7 @@ const TierTable = ({ className }: TierTableProps) => {
         <div className="info">라인별 픽률 0.5% 이상만 표시</div>
       </header>
 
-      <div className="argments">
+      <div className="arguments">
         <Controller
           control={form.control}
           name="laneId"
