@@ -9,8 +9,10 @@
 
 ## 스크린샷들
 
-![image](https://user-images.githubusercontent.com/43225384/222954627-046f316f-967c-4059-b5d6-e35362f68631.png)
-![image](https://user-images.githubusercontent.com/43225384/226129673-1754fd56-2bdb-4eb6-96a3-df3649599377.png)
+![image](https://github.com/2skydev/LADA/assets/43225384/3ae69fbd-8b58-4fb7-93c1-2de1c9d7ce49)
+![image](https://github.com/2skydev/LADA/assets/43225384/4f5f6820-66d5-4c06-b18a-e62ec69ef262)
+![image](https://github.com/2skydev/LADA/assets/43225384/cb186443-6477-4942-933a-5b639cb8cc34)
+![image](https://github.com/2skydev/LADA/assets/43225384/409d8370-9eaf-43a8-ae3b-3c43fce6e814)
 
 <br />
 
