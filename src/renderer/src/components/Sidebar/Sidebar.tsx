@@ -34,7 +34,7 @@ const Sidebar = ({ className }: SidebarProps) => {
   const menus: Menu[] = useMemo(
     () => [
       {
-        title: '챔피언',
+        title: '통계',
         items: [
           {
             icon: <LaneIcon laneId={0} />,
