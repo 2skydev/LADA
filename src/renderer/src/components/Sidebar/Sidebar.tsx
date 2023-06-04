@@ -8,6 +8,7 @@ import { useRecoilValue } from 'recoil'
 import logoImage from '@renderer/assets/images/logo@256.png'
 import LaneIcon from '@renderer/features/asset/LaneIcon'
 import { configStore } from '@renderer/stores/config'
+import { LANE_ID } from '@renderer/types/league'
 
 import { SidebarStyled } from './styled'
 
@@ -37,10 +38,15 @@ const Sidebar = ({ className }: SidebarProps) => {
         title: '통계',
         items: [
           {
-            icon: <LaneIcon laneId={0} />,
+            icon: <LaneIcon laneId={LANE_ID.top} />,
             link: '/',
             text: '챔피언 티어',
             isActiveFn: (pathname: string) => pathname === '/' || pathname.includes('/champ/'),
+          },
+          {
+            icon: 'bx-group',
+            link: '/duo-synergy',
+            text: '듀오 시너지',
           },
         ],
       },
@@ -48,7 +54,7 @@ const Sidebar = ({ className }: SidebarProps) => {
         title: '유틸리티',
         items: [
           {
-            icon: 'bx-group',
+            icon: 'bx-network-chart',
             link: '/team',
             text: '5:5 팀 구성',
           },
