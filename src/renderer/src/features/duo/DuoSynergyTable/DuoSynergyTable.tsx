@@ -245,6 +245,8 @@ const DuoSynergyTable = ({ className }: DuoSynergyTableProps) => {
             title: '시너지 점수',
             align: 'right',
             sorter: (a, b) => a.synergyScore - b.synergyScore,
+            sortOrder:
+              criterion === 'synergyScore' ? (order === 'desc' ? 'descend' : 'ascend') : null,
             width: 200,
           },
           {
@@ -253,6 +255,8 @@ const DuoSynergyTable = ({ className }: DuoSynergyTableProps) => {
             title: '듀오 승률',
             align: 'right',
             sorter: (a, b) => a.duoWinrate - b.duoWinrate,
+            sortOrder:
+              criterion === 'duoWinrate' ? (order === 'desc' ? 'descend' : 'ascend') : null,
             render: (value: number) => value + '%',
             width: 140,
           },
@@ -262,6 +266,7 @@ const DuoSynergyTable = ({ className }: DuoSynergyTableProps) => {
             title: '듀오 픽률',
             align: 'right',
             sorter: (a, b) => a.pickrate - b.pickrate,
+            sortOrder: criterion === 'pickrate' ? (order === 'desc' ? 'descend' : 'ascend') : null,
             render: (value: number) => value + '%',
             width: 140,
           },
@@ -271,6 +276,7 @@ const DuoSynergyTable = ({ className }: DuoSynergyTableProps) => {
             title: '표본수',
             align: 'right',
             sorter: (a, b) => a.count - b.count,
+            sortOrder: criterion === 'count' ? (order === 'desc' ? 'descend' : 'ascend') : null,
             render: (value: number) => value.toLocaleString(),
             width: 140,
           },
@@ -281,6 +287,13 @@ const DuoSynergyTable = ({ className }: DuoSynergyTableProps) => {
         pagination={false}
         scroll={{ y: 600 }}
         sortDirections={['descend', 'ascend']}
+        onChange={(_, __, sorter) => {
+          console.log(sorter)
+          if (!Array.isArray(sorter)) {
+            form.setValue('criterion', sorter.columnKey as string)
+            form.setValue('order', sorter.order === 'ascend' ? 'asc' : 'desc')
+          }
+        }}
       />
     </DuoSynergyTableStyled>
   )
