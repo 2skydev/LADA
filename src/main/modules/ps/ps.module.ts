@@ -82,6 +82,27 @@ export class PSModule {
       return Promise.all(promises)
     })
 
+    this.server.add('/duo/:duoId', async ({ params, payload }) => {
+      const { duoId } = params
+      const { rankRangeId = 2, criterion = 'synergyScore', order = 'desc', championId } = payload
+
+      const {
+        data: { data },
+      } = await axios.get(`https://lol.ps/api/lab/duo-list.json`, {
+        params: {
+          region: 0,
+          version: this.version.id,
+          tier: rankRangeId,
+          duo: duoId,
+          criterion,
+          order,
+          ...(championId !== undefined && championId !== null && { championId }),
+        },
+      })
+
+      return data.map((item, i) => ({ ...item, ranking: i + 1 }))
+    })
+
     this.server.add('/champ/:id', async ({ params, payload }) => {
       const { id } = params
       let { laneId, rankRangeId = 2 } = payload

@@ -2835,6 +2835,11 @@ hamt_plus@1.0.2:
   resolved "https://registry.yarnpkg.com/hamt_plus/-/hamt_plus-1.0.2.tgz#e21c252968c7e33b20f6a1b094cd85787a265601"
   integrity sha512-t2JXKaehnMb9paaYA7J0BX8QQAY8lwfQ9Gjf4pg/mk4krt+cmwmU652HOoWonf+7+EQV97ARPMhhVgU1ra2GhA==
 
+hangul-util@^0.1.0:
+  version "0.1.0"
+  resolved "https://registry.yarnpkg.com/hangul-util/-/hangul-util-0.1.0.tgz#18238d6c355db9a53b25f71f4e86c64efe577de0"
+  integrity sha512-xHOm2u3ssIVLx7x41pD+6rkVRj9RLHFaBfGrGgUxhR7UK9gZLuj7p9e6SuRqCOL6dlpCIwF7kmQFo9/X0jL8tw==
+
 has-bigints@^1.0.1, has-bigints@^1.0.2:
   version "1.0.2"
   resolved "https://registry.yarnpkg.com/has-bigints/-/has-bigints-1.0.2.tgz#0871bd3e3d51626f6ca0966668ba35d5602d6eaa"

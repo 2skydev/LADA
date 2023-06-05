@@ -5,13 +5,16 @@ export const ChampionProfileSmallStyled = styled.div`
   align-items: center;
   white-space: nowrap;
 
+  .name {
+    margin-left: 1rem;
+  }
+
   .profileImage {
     width: 40px;
     height: 40px;
     min-width: 40px;
     min-height: 40px;
     position: relative;
-    margin-right: 1rem;
 
     .imageMask {
       width: 100%;

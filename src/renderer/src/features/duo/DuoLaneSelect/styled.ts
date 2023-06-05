@@ -1,7 +1,7 @@
 import { darken } from 'polished'
 import styled from 'styled-components'
 
-export const LaneSelectStyled = styled.div`
+export const DuoLaneSelectStyled = styled.div`
   .ant-radio-button-wrapper {
     height: 2.5rem;
     display: inline-flex;

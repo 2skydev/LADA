@@ -9,7 +9,7 @@ const Champ = () => {
 
   return (
     <ChampPageStyled>
-      <LayoutConfig breadcrumbs={['챔피언', '상세보기']} />
+      <LayoutConfig breadcrumbs={['통계', '챔피언 상세']} />
       <ChampDetail champId={Number(id)} />
     </ChampPageStyled>
   )
