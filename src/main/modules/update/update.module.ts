@@ -98,7 +98,7 @@ export class UpdateModule {
     })
 
     if (app.isPackaged) {
-      this.updateLoadingWindow.loadFile(this.appModule.PROD_LOAD_FILE_PATH, {
+      await this.updateLoadingWindow.loadFile(this.appModule.PROD_LOAD_FILE_PATH, {
         hash: '#/windows/update-loading',
       })
     } else {

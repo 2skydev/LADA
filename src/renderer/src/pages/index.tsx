@@ -5,7 +5,7 @@ import { IndexPageStyled } from '@renderer/styles/pageStyled/indexPageStyled'
 const Index = () => {
   return (
     <IndexPageStyled>
-      <LayoutConfig breadcrumbs={['챔피언', '챔피언 티어']} />
+      <LayoutConfig breadcrumbs={['통계', '챔피언 티어']} />
       <TierTable />
     </IndexPageStyled>
   )

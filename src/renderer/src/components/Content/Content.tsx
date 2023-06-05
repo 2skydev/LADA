@@ -6,7 +6,7 @@ import { motion } from 'framer-motion'
 import { useRecoilValue } from 'recoil'
 
 import DataDragonImage from '@renderer/features/asset/DataDragonImage'
-import useAPI from '@renderer/hooks/useAPI'
+import { currentSummonerStore } from '@renderer/stores/currentSummoner'
 import { layoutStore } from '@renderer/stores/layout'
 
 import { ContentStyled } from './styled'
@@ -18,13 +18,8 @@ export interface ContentProps {
 
 const Content = ({ className, children }: ContentProps) => {
   const { breadcrumbs } = useRecoilValue(layoutStore)
+  const currentSummoner = useRecoilValue(currentSummonerStore)
   const { pathname } = useLocation()
-
-  const { data } = useAPI('league', '/summoner/current', {
-    revalidateOnLeagueReconnect: true,
-  })
-
-  const { displayName, profileIconId } = data || {}
 
   return (
     <ContentStyled className={clsx('Content', className)}>
@@ -44,15 +39,20 @@ const Content = ({ className, children }: ContentProps) => {
           </motion.span>
         </div>
 
-        {displayName && (
+        {currentSummoner && (
           <Button
             type="text"
             className="right"
             icon={
-              <DataDragonImage type="profileicon" filename={profileIconId} size="28px" circle />
+              <DataDragonImage
+                type="profileicon"
+                filename={currentSummoner.profileIconId}
+                size="28px"
+                circle
+              />
             }
           >
-            <span>{displayName}</span>
+            <span>{currentSummoner.name}</span>
           </Button>
         )}
       </div>

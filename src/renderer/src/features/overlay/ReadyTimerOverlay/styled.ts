@@ -8,4 +8,9 @@ export const ReadyTimerOverlayStyled = styled.div`
   color: ${props => props.theme.colors.gold};
   text-align: center;
   font-family: 'BeaufortforLOL';
+
+  span {
+    font-family: 'NanumSquareRound';
+    transform: translateY(-1px);
+  }
 `
