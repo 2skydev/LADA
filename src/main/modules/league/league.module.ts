@@ -1,4 +1,4 @@
-import { BrowserWindow } from 'electron'
+import { BrowserWindow, app } from 'electron'
 import { OverlayController, OVERLAY_WINDOW_OPTS } from 'electron-overlay-window'
 
 import { initializer, singleton } from '@launchtray/tsyringe-async'
@@ -17,6 +17,7 @@ export class LeagueModule {
   client: LeagueAPIClient
   version: string
   isConnected = false
+  clientOverlayWindow: BrowserWindow | null = null
 
   constructor(private appModule: AppModule) {
     this.server = new IPCServer('apis/league')
@@ -50,6 +51,7 @@ export class LeagueModule {
 
     this.client.on('disconnect', () => {
       this.isConnected = false
+      this.clientOverlayWindow?.hide()
       this.appModule.window?.webContents.send('league/disconnect')
       this.appModule.window?.webContents.send('league/connect-change', 'disconnect')
     })
@@ -64,19 +66,11 @@ export class LeagueModule {
         this.appModule.createWindow()
       }
 
-      const clientOverlayWindow = new BrowserWindow({
-        ...OVERLAY_WINDOW_OPTS,
-        alwaysOnTop: true,
-        hasShadow: false,
-        webPreferences: {
-          preload: this.appModule.PRELOAD_PATH,
-        },
+      this.createClientOverlayWindow().then(isInitialCreated => {
+        if (!isInitialCreated) return
+        OverlayController.attachByTitle(this.clientOverlayWindow!, 'League of Legends')
+        OverlayController.activateOverlay()
       })
-
-      clientOverlayWindow.loadURL('http://localhost:3000/#/overlays/client')
-
-      OverlayController.attachByTitle(clientOverlayWindow, 'League of Legends')
-      OverlayController.activateOverlay()
 
       this.appModule.window?.webContents.send('league/connect-change', 'connect')
 
@@ -100,10 +94,11 @@ export class LeagueModule {
 
           if (!autoAccept) return
 
-          clientOverlayWindow.show()
-          clientOverlayWindow.focus()
+          this.clientOverlayWindow?.show()
+          this.clientOverlayWindow?.focus()
           OverlayController.focusTarget()
-          clientOverlayWindow.webContents.send('league/auto-accept', {
+
+          this.clientOverlayWindow?.webContents.send('league/auto-accept', {
             timer: data.timer,
             playerResponse: data.playerResponse,
             autoAcceptDelaySeconds,
@@ -116,7 +111,7 @@ export class LeagueModule {
             url: '/lol-matchmaking/v1/ready-check/accept',
           })
         } else {
-          clientOverlayWindow.webContents.send('league/auto-accept', {
+          this.clientOverlayWindow?.webContents.send('league/auto-accept', {
             playerResponse: data.playerResponse,
           })
         }
@@ -133,6 +128,30 @@ export class LeagueModule {
     )
 
     this.version = versions[0]
+  }
+
+  // 리그 클라이언트 오버레이 창 생성
+  async createClientOverlayWindow() {
+    if (this.clientOverlayWindow) return false
+
+    this.clientOverlayWindow = new BrowserWindow({
+      ...OVERLAY_WINDOW_OPTS,
+      alwaysOnTop: true,
+      hasShadow: false,
+      webPreferences: {
+        preload: this.appModule.PRELOAD_PATH,
+      },
+    })
+
+    if (app.isPackaged) {
+      await this.clientOverlayWindow.loadFile(this.appModule.PROD_LOAD_FILE_PATH, {
+        hash: '#/overlays/client',
+      })
+    } else {
+      await this.clientOverlayWindow.loadURL(this.appModule.DEV_URL + '#/overlays/client')
+    }
+
+    return true
   }
 
   // 현재 롤 클라이언트가 챔피언 선택 중인지 확인
