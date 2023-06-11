@@ -2,15 +2,14 @@ import { initializer, singleton } from '@launchtray/tsyringe-async'
 import axios from 'axios'
 import * as cheerio from 'cheerio'
 
+import { DIVISION_ROMAN_TO_NUMBER_MAP } from '@main/modules/league/constants/rank'
+import { AdApRatio } from '@main/modules/league/types/stat'
+import { getAvgTier } from '@main/modules/league/utils/rank'
+import { PSVersion } from '@main/modules/ps/types'
+import { PSInGame, PSInGamePlayer } from '@main/modules/ps/types/stat'
 import IPCServer from '@main/utils/IPCServer'
 
-interface Version {
-  id: number
-  label: string
-  date: string
-}
-
-const getLatestVersion = async (): Promise<Version> => {
+const getLatestVersion = async (): Promise<PSVersion> => {
   const { data: html } = await axios.get('https://lol.ps/statistics')
   const $ = cheerio.load(html)
 
@@ -34,7 +33,7 @@ const getLatestVersion = async (): Promise<Version> => {
 
 @singleton()
 export class PSModule {
-  version: Version
+  version: PSVersion
   server: IPCServer
 
   constructor() {
@@ -56,6 +55,24 @@ export class PSModule {
       })
 
       return data
+    })
+
+    this.server.add('/summoner-ps-id/:summonerName', async ({ params }) => {
+      const { summonerName } = params
+
+      const { data: html } = await axios.get(`https://lol.ps/summoner/${summonerName}`)
+      const $ = cheerio.load(html)
+
+      const [
+        ,
+        ,
+        ,
+        {
+          data: { summary },
+        },
+      ] = JSON.parse($('script[sveltekit\\:data-type="server_data"]').text())
+
+      return summary._id
     })
 
     this.server.add('/summoners', async ({ payload }) => {
@@ -80,6 +97,110 @@ export class PSModule {
       )
 
       return Promise.all(promises)
+    })
+
+    this.server.add('/in-game/:summonerPsId', async ({ params }) => {
+      const { summonerPsId } = params
+
+      try {
+        const {
+          data: { data },
+        } = await axios.get(`https://lol.ps/api/summoner/${summonerPsId}/spectator.json`, {
+          params: {
+            region: 'kr',
+          },
+        })
+
+        const getTeamAdApRatio = (team: 'red' | 'blue', spectatorData: any): AdApRatio => {
+          return {
+            ad: Number(spectatorData.adApRatio[team].ad),
+            ap: Number(spectatorData.adApRatio[team].ap),
+            true: Number(spectatorData.adApRatio[team].true),
+          }
+        }
+
+        const getTeamPlayers = (team: 'red' | 'blue', spectatorData: any): PSInGamePlayer[] => {
+          return [0, 1, 2, 3, 4].map(findLaneId => {
+            const {
+              summonerName,
+              summonerId: summonerPsId,
+              championId,
+              spell1Id,
+              spell2Id,
+              perks,
+              laneId,
+            } = spectatorData.participants.find(
+              participant =>
+                participant.teamId === (team === 'blue' ? 100 : 200) &&
+                participant.laneId === findLaneId,
+            )
+
+            const { tier, rank, lp, psScore, seasonStat, championStat } =
+              spectatorData.participantInfo[summonerPsId]
+
+            const division = ['MASTER', 'GRANDMASTER', 'CHALLENGER'].includes(tier)
+              ? null
+              : DIVISION_ROMAN_TO_NUMBER_MAP[rank]
+
+            return {
+              summonerName,
+              summonerPsId,
+              tier,
+              division,
+              lp,
+              laneId,
+              psScore,
+              championId,
+              seasonStat: {
+                winRate: seasonStat.winrate,
+                gameCount: seasonStat.count,
+              },
+              championStat: {
+                winRate: championStat.winrate,
+                gameCount: championStat.count,
+                kda: championStat.kda,
+              },
+              runes: {
+                main: perks.perkIds.slice(0, 4),
+                sub: perks.perkIds.slice(4, 6),
+                shard: perks.perkIds.slice(6, 9),
+              },
+              spellIds: [spell1Id, spell2Id],
+            }
+          })
+        }
+
+        const result: Omit<PSInGame, 'avgRankInfo'> = {
+          blue: {
+            adApRatio: getTeamAdApRatio('blue', data),
+            players: getTeamPlayers('blue', data),
+          },
+          red: {
+            adApRatio: getTeamAdApRatio('red', data),
+            players: getTeamPlayers('red', data),
+          },
+          myTeam: 'red',
+          enemyTeam: 'blue',
+          gameStartTime: data.gameStartTime,
+        }
+
+        if (result.blue.players.find(player => player.summonerPsId === summonerPsId)) {
+          result.myTeam = 'blue'
+          result.enemyTeam = 'red'
+        }
+
+        const avgRankInfo = getAvgTier([
+          ...result.blue.players.map(({ tier, division, lp }) => ({ tier, division, lp })),
+          ...result.red.players.map(({ tier, division, lp }) => ({ tier, division, lp })),
+        ])
+
+        return {
+          ...result,
+          avgRankInfo,
+        }
+      } catch {
+        return null
+      }
     })
 
     this.server.add('/duo/:duoId', async ({ params, payload }) => {

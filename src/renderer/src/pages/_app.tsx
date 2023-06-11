@@ -9,7 +9,8 @@ import { ThemeProvider } from 'styled-components'
 import Layout from '@renderer/components/Layout'
 import Titlebar from '@renderer/components/Titlebar'
 import NeedUpdateLaterNotification from '@renderer/features/update/NeedUpdateLaterNotification'
-import useNavigateToTierList from '@renderer/hooks/useNavigateToTierList'
+import useAutoNavigateToInGamePage from '@renderer/hooks/useAutoNavigateToInGamePage'
+import useAutoNavigateToTierListPage from '@renderer/hooks/useAutoNavigateToTierListPage'
 import { useUpdateContentModal } from '@renderer/hooks/useUpdateContentModal'
 import { appStateStore } from '@renderer/stores/app'
 import { champSelectSessionStore } from '@renderer/stores/champSelectSession'
@@ -75,15 +76,18 @@ const AppInner = () => {
       })
     })
 
-    window.electron.subscribeLeague('summoner/current', data => {
-      console.log('summoner/current', data)
-      if (data) {
+    window.electron.subscribeLeague('summoner/current', async data => {
+      console.log(data)
+      if (data && data.summonerId !== currentSummoner?.id) {
+        const psId = await window.electron.apis('ps', `/summoner-ps-id/${data.displayName}`)
+
         setCurrentSummoner({
           id: data.summonerId,
           name: data.displayName,
           profileIconId: data.profileIconId,
+          psId,
         })
-      } else {
+      } else if (!data) {
         setCurrentSummoner(null)
       }
     })
@@ -101,6 +105,15 @@ const AppInner = () => {
 
       console.log('champ-select/session', data, currentLane)
     })
+
+    window.electron.subscribeLeague('in-game', isInGame => {
+      setAppState({
+        ...appState,
+        leagueIsInGame: isInGame,
+      })
+
+      console.log('in-game', isInGame)
+    })
   }
 
   const styledTheme = useMemo(
@@ -115,7 +128,9 @@ const AppInner = () => {
   const isNoLayout = noLayoutPaths.some(path => path.test(pathname))
 
   useUpdateContentModal({ autoOpen: !isNoLayout })
-  useNavigateToTierList()
+
+  useAutoNavigateToInGamePage()
+  useAutoNavigateToTierListPage()
 
   useEffect(() => {
     bootstrap()
