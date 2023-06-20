@@ -15,11 +15,23 @@ const _colors = {
   textColor1: '#ffffff',
   textColor2: '#8E9297',
   formFieldBG: '#313339',
+
   success: '#4caf50',
   error: '#FE6968',
-  relic: '#ff6000',
-  ancient: '#c9a472',
-  blue: '#00a1ff',
+
+  red: '#ff453a',
+  orange: '#ff9f0a',
+  yellow: '#ffd60a',
+  green: '#30d158',
+  mint: '#66d4cf',
+  teal: '#40c8e0',
+  cyan: '#64d2ff',
+  blue: '#0a84ff',
+  indigo: '#5e5ce6',
+  purple: '#bf5af2',
+  pink: '#ff375f',
+  brown: '#ac8e68',
+
   gold: '#e0b667',
 }
 

@@ -28,8 +28,10 @@ const useAPI = <T = any>(category: APICategory, url: string, options: useAPIOpti
     revalidateOnFocus: false,
     revalidateOnReconnect: false,
     fetcher: async ([category, url, payload]: [APICategory, string, any]) => {
-      console.log('API 요청', category, url, payload)
       const response = await window.electron.apis(category, url, payload)
+      console.groupCollapsed(`%c[useAPI - ${category}]`, 'color: grey', url, payload || '')
+      console.log(response)
+      console.groupEnd()
 
       if (response?.errorCode) throw new Error(response?.message || 'Unknown Error')
 

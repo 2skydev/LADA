@@ -4,6 +4,7 @@ export interface CurrentSummonerStoreValues {
   id: string
   name: string
   profileIconId: string
+  psId: string
 }
 
 export const currentSummonerStore = atom<CurrentSummonerStoreValues | null>({
@@ -17,10 +18,13 @@ export const currentSummonerStore = atom<CurrentSummonerStoreValues | null>({
 
     if (!data) return null
 
+    const psId = await window.electron.apis('ps', `/summoner-ps-id/${data.displayName}`)
+
     return {
       id: data.summonerId,
       name: data.displayName,
       profileIconId: data.profileIconId,
+      psId,
     }
   })(),
 })

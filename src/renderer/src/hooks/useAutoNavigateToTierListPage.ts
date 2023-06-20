@@ -6,7 +6,7 @@ import { useRecoilValue } from 'recoil'
 import { champSelectSessionStore } from '@renderer/stores/champSelectSession'
 import { LANE_ID } from '@renderer/types/league'
 
-const useNavigateToTierList = () => {
+const useAutoNavigateToTierListPage = () => {
   const navigate = useNavigate()
   const [prevGameId, setPrevGameId] = useState<string | null>(null)
 
@@ -20,4 +20,4 @@ const useNavigateToTierList = () => {
   }, [data])
 }
 
-export default useNavigateToTierList
+export default useAutoNavigateToTierListPage

@@ -56,6 +56,12 @@ export const RuneIconStyled = styled.div<RuneIconStyledProps>`
     }
   }
 
+  &.removeBorder {
+    .ring {
+      display: none;
+    }
+  }
+
   .ring {
     position: absolute;
     z-index: 1;

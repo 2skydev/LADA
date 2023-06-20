@@ -2,39 +2,19 @@ import { initializer, singleton } from '@launchtray/tsyringe-async'
 import axios from 'axios'
 import * as cheerio from 'cheerio'
 
+import { getAvgTier } from '@main/modules/league/utils/rank'
+import { PSInGame } from '@main/modules/ps/types/stat'
+import { PSSummoner } from '@main/modules/ps/types/summoner'
+import {
+  convertPSInGameDataToTeamAdApRatio,
+  convertPSInGameDataToTeamPlayers,
+} from '@main/modules/ps/utils/convert'
+import { getDivision } from '@main/modules/ps/utils/rank'
 import IPCServer from '@main/utils/IPCServer'
-
-interface Version {
-  id: number
-  label: string
-  date: string
-}
-
-const getLatestVersion = async (): Promise<Version> => {
-  const { data: html } = await axios.get('https://lol.ps/statistics')
-  const $ = cheerio.load(html)
-
-  const [
-    ,
-    ,
-    ,
-    {
-      data: {
-        versionInfo: [latestVersion],
-      },
-    },
-  ] = JSON.parse($('script[sveltekit\\:data-type="server_data"]').text())
-
-  return {
-    id: latestVersion.versionId,
-    label: latestVersion.description,
-    date: latestVersion.patchDate,
-  }
-}
 
 @singleton()
 export class PSModule {
-  version: Version
+  version: number
   server: IPCServer
 
   constructor() {
@@ -49,13 +29,31 @@ export class PSModule {
       } = await axios.get(`https://lol.ps/api/statistics/tierlist.json`, {
         params: {
           region: 0,
-          version: this.version.id,
+          version: this.version,
           tier: rankRangeId,
           lane: Number(lane),
         },
       })
 
       return data
+    })
+
+    this.server.add('/summoner-ps-id/:summonerName', async ({ params }) => {
+      const { summonerName } = params
+
+      const { data: html } = await axios.get(`https://lol.ps/summoner/${summonerName}`)
+      const $ = cheerio.load(html)
+
+      const [
+        ,
+        ,
+        ,
+        {
+          data: { summary },
+        },
+      ] = JSON.parse($('script[sveltekit\\:data-type="server_data"]').text())
+
+      return summary._id
     })
 
     this.server.add('/summoners', async ({ payload }) => {
@@ -82,6 +80,11 @@ export class PSModule {
       return Promise.all(promises)
     })
 
+    this.server.add('/in-game/:summonerPsId', async ({ params }) => {
+      const { summonerPsId } = params
+      return await this.getInGame(summonerPsId)
+    })
+
     this.server.add('/duo/:duoId', async ({ params, payload }) => {
       const { duoId } = params
       const { rankRangeId = 2, criterion = 'synergyScore', order = 'desc', championId } = payload
@@ -91,7 +94,7 @@ export class PSModule {
       } = await axios.get(`https://lol.ps/api/lab/duo-list.json`, {
         params: {
           region: 0,
-          version: this.version.id,
+          version: this.version,
           tier: rankRangeId,
           duo: duoId,
           criterion,
@@ -123,7 +126,7 @@ export class PSModule {
       } = await axios.get(`https://lol.ps/api/champ/${id}/summary.json`, {
         params: {
           region: 0,
-          version: this.version.id,
+          version: this.version,
           tier: rankRangeId,
           lane: laneId,
         },
@@ -136,7 +139,7 @@ export class PSModule {
       } = await axios.get(`https://lol.ps/api/champ/${id}/spellitem.json`, {
         params: {
           region: 0,
-          version: this.version.id,
+          version: this.version,
           tier: rankRangeId,
           lane: laneId,
         },
@@ -147,7 +150,7 @@ export class PSModule {
       } = await axios.get(`https://lol.ps/api/champ/${id}/skill.json`, {
         params: {
           region: 0,
-          version: this.version.id,
+          version: this.version,
           tier: rankRangeId,
           lane: laneId,
         },
@@ -158,7 +161,7 @@ export class PSModule {
       } = await axios.get(`https://lol.ps/api/champ/${id}/runestatperk.json`, {
         params: {
           region: 0,
-          version: this.version.id,
+          version: this.version,
           tier: rankRangeId,
           lane: laneId,
         },
@@ -171,7 +174,7 @@ export class PSModule {
       } = await axios.get(`https://lol.ps/api/champ/${id}/graphs.json`, {
         params: {
           region: 0,
-          version: this.version.id,
+          version: this.version,
           tier: rankRangeId,
           lane: laneId,
         },
@@ -182,7 +185,7 @@ export class PSModule {
       } = await axios.get(`https://lol.ps/api/champ/${id}/versus.json`, {
         params: {
           region: 0,
-          version: this.version.id,
+          version: this.version,
           tier: rankRangeId,
           lane: laneId,
         },
@@ -216,6 +219,106 @@ export class PSModule {
 
   @initializer()
   async init() {
-    this.version = await getLatestVersion()
+    this.version = await this.getLatestVersion()
+  }
+
+  async getLatestVersion(): Promise<number> {
+    const {
+      data: {
+        data: [latestVersion],
+      },
+    } = await axios.get('https://lol.ps/api/info/active-version.json')
+
+    return latestVersion.versionId
+  }
+
+  async getSummoner(summonerName: string): Promise<PSSummoner | null> {
+    try {
+      const {
+        data: { data },
+      } = await axios.get(
+        `https://lol.ps/api/summoner/${encodeURIComponent(summonerName)}/summary.json?region=kr`,
+      )
+
+      return {
+        summonerId: data.account_id,
+        summonerPsId: data._id,
+        summonerName: data.summoner_name,
+        summonerLevel: data.summoner_level,
+        summonerProfileIconId: data.profile_icon_id,
+        wins: data.wins,
+        losses: data.losses,
+        count: data.count,
+        tier: data.tier,
+        division: getDivision(data.tier, data.rank),
+        lp: data.league_points,
+      }
+    } catch {
+      return null
+    }
+  }
+
+  async getInGame(summonerPsId: string): Promise<PSInGame | null> {
+    try {
+      // return inGameTempData as PSInGame
+
+      const {
+        data: { data },
+      } = await axios.get(`https://lol.ps/api/summoner/${summonerPsId}/spectator.json`, {
+        params: {
+          region: 'kr',
+        },
+      })
+
+      const result: Omit<PSInGame, 'avgRankInfo'> = {
+        blue: {
+          adApRatio: convertPSInGameDataToTeamAdApRatio('blue', data),
+          players: convertPSInGameDataToTeamPlayers('blue', data),
+        },
+        red: {
+          adApRatio: convertPSInGameDataToTeamAdApRatio('red', data),
+          players: convertPSInGameDataToTeamPlayers('red', data),
+        },
+        myTeam: 'red',
+        enemyTeam: 'blue',
+        gameStartTime: data.gameStartTime,
+      }
+
+      // const promises = (['blue', 'red'] as const)
+      //   .map(team => {
+      //     return result[team].players.map(player => {
+      //       return this.getSummoner(player.summonerName)
+      //     })
+      //   })
+      //   .flat()
+
+      // const summoners = await Promise.all(promises)
+
+      // ;(['blue', 'red'] as const).forEach(team => {
+      //   result[team].players.forEach((player, i) => {
+      //     const { promotion } = summoners[i + (team === 'red' ? 5 : 0)]!
+
+      //     console.log(promotion, i + (team === 'red' ? 5 : 0))
+      //     if (promotion) player.promotion = promotion
+      //   })
+      // })
+
+      if (result.blue.players.find(player => player.summonerPsId === summonerPsId)) {
+        result.myTeam = 'blue'
+        result.enemyTeam = 'red'
+      }
+
+      const avgRankInfo = getAvgTier([
+        ...result.blue.players.map(({ tier, division, lp }) => ({ tier, division, lp })),
+        ...result.red.players.map(({ tier, division, lp }) => ({ tier, division, lp })),
+      ])
+
+      return {
+        ...result,
+        avgRankInfo,
+      }
+    } catch {
+      return null
+    }
   }
 }

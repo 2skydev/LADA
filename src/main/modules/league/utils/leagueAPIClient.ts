@@ -10,13 +10,15 @@ import {
   LeagueWebSocket,
 } from 'league-connect'
 import pRetry from 'p-retry'
+import { check } from 'tcp-port-used'
 
-type LeagueAPIClientEvents = 'ready' | 'disconnect' | 'connect'
+type LeagueAPIClientEvents = 'ready' | 'disconnect' | 'connect' | 'in-game'
 
 class LeagueAPIClient {
   private credentials: Credentials | null = null
   private ws: LeagueWebSocket | null = null
   private emitter = new EventEmitter()
+  public isInGame = false
 
   /**
    * LeagueAPIClient를 초기화합니다.
@@ -27,6 +29,8 @@ class LeagueAPIClient {
    * @returns 롤 클라이언트 API 연결 여부
    */
   public async initialize() {
+    this.intervalCheckInGame()
+
     try {
       await Promise.all([this.connectAuth(), this.connectWS()])
 
@@ -69,6 +73,19 @@ class LeagueAPIClient {
         awaitConnection: true,
       },
     })
+  }
+
+  private async checkInGame() {
+    const isUsed = await check(2999, '127.0.0.1')
+    if (isUsed !== this.isInGame) {
+      this.isInGame = isUsed
+      this.emitter.emit('in-game', isUsed)
+    }
+  }
+
+  private async intervalCheckInGame() {
+    await this.checkInGame()
+    setTimeout(() => this.intervalCheckInGame(), 1000)
   }
 
   /**

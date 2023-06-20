@@ -51,6 +51,16 @@ const Sidebar = ({ className }: SidebarProps) => {
         ],
       },
       {
+        title: '라이브 게임',
+        items: [
+          {
+            icon: 'bx-search-alt',
+            link: '/live/in-game',
+            text: '인게임 정보',
+          },
+        ],
+      },
+      {
         title: '유틸리티',
         items: [
           {

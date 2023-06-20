@@ -10,6 +10,7 @@ export interface RuneIconProps {
   active?: boolean
   size?: string
   imageOnly?: boolean
+  removeBorder?: boolean
   largeImage?: boolean
   useCategoryImage?: boolean
   onClick?: (runeId: number) => void
@@ -21,6 +22,7 @@ const RuneIcon = ({
   active = true,
   size = '38px',
   imageOnly: _imageOnly,
+  removeBorder,
   largeImage,
   useCategoryImage,
   onClick,
@@ -37,7 +39,7 @@ const RuneIcon = ({
       className={clsx(
         'RuneIcon',
         className,
-        { active, imageOnly, largeImage },
+        { active, imageOnly, largeImage, removeBorder },
         onClick && 'clickable',
       )}
       data-category={categoryData.key}

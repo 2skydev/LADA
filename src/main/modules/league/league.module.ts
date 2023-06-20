@@ -7,9 +7,8 @@ import axios from 'axios'
 import { IPCHandle } from '@main/core/decorators/ipcHandle'
 import { AppModule } from '@main/modules/app/app.module'
 import { configStore } from '@main/modules/config/stores/config.store'
+import LeagueAPIClient from '@main/modules/league/utils/leagueAPIClient'
 import IPCServer from '@main/utils/IPCServer'
-
-import LeagueAPIClient from './leagueAPIClient'
 
 @singleton()
 export class LeagueModule {
@@ -54,6 +53,10 @@ export class LeagueModule {
       this.clientOverlayWindow?.hide()
       this.appModule.window?.webContents.send('league/disconnect')
       this.appModule.window?.webContents.send('league/connect-change', 'disconnect')
+    })
+
+    this.client.on('in-game', isInGame => {
+      this.appModule.window?.webContents.send('league/in-game', isInGame)
     })
 
     this.client.on('ready', () => {
