@@ -1,4 +1,4 @@
-import { darken, lighten } from 'polished'
+import { darken, lighten, rgba } from 'polished'
 import styled from 'styled-components'
 
 export const InGameInfoStyled = styled.div`
@@ -20,8 +20,6 @@ export const InGameInfoStyled = styled.div`
 
   .teams {
     display: flex;
-    background-color: rgba(0, 0, 0, 0.2);
-    padding: 1rem;
     border-radius: 8px;
     gap: 1rem;
 
@@ -29,6 +27,10 @@ export const InGameInfoStyled = styled.div`
       width: 50%;
 
       &.myTeam {
+        > .header {
+          background-color: ${props => rgba(props.theme.colors.blue, 0.5)};
+        }
+
         .player {
           .championProfile {
             border-color: ${props => props.theme.colors.blue};
@@ -36,13 +38,21 @@ export const InGameInfoStyled = styled.div`
         }
       }
 
+      &:not(.myTeam) {
+        > .header {
+          background-color: ${props => rgba(props.theme.colors.red, 0.5)};
+        }
+      }
+
       > .header {
         display: flex;
         justify-content: space-between;
-        padding: 0.5rem 0.8rem;
+        padding: 0.4rem 0.8rem;
+        border-radius: 4px;
+        margin-bottom: 0.5rem;
 
         .title {
-          color: ${props => lighten(0.1, props.theme.colors.textColor2)};
+          color: ${props => lighten(0.1, props.theme.colors.textColor1)};
           font-size: 0.8rem;
         }
 
@@ -51,166 +61,302 @@ export const InGameInfoStyled = styled.div`
         }
 
         .title:nth-child(2) {
-          width: 100px;
+          width: 7rem;
+          text-align: center;
+        }
+
+        .title:nth-child(3) {
+          width: 10rem;
           text-align: center;
         }
 
         .title:nth-child(4) {
-          width: 90px;
+          width: 120px;
           text-align: right;
         }
       }
 
-      .player {
-        display: flex;
-        align-items: center;
-        justify-content: space-between;
-        padding: 0.5rem 0.8rem;
-        border-radius: 6px;
-        background-color: ${props => darken(0.015, props.theme.colors.contentBG)};
-
-        &.self {
-          .summaryText {
-            .summonerName {
-              color: ${props => props.theme.colors.primary};
-            }
-          }
-        }
-
-        + .player {
+      > .item {
+        + .item {
           margin-top: 0.5rem;
         }
 
-        .playerSummary {
+        .player {
           display: flex;
           align-items: center;
-        }
+          justify-content: space-between;
+          padding: 0.5rem 0.8rem;
+          border-top-left-radius: 6px;
+          border-top-right-radius: 6px;
+          background-color: ${props => darken(0.03, props.theme.colors.contentBG)};
 
-        .spells {
-          margin-right: 0.5rem;
-
-          .DataDragonImage {
-            width: 20px;
-            height: 20px;
-            border-radius: 4px;
-
-            + .DataDragonImage {
-              margin-top: 0.3rem;
+          &.self {
+            .summaryText {
+              .summonerName {
+                color: ${props => props.theme.colors.primary};
+              }
             }
           }
-        }
 
-        .championProfile {
-          border-radius: 50%;
-          border: 2px solid ${props => props.theme.colors.red};
-          padding: 3px;
-          margin-right: 0.8rem;
-          position: relative;
+          .playerSummary {
+            .top {
+              display: flex;
+              align-items: center;
 
-          .laneIconContainer {
-            position: absolute;
-            border-radius: 50%;
-            width: 20px;
-            height: 20px;
-            background-color: ${props => props.theme.colors.formFieldBG};
-            right: -4px;
-            bottom: -4px;
-            z-index: 1;
-            display: flex;
-            justify-content: center;
-            align-items: center;
+              .spells {
+                margin-right: 0.5rem;
 
-            .LaneIcon {
-              height: 14px;
-            }
-          }
-        }
+                .DataDragonImage {
+                  width: 20px;
+                  height: 20px;
+                  border-radius: 3px;
 
-        .summaryText {
-          width: 10rem;
+                  + .DataDragonImage {
+                    margin-top: 0.2rem;
+                  }
+                }
+              }
 
-          .summonerName {
-            text-overflow: ellipsis;
-            overflow: hidden;
-            white-space: nowrap;
-            padding-right: 1rem;
-            font-size: 0.85rem;
-          }
+              .championProfile {
+                border-radius: 50%;
+                border: 2px solid ${props => props.theme.colors.red};
+                padding: 3px;
+                margin-right: 0.8rem;
+                position: relative;
+                cursor: pointer;
 
-          .championStat {
-            color: ${props => lighten(0.1, props.theme.colors.textColor2)};
-            font-size: 0.75rem;
+                .laneIconContainer {
+                  position: absolute;
+                  border-radius: 50%;
+                  width: 20px;
+                  height: 20px;
+                  background-color: ${props => props.theme.colors.formFieldBG};
+                  right: -4px;
+                  bottom: -4px;
+                  z-index: 1;
+                  display: flex;
+                  justify-content: center;
+                  align-items: center;
 
-            .winRate {
-              font-weight: bold;
-              color: ${props => lighten(0.2, props.theme.colors.textColor2)};
+                  .LaneIcon {
+                    height: 14px;
+                  }
+                }
+              }
 
-              &.high {
-                color: ${props => props.theme.colors.error};
+              .summaryText {
+                width: 10rem;
+
+                .summonerName {
+                  text-overflow: ellipsis;
+                  overflow: hidden;
+                  white-space: nowrap;
+                  padding-right: 1rem;
+                  font-size: 0.85rem;
+
+                  span {
+                    cursor: pointer;
+                    transition: 150ms color;
+
+                    &:hover {
+                      color: ${props => props.theme.colors.blue};
+                    }
+
+                    .bx {
+                      transform: translateY(1px);
+                      margin-right: 0.2rem;
+                    }
+                  }
+                }
+
+                .championStat {
+                  color: ${props => lighten(0.1, props.theme.colors.textColor2)};
+                  font-size: 0.7rem;
+                  display: flex;
+                  align-items: center;
+
+                  .winRate {
+                    font-weight: bold;
+                    color: ${props => lighten(0.2, props.theme.colors.textColor2)};
+
+                    &.high {
+                      color: ${props => props.theme.colors.green};
+                    }
+                  }
+
+                  .ant-divider {
+                    height: 0.4rem;
+                  }
+
+                  .kda {
+                    .value {
+                      font-weight: bold;
+                      color: ${props => lighten(0.2, props.theme.colors.textColor2)};
+
+                      &.green {
+                        color: ${props => props.theme.colors.green};
+                      }
+                    }
+                  }
+                }
               }
             }
 
-            .kda {
-              font-size: 0.7rem;
-              margin-top: -0.2rem;
+            .bottom {
+              margin-top: 0.3rem;
 
-              .value {
-                font-weight: bold;
-                color: ${props => lighten(0.2, props.theme.colors.textColor2)};
+              .recentMatches {
+                display: flex;
+                align-items: center;
+                gap: 1px;
 
+                .item {
+                  border-bottom: 3px solid ${props => props.theme.colors.red};
+
+                  &.win {
+                    border-color: ${props => props.theme.colors.green};
+                  }
+
+                  .ChampionImage {
+                    width: 16px;
+                    height: 16px;
+                  }
+
+                  &:nth-child(7) {
+                    opacity: 0.8;
+                  }
+
+                  &:nth-child(8) {
+                    opacity: 0.6;
+                  }
+
+                  &:nth-child(9) {
+                    opacity: 0.5;
+                  }
+
+                  &:nth-child(10) {
+                    opacity: 0.25;
+                  }
+                }
+              }
+            }
+          }
+
+          .seasonStat {
+            display: flex;
+            align-items: center;
+            flex-direction: column;
+
+            .top {
+              display: flex;
+              flex-direction: column;
+              align-items: center;
+
+              .RankIcon {
+                height: 1.5rem;
+                margin-bottom: 0.1rem;
+              }
+
+              .tier {
+                font-size: 0.75rem;
+
+                span {
+                  opacity: 0.6;
+                }
+              }
+            }
+
+            .bottom {
+              display: flex;
+              text-align: center;
+              width: 7rem;
+              font-size: 0.75rem;
+              color: ${props => lighten(0, props.theme.colors.textColor2)};
+              gap: 0.5rem;
+              justify-content: center;
+
+              .winRate {
                 &.green {
                   color: ${props => props.theme.colors.green};
                 }
 
-                &.orange {
-                  color: ${props => props.theme.colors.orange};
+                &.red {
+                  color: ${props => props.theme.colors.red};
                 }
               }
             }
           }
-        }
 
-        .seasonStat {
-          display: flex;
-          align-items: center;
+          .psScore {
+            color: ${props => props.theme.colors.textColor2};
+            font-size: 1.4rem;
+            font-weight: bold;
+            text-align: center;
+            width: 10rem;
 
-          .left {
+            &.high {
+              color: ${props => lighten(0.1, props.theme.colors.green)};
+            }
+          }
+
+          .runes {
             display: flex;
             flex-direction: column;
-            align-items: center;
+            gap: 0.4rem;
+            width: 120px;
 
-            .RankIcon {
-              height: 1.5rem;
+            .main,
+            .sub,
+            .shard {
+              display: flex;
+              justify-content: space-between;
+              gap: 0.2rem;
             }
 
-            .tier {
-              font-size: 0.75rem;
+            .main {
+              .RuneIcon:first-child {
+                margin-right: 0.5rem;
+              }
             }
-          }
 
-          .right {
-            text-align: center;
-            width: 4rem;
-            margin-left: 0.8rem;
+            .shard {
+              gap: 0.1rem;
+              padding-right: 0.2rem;
+            }
 
-            .gameCount {
-              font-size: 0.75rem;
-              color: ${props => lighten(0.1, props.theme.colors.textColor2)};
+            .bottom {
+              display: flex;
+              align-items: center;
+              justify-content: space-between;
+              /* flex-direction: row-reverse; */
             }
           }
         }
 
-        .runes {
+        .tags {
+          /* padding: 0.4rem 0.8rem;
+          border-bottom-left-radius: 6px;
+          border-bottom-right-radius: 6px;
+          background-color: ${props => darken(0.03, props.theme.colors.contentBG)};
+          border-top: 1px solid ${props => props.theme.colors.borderColor};
           display: flex;
-          flex-direction: column;
-          gap: 0.1rem;
+          justify-content: space-between; */
 
-          .main,
-          .sub,
-          .shard {
-            display: flex;
-            justify-content: flex-end;
-            gap: 0.2rem;
+          .ant-tag {
+            font-size: 0.6rem;
+            line-height: 18px;
+            padding-inline: 0.3rem;
+            border: none;
+
+            &.green {
+              background-color: ${props => rgba(props.theme.colors.green, 0.2)};
+              /* border-color: ${props => rgba(props.theme.colors.green, 0.5)}; */
+            }
+
+            &.red {
+              background-color: ${props => rgba(props.theme.colors.red, 0.2)};
+              /* border-color: ${props => rgba(props.theme.colors.red, 0.5)}; */
+            }
           }
         }
       }

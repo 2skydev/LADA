@@ -17,4 +17,4 @@ export const DIVISION_ROMAN_TO_NUMBER_MAP = {
   II: 2,
   III: 3,
   IV: 4,
-}
+} as const

@@ -19,7 +19,7 @@ const useDataDragonChampNames = (): null | Record<string, { en: string; ko: stri
   return Object.values(data.data).reduce((acc: Record<string, any>, champ: any) => {
     return {
       ...acc,
-      [champ.key]: { en: champ.id, ko: champ.name },
+      [champ.key]: { en: champ.id, ko: champ.name, image: champ.image.full },
     }
   }, {})
 }

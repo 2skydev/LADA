@@ -2,38 +2,19 @@ import { initializer, singleton } from '@launchtray/tsyringe-async'
 import axios from 'axios'
 import * as cheerio from 'cheerio'
 
-import { DIVISION_ROMAN_TO_NUMBER_MAP } from '@main/modules/league/constants/rank'
-import { AdApRatio } from '@main/modules/league/types/stat'
 import { getAvgTier } from '@main/modules/league/utils/rank'
-import { PSVersion } from '@main/modules/ps/types'
-import { PSInGame, PSInGamePlayer } from '@main/modules/ps/types/stat'
+import { PSInGame } from '@main/modules/ps/types/stat'
+import { PSSummoner } from '@main/modules/ps/types/summoner'
+import {
+  convertPSInGameDataToTeamAdApRatio,
+  convertPSInGameDataToTeamPlayers,
+} from '@main/modules/ps/utils/convert'
+import { getDivision } from '@main/modules/ps/utils/rank'
 import IPCServer from '@main/utils/IPCServer'
-
-const getLatestVersion = async (): Promise<PSVersion> => {
-  const { data: html } = await axios.get('https://lol.ps/statistics')
-  const $ = cheerio.load(html)
-
-  const [
-    ,
-    ,
-    ,
-    {
-      data: {
-        versionInfo: [latestVersion],
-      },
-    },
-  ] = JSON.parse($('script[sveltekit\\:data-type="server_data"]').text())
-
-  return {
-    id: latestVersion.versionId,
-    label: latestVersion.description,
-    date: latestVersion.patchDate,
-  }
-}
 
 @singleton()
 export class PSModule {
-  version: PSVersion
+  version: number
   server: IPCServer
 
   constructor() {
@@ -48,7 +29,7 @@ export class PSModule {
       } = await axios.get(`https://lol.ps/api/statistics/tierlist.json`, {
         params: {
           region: 0,
-          version: this.version.id,
+          version: this.version,
           tier: rankRangeId,
           lane: Number(lane),
         },
@@ -101,106 +82,7 @@ export class PSModule {
 
     this.server.add('/in-game/:summonerPsId', async ({ params }) => {
       const { summonerPsId } = params
-
-      try {
-        const {
-          data: { data },
-        } = await axios.get(`https://lol.ps/api/summoner/${summonerPsId}/spectator.json`, {
-          params: {
-            region: 'kr',
-          },
-        })
-
-        const getTeamAdApRatio = (team: 'red' | 'blue', spectatorData: any): AdApRatio => {
-          return {
-            ad: Number(spectatorData.adApRatio[team].ad),
-            ap: Number(spectatorData.adApRatio[team].ap),
-            true: Number(spectatorData.adApRatio[team].true),
-          }
-        }
-
-        const getTeamPlayers = (team: 'red' | 'blue', spectatorData: any): PSInGamePlayer[] => {
-          return [0, 1, 2, 3, 4].map(findLaneId => {
-            const {
-              summonerName,
-              summonerId: summonerPsId,
-              championId,
-              spell1Id,
-              spell2Id,
-              perks,
-              laneId,
-            } = spectatorData.participants.find(
-              participant =>
-                participant.teamId === (team === 'blue' ? 100 : 200) &&
-                participant.laneId === findLaneId,
-            )
-
-            const { tier, rank, lp, psScore, seasonStat, championStat } =
-              spectatorData.participantInfo[summonerPsId]
-
-            const division = ['MASTER', 'GRANDMASTER', 'CHALLENGER'].includes(tier)
-              ? null
-              : DIVISION_ROMAN_TO_NUMBER_MAP[rank]
-
-            return {
-              summonerName,
-              summonerPsId,
-              tier,
-              division,
-              lp,
-              laneId,
-              psScore,
-              championId,
-              seasonStat: {
-                winRate: seasonStat.winrate,
-                gameCount: seasonStat.count,
-              },
-              championStat: {
-                winRate: championStat.winrate,
-                gameCount: championStat.count,
-                kda: championStat.kda,
-              },
-              runes: {
-                main: perks.perkIds.slice(0, 4),
-                sub: perks.perkIds.slice(4, 6),
-                shard: perks.perkIds.slice(6, 9),
-              },
-              spellIds: [spell1Id, spell2Id],
-            }
-          })
-        }
-
-        const result: Omit<PSInGame, 'avgRankInfo'> = {
-          blue: {
-            adApRatio: getTeamAdApRatio('blue', data),
-            players: getTeamPlayers('blue', data),
-          },
-          red: {
-            adApRatio: getTeamAdApRatio('red', data),
-            players: getTeamPlayers('red', data),
-          },
-          myTeam: 'red',
-          enemyTeam: 'blue',
-          gameStartTime: data.gameStartTime,
-        }
-
-        if (result.blue.players.find(player => player.summonerPsId === summonerPsId)) {
-          result.myTeam = 'blue'
-          result.enemyTeam = 'red'
-        }
-
-        const avgRankInfo = getAvgTier([
-          ...result.blue.players.map(({ tier, division, lp }) => ({ tier, division, lp })),
-          ...result.red.players.map(({ tier, division, lp }) => ({ tier, division, lp })),
-        ])
-
-        return {
-          ...result,
-          avgRankInfo,
-        }
-      } catch {
-        return null
-      }
+      return await this.getInGame(summonerPsId)
     })
 
     this.server.add('/duo/:duoId', async ({ params, payload }) => {
@@ -212,7 +94,7 @@ export class PSModule {
       } = await axios.get(`https://lol.ps/api/lab/duo-list.json`, {
         params: {
           region: 0,
-          version: this.version.id,
+          version: this.version,
           tier: rankRangeId,
           duo: duoId,
           criterion,
@@ -244,7 +126,7 @@ export class PSModule {
       } = await axios.get(`https://lol.ps/api/champ/${id}/summary.json`, {
         params: {
           region: 0,
-          version: this.version.id,
+          version: this.version,
           tier: rankRangeId,
           lane: laneId,
         },
@@ -257,7 +139,7 @@ export class PSModule {
       } = await axios.get(`https://lol.ps/api/champ/${id}/spellitem.json`, {
         params: {
           region: 0,
-          version: this.version.id,
+          version: this.version,
           tier: rankRangeId,
           lane: laneId,
         },
@@ -268,7 +150,7 @@ export class PSModule {
       } = await axios.get(`https://lol.ps/api/champ/${id}/skill.json`, {
         params: {
           region: 0,
-          version: this.version.id,
+          version: this.version,
           tier: rankRangeId,
           lane: laneId,
         },
@@ -279,7 +161,7 @@ export class PSModule {
       } = await axios.get(`https://lol.ps/api/champ/${id}/runestatperk.json`, {
         params: {
           region: 0,
-          version: this.version.id,
+          version: this.version,
           tier: rankRangeId,
           lane: laneId,
         },
@@ -292,7 +174,7 @@ export class PSModule {
       } = await axios.get(`https://lol.ps/api/champ/${id}/graphs.json`, {
         params: {
           region: 0,
-          version: this.version.id,
+          version: this.version,
           tier: rankRangeId,
           lane: laneId,
         },
@@ -303,7 +185,7 @@ export class PSModule {
       } = await axios.get(`https://lol.ps/api/champ/${id}/versus.json`, {
         params: {
           region: 0,
-          version: this.version.id,
+          version: this.version,
           tier: rankRangeId,
           lane: laneId,
         },
@@ -337,6 +219,106 @@ export class PSModule {
 
   @initializer()
   async init() {
-    this.version = await getLatestVersion()
+    this.version = await this.getLatestVersion()
+  }
+
+  async getLatestVersion(): Promise<number> {
+    const {
+      data: {
+        data: [latestVersion],
+      },
+    } = await axios.get('https://lol.ps/api/info/active-version.json')
+
+    return latestVersion.versionId
+  }
+
+  async getSummoner(summonerName: string): Promise<PSSummoner | null> {
+    try {
+      const {
+        data: { data },
+      } = await axios.get(
+        `https://lol.ps/api/summoner/${encodeURIComponent(summonerName)}/summary.json?region=kr`,
+      )
+
+      return {
+        summonerId: data.account_id,
+        summonerPsId: data._id,
+        summonerName: data.summoner_name,
+        summonerLevel: data.summoner_level,
+        summonerProfileIconId: data.profile_icon_id,
+        wins: data.wins,
+        losses: data.losses,
+        count: data.count,
+        tier: data.tier,
+        division: getDivision(data.tier, data.rank),
+        lp: data.league_points,
+      }
+    } catch {
+      return null
+    }
+  }
+
+  async getInGame(summonerPsId: string): Promise<PSInGame | null> {
+    try {
+      // return inGameTempData as PSInGame
+
+      const {
+        data: { data },
+      } = await axios.get(`https://lol.ps/api/summoner/${summonerPsId}/spectator.json`, {
+        params: {
+          region: 'kr',
+        },
+      })
+
+      const result: Omit<PSInGame, 'avgRankInfo'> = {
+        blue: {
+          adApRatio: convertPSInGameDataToTeamAdApRatio('blue', data),
+          players: convertPSInGameDataToTeamPlayers('blue', data),
+        },
+        red: {
+          adApRatio: convertPSInGameDataToTeamAdApRatio('red', data),
+          players: convertPSInGameDataToTeamPlayers('red', data),
+        },
+        myTeam: 'red',
+        enemyTeam: 'blue',
+        gameStartTime: data.gameStartTime,
+      }
+
+      // const promises = (['blue', 'red'] as const)
+      //   .map(team => {
+      //     return result[team].players.map(player => {
+      //       return this.getSummoner(player.summonerName)
+      //     })
+      //   })
+      //   .flat()
+
+      // const summoners = await Promise.all(promises)
+
+      // ;(['blue', 'red'] as const).forEach(team => {
+      //   result[team].players.forEach((player, i) => {
+      //     const { promotion } = summoners[i + (team === 'red' ? 5 : 0)]!
+
+      //     console.log(promotion, i + (team === 'red' ? 5 : 0))
+      //     if (promotion) player.promotion = promotion
+      //   })
+      // })
+
+      if (result.blue.players.find(player => player.summonerPsId === summonerPsId)) {
+        result.myTeam = 'blue'
+        result.enemyTeam = 'red'
+      }
+
+      const avgRankInfo = getAvgTier([
+        ...result.blue.players.map(({ tier, division, lp }) => ({ tier, division, lp })),
+        ...result.red.players.map(({ tier, division, lp }) => ({ tier, division, lp })),
+      ])
+
+      return {
+        ...result,
+        avgRankInfo,
+      }
+    } catch {
+      return null
+    }
   }
 }

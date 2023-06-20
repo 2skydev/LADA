@@ -12,4 +12,6 @@ export interface PSInGameTeam extends InGameTeam {
 export interface PSInGamePlayer extends InGamePlayer {
   summonerPsId: string
   psScore: number
+  ganked: number
+  turrets: number
 }

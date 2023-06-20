@@ -1,4 +1,4 @@
-import { Division, Rank, Tier } from '@main/modules/league/types/rank'
+import { Rank } from '@main/modules/league/types/rank'
 
 export interface AdApRatio {
   ad: number
@@ -37,15 +37,25 @@ export interface InGameTeam {
   players: InGamePlayer[]
 }
 
-export interface InGamePlayer {
+export interface InGameRecentMatch {
+  championId: number
+  isWin: boolean
+}
+
+export interface InGamePlayer extends Rank {
   summonerName: string
-  tier: Tier
-  division: Division
-  lp: number
   laneId: number
   championId: number
   championStat: ChampionStat
   seasonStat: SeasonStat
   spellIds: [number, number]
   runes: InGameRunes
+  recentMatches: InGameRecentMatch[]
+  tags?: InGamePlayerTag[]
+}
+
+export interface InGamePlayerTag {
+  color: string
+  label: string
+  tooltip?: string
 }
