@@ -86,8 +86,7 @@ export const InGameInfoStyled = styled.div`
           align-items: center;
           justify-content: space-between;
           padding: 0.5rem 0.8rem;
-          border-top-left-radius: 6px;
-          border-top-right-radius: 6px;
+          border-radius: 6px;
           background-color: ${props => darken(0.03, props.theme.colors.contentBG)};
 
           &.self {

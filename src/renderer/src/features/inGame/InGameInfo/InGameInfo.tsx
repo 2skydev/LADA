@@ -1,7 +1,7 @@
 import { useEffect, useState } from 'react'
 import { useNavigate } from 'react-router-dom'
 
-import { Divider, Space, Tag, Tooltip } from 'antd'
+import { Divider, Space, Tag } from 'antd'
 import clsx from 'clsx'
 import dayjs from 'dayjs'
 import { match, P } from 'ts-pattern'
@@ -42,9 +42,7 @@ const GameTime = ({ gameStartTime }: { gameStartTime: number }) => {
 }
 
 const InGameInfo = ({ className, summonerPsId }: InGameInfoProps) => {
-  const id = summonerPsId || `i4KNrd4vJq_jvabM_Cp-1MH5YL5VwiNlm1iq4kEvZKpFBA`
-  // const { data, isValidating, mutate: reload } = useAPI<PSInGame>('ps', `/in-game/${summonerPsId}`)
-  const { data, isValidating, mutate: reload } = useAPI<PSInGame>('ps', `/in-game/${id}`)
+  const { data, isValidating, mutate: reload } = useAPI<PSInGame>('ps', `/in-game/${summonerPsId}`)
 
   const navigate = useNavigate()
   const summonerSpells = useDataDragonSummonerSpells()
@@ -107,7 +105,9 @@ const InGameInfo = ({ className, summonerPsId }: InGameInfoProps) => {
 
                   return (
                     <div className="item" key={player.summonerPsId}>
-                      <div className={clsx('player', player.summonerPsId === id && 'self')}>
+                      <div
+                        className={clsx('player', player.summonerPsId === summonerPsId && 'self')}
+                      >
                         <div className="playerSummary">
                           <div className="top">
                             <div className="spells">
