@@ -25,13 +25,13 @@ export const SidebarStyled = styled.div`
     .menuGroup {
       padding: 1rem 1.5rem;
 
-      & + .menuGroup {
+      /* & + .menuGroup {
         border-top: 1px solid ${props => props.theme.colors.borderColor};
-      }
+      } */
 
       .title {
         font-size: 0.85rem;
-        margin-bottom: 1.5rem;
+        margin-bottom: 1rem;
         font-weight: bold;
       }
 
