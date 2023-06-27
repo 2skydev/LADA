@@ -14,7 +14,7 @@ export const ContentStyled = styled.div`
     display: flex;
     align-items: center;
     justify-content: space-between;
-    height: 4.5rem;
+    height: 4rem;
 
     .left {
       display: flex;
@@ -26,16 +26,28 @@ export const ContentStyled = styled.div`
         color: ${props => props.theme.colors.textColor2};
       }
 
-      > span {
+      .breadcrumb {
         margin-bottom: -1px;
+        display: flex;
 
-        > span {
-          & + span::before {
-            content: '/';
-            display: inline-block;
-            margin: 0 0.3rem;
-            font-weight: bold;
-            color: ${props => props.theme.colors.textColor2};
+        .divider::before {
+          content: '/';
+          display: inline-block;
+          margin: 0 0.3rem;
+          font-weight: bold;
+          color: ${props => props.theme.colors.textColor2};
+        }
+
+        .item {
+          position: relative;
+          overflow: hidden;
+
+          .hidden {
+            opacity: 0;
+          }
+
+          .text {
+            display: block;
           }
         }
       }
