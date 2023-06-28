@@ -3,7 +3,7 @@
 리그 오브 레전드 전적 검색 및 챔피언 티어, 룬, 아이템 자동설정 등 여러 기능이 있는 데스크탑 앱 입니다.<br />
 해당 프로젝트는 개인 토이 프로젝트로 개발 기간은 마구잡이일 경우가 있습니다.<br />
 
-[최신 릴리즈 LADA 설치 파일 다운로드](https://github.com/2skydev/LADA/releases/download/v0.0.4/LADA-Setup-0.0.4.exe)
+[최신 릴리즈 LADA 설치 파일 다운로드](https://github.com/2skydev/LADA/releases/download/v0.0.10/LADA-Setup-0.0.10.exe)
 
 <br />
 
