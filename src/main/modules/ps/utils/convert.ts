@@ -40,9 +40,9 @@ export const convertPSInGameDataToTeamPlayers = (
     const result: PSInGamePlayer = {
       summonerName,
       summonerPsId,
-      tier,
+      tier: tier ?? 'UNRANKED',
       division,
-      lp,
+      lp: lp ?? 0,
       laneId,
       psScore,
       championId,

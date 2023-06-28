@@ -67,9 +67,16 @@ const InGameInfo = ({ className, summonerPsId }: InGameInfoProps) => {
               <Tag>개인/2인 랭크</Tag>
 
               <Tag>
-                평균 {data.avgRankInfo.tier}{' '}
-                {!NO_DIVISION_TIERS.includes(data.avgRankInfo.tier) && data.avgRankInfo.division}{' '}
-                <span style={{ opacity: 0.6 }}>-</span> {data.avgRankInfo.lp}LP
+                {data.avgRankInfo.tier && (
+                  <>
+                    평균 {data.avgRankInfo.tier}{' '}
+                    {!NO_DIVISION_TIERS.includes(data.avgRankInfo.tier) &&
+                      data.avgRankInfo.division}{' '}
+                    <span style={{ opacity: 0.6 }}>-</span> {data.avgRankInfo.lp}LP
+                  </>
+                )}
+
+                {!data.avgRankInfo.tier && '평균 티어 정보 없음'}
               </Tag>
 
               <Tag>
