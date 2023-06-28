@@ -127,6 +127,10 @@ export class AppModule {
       this.createWindow()
     })
 
+    app.on('window-all-closed', () => {
+      this.window = null
+    })
+
     app.on('second-instance', (_, argv) => {
       if (!this.IS_MAC) {
         const url = argv.find(arg => arg.startsWith(`${this.PROTOCOL}://`))
