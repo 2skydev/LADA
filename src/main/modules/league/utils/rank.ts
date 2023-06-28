@@ -4,13 +4,27 @@ import { Division, Rank } from '@main/modules/league/types/rank'
 export const getAvgTier = (ranks: Rank[]): Rank => {
   let sum = 0
   let lpSum = 0
+  let unRankedCount = 0
 
   ranks.forEach(rank => {
+    if (!rank.tier || !rank.lp) {
+      unRankedCount++
+      return
+    }
+
     let score = TIERS.indexOf(rank.tier) * 4
     score += rank.division ? Math.abs(rank.division - 4) : 0
     sum += score
     lpSum += rank.lp
   })
+
+  if (unRankedCount === ranks.length) {
+    return {
+      tier: 'UNRANKED',
+      division: null,
+      lp: 0,
+    }
+  }
 
   const avgScore = Math.round(sum / ranks.length)
 

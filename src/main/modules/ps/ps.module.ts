@@ -249,9 +249,9 @@ export class PSModule {
         wins: data.wins,
         losses: data.losses,
         count: data.count,
-        tier: data.tier,
+        tier: data.tier ?? 'UNRANKED',
         division: getDivision(data.tier, data.rank),
-        lp: data.league_points,
+        lp: data.league_points ?? 0,
       }
     } catch {
       return null
