@@ -1,6 +1,7 @@
 import { useEffect } from 'react'
 
-import { useRecoilValue, useSetRecoilState } from 'recoil'
+import deepEqual from 'fast-deep-equal'
+import { useRecoilState, useRecoilValue } from 'recoil'
 
 import { championSelectSessionStore } from '@renderer/stores/championSelectSession'
 import { currentSummonerStore } from '@renderer/stores/currentSummoner'
@@ -8,7 +9,9 @@ import { leagueChampSelectLaneStringToLane } from '@renderer/utils/league'
 
 const useChampionSelectSessionListener = () => {
   const currentSummoner = useRecoilValue(currentSummonerStore)
-  const setChampionSelectSession = useSetRecoilState(championSelectSessionStore)
+  const [championSelectSession, setChampionSelectSession] = useRecoilState(
+    championSelectSessionStore,
+  )
 
   useEffect(() => {
     window.electron.subscribeLeague('champ-select/session', data => {
@@ -20,16 +23,22 @@ const useChampionSelectSessionListener = () => {
       const currentChampionId = currentSummonerData?.championId || null
       const currentTempChampionId = currentSummonerData?.championPickIntent || null
 
-      setChampionSelectSession({
+      const newChampionSelectSession = {
         gameId: data.gameId,
         lane: leagueChampSelectLaneStringToLane(currentLane),
         championId: currentChampionId,
         tempChampionId: currentTempChampionId,
-      })
+      }
 
-      console.log('champ-select/session', data, currentLane)
+      if (!deepEqual(newChampionSelectSession, championSelectSession)) {
+        setChampionSelectSession(newChampionSelectSession)
+      }
     })
-  }, [])
+
+    return () => {
+      window.electron.unsubscribeLeague('champ-select/session')
+    }
+  }, [currentSummoner?.id, championSelectSession])
 }
 
 export default useChampionSelectSessionListener
