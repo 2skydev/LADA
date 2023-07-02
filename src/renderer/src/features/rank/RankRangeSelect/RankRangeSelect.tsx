@@ -1,31 +1,33 @@
-import { forwardRef } from 'react'
-
-import { RefSelectProps, Select, SelectProps } from 'antd'
+import { Select } from 'antd'
 import clsx from 'clsx'
+import { useRecoilState } from 'recoil'
+
+import { RANK_RANGE_IDS, RANK_RANGE_ID_TO_LABEL_MAP } from '@main/modules/ps/constants/rank'
+
+import { rankRangeIdAtom } from '@renderer/features/rank/RankRangeSelect/rankRangeId.atom'
 
 import { RankRangeSelectStyled } from './styled'
 
-export interface RankRangeSelectProps extends SelectProps {
+export interface RankRangeSelectProps {
   className?: string
 }
 
-const RankRangeSelect = forwardRef<RefSelectProps, RankRangeSelectProps>(
-  ({ className, ...props }, ref) => {
-    return (
-      <RankRangeSelectStyled className={clsx('RankRangeSelect', className)}>
-        <Select
-          {...props}
-          ref={ref}
-          options={[
-            { value: 2, label: '플레티넘+' },
-            { value: 13, label: '다이아+' },
-            { value: 3, label: '마스터+' },
-            { value: 1, label: '브실골' },
-          ]}
-        />
-      </RankRangeSelectStyled>
-    )
-  },
-)
+/**
+ * 해당 컴포넌트는 전역 상태를 사용합니다.
+ * 자동으로 전역 상태를 업데이트하며 값 접근은 rankRangeIdAtom을 통해 가능합니다.
+ */
+const RankRangeSelect = ({ className }: RankRangeSelectProps) => {
+  const [rankRangeId, setRankRangeId] = useRecoilState(rankRangeIdAtom)
+
+  return (
+    <RankRangeSelectStyled className={clsx('RankRangeSelect', className)}>
+      <Select
+        value={rankRangeId}
+        onChange={value => setRankRangeId(value)}
+        options={RANK_RANGE_IDS.map(id => ({ value: id, label: RANK_RANGE_ID_TO_LABEL_MAP[id] }))}
+      />
+    </RankRangeSelectStyled>
+  )
+}
 
 export default RankRangeSelect

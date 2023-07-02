@@ -4,11 +4,13 @@ import { useNavigate } from 'react-router-dom'
 import { Table, Tooltip } from 'antd'
 import clsx from 'clsx'
 import dayjs from 'dayjs'
+import { useRecoilValue } from 'recoil'
 
 import RankingVariation from '@renderer/components/RankingVariation'
 import ChampionProfileSmall from '@renderer/features/asset/ChampionProfileSmall'
 import LaneSelect from '@renderer/features/lane/LaneSelect'
 import RankRangeSelect from '@renderer/features/rank/RankRangeSelect'
+import { rankRangeIdAtom } from '@renderer/features/rank/RankRangeSelect/rankRangeId.atom'
 import useAPI from '@renderer/hooks/useAPI'
 import { useCustomForm } from '@renderer/hooks/useCustomForm'
 import { useDidUpdateEffect } from '@renderer/hooks/useDidUpdateEffect'
@@ -27,13 +29,12 @@ const TierTable = ({ className }: TierTableProps) => {
   const form = useCustomForm({
     defaultValues: {
       laneId: Number(query.laneId || 0),
-      rankRangeId: 2,
     },
     onSubmit: () => {},
   })
 
   const laneId = form.watch('laneId')
-  const rankRangeId = form.watch('rankRangeId')
+  const rankRangeId = useRecoilValue(rankRangeIdAtom)
 
   const { data = [], isLoading } = useAPI<any[]>('ps', `/tiers/${laneId}`, {
     dedupingInterval: 1000 * 60 * 5,
@@ -74,11 +75,7 @@ const TierTable = ({ className }: TierTableProps) => {
           render={({ field }) => <LaneSelect {...field} />}
         />
 
-        <Controller
-          control={form.control}
-          name="rankRangeId"
-          render={({ field }) => <RankRangeSelect {...field} />}
-        />
+        <RankRangeSelect />
       </div>
 
       <br />

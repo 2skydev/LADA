@@ -6,12 +6,14 @@ import { Input, Table } from 'antd'
 import clsx from 'clsx'
 import { includesByCho, correctByDistance } from 'hangul-util'
 import { debounce } from 'lodash'
+import { useRecoilValue } from 'recoil'
 
 import ChampionProfileSmall from '@renderer/features/asset/ChampionProfileSmall'
 import LaneIcon from '@renderer/features/asset/LaneIcon/LaneIcon'
 import DuoLaneSelect, { DUO_OPTIONS } from '@renderer/features/duo/DuoLaneSelect'
 import { LANE_LABELS } from '@renderer/features/lane/LaneSelect'
 import RankRangeSelect from '@renderer/features/rank/RankRangeSelect'
+import { rankRangeIdAtom } from '@renderer/features/rank/RankRangeSelect/rankRangeId.atom'
 import useAPI from '@renderer/hooks/useAPI'
 import { useCustomForm } from '@renderer/hooks/useCustomForm'
 import useDataDragonChampNames from '@renderer/hooks/useDataDragonChampNames'
@@ -87,7 +89,6 @@ const DuoSynergyTable = ({ className }: DuoSynergyTableProps) => {
   const form = useCustomForm<DuoSynergyForm>({
     defaultValues: {
       duoId: 0,
-      rankRangeId: 2,
       criterion: 'synergyScore',
       order: 'desc',
       championId: null,
@@ -97,11 +98,11 @@ const DuoSynergyTable = ({ className }: DuoSynergyTableProps) => {
   })
 
   const duoId = form.watch('duoId')
-  const rankRangeId = form.watch('rankRangeId')
   const criterion = form.watch('criterion')
   const order = form.watch('order')
   const championId = form.watch('championId')
   const search = form.watch('search')
+  const rankRangeId = useRecoilValue(rankRangeIdAtom)
 
   const { data = [], isLoading: isLoadingAPI } = useAPI<any[]>('ps', `/duo/${duoId}`, {
     dedupingInterval: 1000 * 60 * 5,
@@ -207,11 +208,7 @@ const DuoSynergyTable = ({ className }: DuoSynergyTableProps) => {
           onChange={handleChangeSearch}
         />
 
-        <Controller
-          control={form.control}
-          name="rankRangeId"
-          render={({ field }) => <RankRangeSelect {...field} />}
-        />
+        <RankRangeSelect />
       </div>
 
       <br />
