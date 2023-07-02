@@ -55,6 +55,7 @@ const ChampDetail = ({ className, champId }: ChampDetailProps) => {
   const summonerSpells = useDataDragonSummonerSpells()
 
   const { data, isValidating } = useAPI('ps', `/champ/${champId}`, {
+    dedupingInterval: 1000 * 60 * 5,
     payload: {
       laneId,
       rankRangeId,
