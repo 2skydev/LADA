@@ -73,6 +73,29 @@ const GameSettings = () => {
         </div>
       </Section>
 
+      <Section
+        title="챔피언 정보 - 배치된 포지션 우선"
+        description={
+          <div>
+            챔피언 선택 시 보여주는 정보를 현재 배치된 포지션 우선으로 표시됩니다.
+            <br />이 설정을 비활성화하면 챔피언 선택 시 해당 챔피언의 주 포지션으로 표시됩니다.
+          </div>
+        }
+      >
+        <Controller
+          name="useCurrentPositionChampionData"
+          control={form.control}
+          render={({ field }) => (
+            <Switch
+              checked={field.value}
+              onChange={checked => field.onChange(checked)}
+              checkedChildren={<i className="bx bx-check" />}
+              unCheckedChildren={<i className="bx bx-x" />}
+            />
+          )}
+        />
+      </Section>
+
       <SaveButton defaultValues={config.game} form={form} />
     </SettingsPageStyled>
   )
