@@ -1,10 +1,10 @@
 import { atom } from 'recoil'
 
-import { Lane } from '@renderer/types/league'
+import { LaneId } from '@main/modules/league/types/lane'
 
 export interface ChampionSelectSessionStoreValues {
   gameId: string
-  lane: Lane | null
+  laneId: LaneId | null
   championId: number | null
   tempChampionId: number | null
 }

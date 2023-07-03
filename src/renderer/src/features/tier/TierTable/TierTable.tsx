@@ -4,11 +4,16 @@ import { useNavigate } from 'react-router-dom'
 import { Table, Tooltip } from 'antd'
 import clsx from 'clsx'
 import dayjs from 'dayjs'
+import { useRecoilState, useRecoilValue } from 'recoil'
+
+import { LaneId } from '@main/modules/league/types/lane'
 
 import RankingVariation from '@renderer/components/RankingVariation'
 import ChampionProfileSmall from '@renderer/features/asset/ChampionProfileSmall'
 import LaneSelect from '@renderer/features/lane/LaneSelect'
 import RankRangeSelect from '@renderer/features/rank/RankRangeSelect'
+import { rankRangeIdAtom } from '@renderer/features/rank/RankRangeSelect/rankRangeId.atom'
+import { tierTableLaneIdAtom } from '@renderer/features/tier/TierTable/tierTableLaneId.atom'
 import useAPI from '@renderer/hooks/useAPI'
 import { useCustomForm } from '@renderer/hooks/useCustomForm'
 import { useDidUpdateEffect } from '@renderer/hooks/useDidUpdateEffect'
@@ -23,17 +28,17 @@ export interface TierTableProps {
 const TierTable = ({ className }: TierTableProps) => {
   const navigate = useNavigate()
   const query = useQS<{ laneId?: string }>()
+  const [tierTableLaneId, setTierTableLaneIdId] = useRecoilState(tierTableLaneIdAtom)
 
   const form = useCustomForm({
     defaultValues: {
-      laneId: Number(query.laneId || 0),
-      rankRangeId: 2,
+      laneId: Number(query.laneId || tierTableLaneId) as LaneId,
     },
     onSubmit: () => {},
   })
 
   const laneId = form.watch('laneId')
-  const rankRangeId = form.watch('rankRangeId')
+  const rankRangeId = useRecoilValue(rankRangeIdAtom)
 
   const { data = [], isLoading } = useAPI<any[]>('ps', `/tiers/${laneId}`, {
     dedupingInterval: 1000 * 60 * 5,
@@ -46,9 +51,13 @@ const TierTable = ({ className }: TierTableProps) => {
 
   useDidUpdateEffect(() => {
     if (query.laneId) {
-      form.setValue('laneId', Number(query.laneId))
+      form.setValue('laneId', Number(query.laneId) as LaneId)
     }
   }, [query.laneId])
+
+  useDidUpdateEffect(() => {
+    setTierTableLaneIdId(laneId)
+  }, [laneId])
 
   return (
     <TierTableStyled className={clsx('TierTable', className)}>
@@ -74,11 +83,7 @@ const TierTable = ({ className }: TierTableProps) => {
           render={({ field }) => <LaneSelect {...field} />}
         />
 
-        <Controller
-          control={form.control}
-          name="rankRangeId"
-          render={({ field }) => <RankRangeSelect {...field} />}
-        />
+        <RankRangeSelect />
       </div>
 
       <br />
