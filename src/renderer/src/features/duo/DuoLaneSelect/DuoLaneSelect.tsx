@@ -3,8 +3,9 @@ import { forwardRef } from 'react'
 import { Radio, RadioGroupProps } from 'antd'
 import clsx from 'clsx'
 
+import { LANE_ID_ENUM } from '@main/modules/league/types/lane'
+
 import LaneIcon from '@renderer/features/asset/LaneIcon'
-import { LANE_ID } from '@renderer/types/league'
 
 import { DuoLaneSelectStyled } from './styled'
 
@@ -12,11 +13,13 @@ export interface DuoLaneSelectProps extends RadioGroupProps {
   className?: string
 }
 
-export const DUO_OPTIONS: [LANE_ID, LANE_ID, string][] = [
-  [LANE_ID.adc, LANE_ID.sup, '바텀'],
-  [LANE_ID.mid, LANE_ID.jg, '미드 & 정글'],
-  [LANE_ID.top, LANE_ID.jg, '탑 & 정글'],
-  [LANE_ID.jg, LANE_ID.sup, '정글 & 서폿'],
+export type DuoId = 0 | 1 | 2 | 3
+
+export const DUO_OPTIONS: [LANE_ID_ENUM, LANE_ID_ENUM, string][] = [
+  [LANE_ID_ENUM.adc, LANE_ID_ENUM.sup, '바텀'],
+  [LANE_ID_ENUM.mid, LANE_ID_ENUM.jg, '미드 & 정글'],
+  [LANE_ID_ENUM.top, LANE_ID_ENUM.jg, '탑 & 정글'],
+  [LANE_ID_ENUM.jg, LANE_ID_ENUM.sup, '정글 & 서폿'],
 ]
 
 const DuoLaneSelect = forwardRef<HTMLDivElement, DuoLaneSelectProps>(

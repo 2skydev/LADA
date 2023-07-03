@@ -5,7 +5,6 @@ import { useRecoilValue } from 'recoil'
 
 import { championSelectSessionStore } from '@renderer/stores/championSelectSession'
 import { configStore } from '@renderer/stores/config'
-import { LANE_ID } from '@renderer/types/league'
 
 const useChampionDetailPageAutoNavigate = () => {
   const navigate = useNavigate()
@@ -20,8 +19,8 @@ const useChampionDetailPageAutoNavigate = () => {
   useEffect(() => {
     if (championId) {
       navigate(
-        data.lane && useCurrentPositionChampionData
-          ? `/champ/${championId}?laneId=${LANE_ID[data.lane]}`
+        data.laneId && useCurrentPositionChampionData
+          ? `/champ/${championId}?laneId=${data.laneId}`
           : `/champ/${championId}`,
       )
     }

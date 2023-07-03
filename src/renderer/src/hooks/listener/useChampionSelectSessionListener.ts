@@ -3,9 +3,10 @@ import { useEffect } from 'react'
 import deepEqual from 'fast-deep-equal'
 import { useRecoilState, useRecoilValue } from 'recoil'
 
+import { leagueChampSelectLaneStringToLaneId } from '@main/modules/league/utils/lane'
+
 import { championSelectSessionStore } from '@renderer/stores/championSelectSession'
 import { currentSummonerStore } from '@renderer/stores/currentSummoner'
-import { leagueChampSelectLaneStringToLane } from '@renderer/utils/league'
 
 const useChampionSelectSessionListener = () => {
   const currentSummoner = useRecoilValue(currentSummonerStore)
@@ -25,7 +26,7 @@ const useChampionSelectSessionListener = () => {
 
       const newChampionSelectSession = {
         gameId: data.gameId,
-        lane: leagueChampSelectLaneStringToLane(currentLane),
+        laneId: leagueChampSelectLaneStringToLaneId(currentLane),
         championId: currentChampionId,
         tempChampionId: currentTempChampionId,
       }

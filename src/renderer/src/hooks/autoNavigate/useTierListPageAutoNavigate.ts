@@ -4,7 +4,6 @@ import { useNavigate } from 'react-router-dom'
 import { useRecoilValue } from 'recoil'
 
 import { championSelectSessionStore } from '@renderer/stores/championSelectSession'
-import { LANE_ID } from '@renderer/types/league'
 
 const useTierListPageAutoNavigate = () => {
   const navigate = useNavigate()
@@ -15,7 +14,7 @@ const useTierListPageAutoNavigate = () => {
   useEffect(() => {
     if (data && prevGameId !== data.gameId) {
       setPrevGameId(data.gameId)
-      navigate(data.lane ? `/?laneId=${LANE_ID[data.lane]}` : '/')
+      navigate(data.laneId ? `/?laneId=${data.laneId}` : '/')
     }
   }, [data])
 }

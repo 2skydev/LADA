@@ -5,10 +5,11 @@ import clsx from 'clsx'
 import { motion, LayoutGroup, AnimatePresence } from 'framer-motion'
 import { useRecoilValue } from 'recoil'
 
+import { LANE_ID_ENUM } from '@main/modules/league/types/lane'
+
 import logoImage from '@renderer/assets/images/logo@256.png'
 import LaneIcon from '@renderer/features/asset/LaneIcon'
 import { configStore } from '@renderer/stores/config'
-import { LANE_ID } from '@renderer/types/league'
 
 import { SidebarStyled } from './styled'
 
@@ -38,7 +39,7 @@ const Sidebar = ({ className }: SidebarProps) => {
         title: '통계',
         items: [
           {
-            icon: <LaneIcon laneId={LANE_ID.top} />,
+            icon: <LaneIcon laneId={LANE_ID_ENUM.top} />,
             link: '/',
             text: '챔피언 티어',
             isActiveFn: (pathname: string) => pathname === '/' || pathname.includes('/champ/'),
