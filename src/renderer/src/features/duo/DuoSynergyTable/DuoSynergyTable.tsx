@@ -6,16 +6,21 @@ import { Input, Table } from 'antd'
 import clsx from 'clsx'
 import { includesByCho, correctByDistance } from 'hangul-util'
 import { debounce } from 'lodash'
+import { useRecoilState, useRecoilValue } from 'recoil'
+
+import { LaneId } from '@main/modules/league/types/lane'
 
 import ChampionProfileSmall from '@renderer/features/asset/ChampionProfileSmall'
 import LaneIcon from '@renderer/features/asset/LaneIcon/LaneIcon'
-import DuoLaneSelect, { DUO_OPTIONS } from '@renderer/features/duo/DuoLaneSelect'
+import DuoLaneSelect, { DUO_OPTIONS, DuoId } from '@renderer/features/duo/DuoLaneSelect'
+import { duoSynergyTableDuoIdAtom } from '@renderer/features/duo/DuoSynergyTable/duoSynergyTableDuoId.atom'
 import { LANE_LABELS } from '@renderer/features/lane/LaneSelect'
 import RankRangeSelect from '@renderer/features/rank/RankRangeSelect'
+import { rankRangeIdAtom } from '@renderer/features/rank/RankRangeSelect/rankRangeId.atom'
 import useAPI from '@renderer/hooks/useAPI'
 import { useCustomForm } from '@renderer/hooks/useCustomForm'
 import useDataDragonChampNames from '@renderer/hooks/useDataDragonChampNames'
-import { LANE_ID } from '@renderer/types/league'
+import { useDidUpdateEffect } from '@renderer/hooks/useDidUpdateEffect'
 
 import {
   DuoSynergyTableChampProfileStyled,
@@ -68,7 +73,7 @@ export interface DuoSynergyItem {
 }
 
 export interface DuoSynergyForm {
-  duoId: number
+  duoId: DuoId
   rankRangeId: number
   criterion: string
   order: string
@@ -84,10 +89,11 @@ export interface FilteredChampItem {
 }
 
 const DuoSynergyTable = ({ className }: DuoSynergyTableProps) => {
+  const [duoSynergyTableDuoId, setDuoSynergyTableDuoId] = useRecoilState(duoSynergyTableDuoIdAtom)
+
   const form = useCustomForm<DuoSynergyForm>({
     defaultValues: {
-      duoId: 0,
-      rankRangeId: 2,
+      duoId: duoSynergyTableDuoId,
       criterion: 'synergyScore',
       order: 'desc',
       championId: null,
@@ -97,11 +103,11 @@ const DuoSynergyTable = ({ className }: DuoSynergyTableProps) => {
   })
 
   const duoId = form.watch('duoId')
-  const rankRangeId = form.watch('rankRangeId')
   const criterion = form.watch('criterion')
   const order = form.watch('order')
   const championId = form.watch('championId')
   const search = form.watch('search')
+  const rankRangeId = useRecoilValue(rankRangeIdAtom)
 
   const { data = [], isLoading: isLoadingAPI } = useAPI<any[]>('ps', `/duo/${duoId}`, {
     dedupingInterval: 1000 * 60 * 5,
@@ -145,6 +151,10 @@ const DuoSynergyTable = ({ className }: DuoSynergyTableProps) => {
     }, 200),
     [],
   )
+
+  useDidUpdateEffect(() => {
+    setDuoSynergyTableDuoId(duoId)
+  }, [duoId])
 
   useEffect(() => {
     const filteredChamps =
@@ -207,11 +217,7 @@ const DuoSynergyTable = ({ className }: DuoSynergyTableProps) => {
           onChange={handleChangeSearch}
         />
 
-        <Controller
-          control={form.control}
-          name="rankRangeId"
-          render={({ field }) => <RankRangeSelect {...field} />}
-        />
+        <RankRangeSelect />
       </div>
 
       <br />
@@ -322,7 +328,7 @@ export const DuoSynergyTableChampProfile = ({
   )
 }
 
-export const DuoSynergyTableLaneTitle = ({ laneId }: { laneId: LANE_ID }) => {
+export const DuoSynergyTableLaneTitle = ({ laneId }: { laneId: LaneId }) => {
   return (
     <DuoSynergyTableLaneTitleStyled>
       <LaneIcon laneId={laneId} /> {LANE_LABELS[laneId]} 승률

@@ -51,4 +51,8 @@ export class MigrationModule {
       await ladaAutoLauncher.enable()
     }
   }
+
+  async 'v0.0.11'() {
+    configStore.set('game.useCurrentPositionChampionData', true)
+  }
 }

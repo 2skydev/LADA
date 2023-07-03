@@ -5,7 +5,7 @@ import { useRecoilValue } from 'recoil'
 
 import { appStateStore } from '@renderer/stores/app'
 
-const useAutoNavigateToInGamePage = () => {
+const useInGamePageAutoNavigate = () => {
   const navigate = useNavigate()
 
   const { leagueIsInGame } = useRecoilValue(appStateStore)
@@ -17,4 +17,4 @@ const useAutoNavigateToInGamePage = () => {
   }, [leagueIsInGame])
 }
 
-export default useAutoNavigateToInGamePage
+export default useInGamePageAutoNavigate

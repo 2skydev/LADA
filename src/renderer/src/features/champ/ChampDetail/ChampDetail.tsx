@@ -5,6 +5,7 @@ import { useLocation } from 'react-router-dom'
 import clsx from 'clsx'
 import { motion } from 'framer-motion'
 import QueryString from 'qs'
+import { useRecoilValue } from 'recoil'
 
 import LoadingIcon from '@renderer/components/LoadingIcon'
 import DataDragonImage from '@renderer/features/asset/DataDragonImage'
@@ -12,6 +13,7 @@ import TierIcon, { HoneyIcon, OpIcon } from '@renderer/features/asset/TierIcon'
 import ItemBuilds from '@renderer/features/item/ItemBuilds'
 import LaneSelect from '@renderer/features/lane/LaneSelect'
 import RankRangeSelect from '@renderer/features/rank/RankRangeSelect'
+import { rankRangeIdAtom } from '@renderer/features/rank/RankRangeSelect/rankRangeId.atom'
 import RunePage from '@renderer/features/rune/RunePage'
 import RuneStyleButtonRadioList from '@renderer/features/rune/RuneStyleButtonRadioList'
 import useAPI from '@renderer/hooks/useAPI'
@@ -41,20 +43,20 @@ const ChampDetail = ({ className, champId }: ChampDetailProps) => {
   const form = useCustomForm({
     defaultValues: {
       laneId: defaultLaneId ? Number(defaultLaneId) : null,
-      rankRangeId: 2,
       runeStyleId: 0,
     },
     onSubmit: () => {},
   })
 
   const laneId = form.watch('laneId')
-  const rankRangeId = form.watch('rankRangeId')
   const selectedRuneStyleId = form.watch('runeStyleId')
+  const rankRangeId = useRecoilValue(rankRangeIdAtom)
 
   const champNames = useDataDragonChampNames()
   const summonerSpells = useDataDragonSummonerSpells()
 
   const { data, isValidating } = useAPI('ps', `/champ/${champId}`, {
+    dedupingInterval: 1000 * 60 * 5,
     payload: {
       laneId,
       rankRangeId,
@@ -113,11 +115,7 @@ const ChampDetail = ({ className, champId }: ChampDetailProps) => {
               )}
             />
 
-            <Controller
-              control={form.control}
-              name="rankRangeId"
-              render={({ field }) => <RankRangeSelect {...field} />}
-            />
+            <RankRangeSelect />
           </div>
 
           <section className="summary">

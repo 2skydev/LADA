@@ -1,5 +1,5 @@
 import { initializer, singleton } from '@launchtray/tsyringe-async'
-import axios from 'axios'
+import axios, { AxiosResponse } from 'axios'
 import * as cheerio from 'cheerio'
 
 import { getAvgTier } from '@main/modules/league/utils/rank'
@@ -121,75 +121,86 @@ export class PSModule {
       laneId = Number(laneId)
       rankRangeId = Number(rankRangeId)
 
-      const {
-        data: { data: summary },
-      } = await axios.get(`https://lol.ps/api/champ/${id}/summary.json`, {
-        params: {
-          region: 0,
-          version: this.version,
-          tier: rankRangeId,
-          lane: laneId,
-        },
-      })
+      let promises: Promise<AxiosResponse<any>>[] = [
+        axios.get(`https://lol.ps/api/champ/${id}/summary.json`, {
+          params: {
+            region: 0,
+            version: this.version,
+            tier: rankRangeId,
+            lane: laneId,
+          },
+        }),
 
-      const {
-        data: {
-          data: { itemWinrates: item, spellWinrates: spell },
-        },
-      } = await axios.get(`https://lol.ps/api/champ/${id}/spellitem.json`, {
-        params: {
-          region: 0,
-          version: this.version,
-          tier: rankRangeId,
-          lane: laneId,
-        },
-      })
+        axios.get(`https://lol.ps/api/champ/${id}/spellitem.json`, {
+          params: {
+            region: 0,
+            version: this.version,
+            tier: rankRangeId,
+            lane: laneId,
+          },
+        }),
 
-      const {
-        data: { data: skill },
-      } = await axios.get(`https://lol.ps/api/champ/${id}/skill.json`, {
-        params: {
-          region: 0,
-          version: this.version,
-          tier: rankRangeId,
-          lane: laneId,
-        },
-      })
+        axios.get(`https://lol.ps/api/champ/${id}/skill.json`, {
+          params: {
+            region: 0,
+            version: this.version,
+            tier: rankRangeId,
+            lane: laneId,
+          },
+        }),
 
-      const {
-        data: { data: runestatperk },
-      } = await axios.get(`https://lol.ps/api/champ/${id}/runestatperk.json`, {
-        params: {
-          region: 0,
-          version: this.version,
-          tier: rankRangeId,
-          lane: laneId,
-        },
-      })
+        axios.get(`https://lol.ps/api/champ/${id}/runestatperk.json`, {
+          params: {
+            region: 0,
+            version: this.version,
+            tier: rankRangeId,
+            lane: laneId,
+          },
+        }),
 
-      const {
-        data: {
-          data: { timelineWinrates },
-        },
-      } = await axios.get(`https://lol.ps/api/champ/${id}/graphs.json`, {
-        params: {
-          region: 0,
-          version: this.version,
-          tier: rankRangeId,
-          lane: laneId,
-        },
-      })
+        axios.get(`https://lol.ps/api/champ/${id}/graphs.json`, {
+          params: {
+            region: 0,
+            version: this.version,
+            tier: rankRangeId,
+            lane: laneId,
+          },
+        }),
 
-      const {
-        data: { data: versus },
-      } = await axios.get(`https://lol.ps/api/champ/${id}/versus.json`, {
-        params: {
-          region: 0,
-          version: this.version,
-          tier: rankRangeId,
-          lane: laneId,
+        axios.get(`https://lol.ps/api/champ/${id}/versus.json`, {
+          params: {
+            region: 0,
+            version: this.version,
+            tier: rankRangeId,
+            lane: laneId,
+          },
+        }),
+      ]
+
+      const [
+        {
+          data: { data: summary },
         },
-      })
+        {
+          data: {
+            data: { itemWinrates: item, spellWinrates: spell },
+          },
+        },
+        {
+          data: { data: skill },
+        },
+        {
+          data: { data: runestatperk },
+        },
+        {
+          data: {
+            data: { timelineWinrates },
+          },
+        },
+        {
+          data: { data: versus },
+        },
+      ] = await Promise.all(promises)
 
       const counterChampionIdList = JSON.parse(versus.counterChampionIdList)
       const counterWinrateList = JSON.parse(versus.counterWinrateList)
@@ -260,8 +271,6 @@ export class PSModule {
 
   async getInGame(summonerPsId: string): Promise<PSInGame | null> {
     try {
-      // return inGameTempData as PSInGame
-
       const {
         data: { data },
       } = await axios.get(`https://lol.ps/api/summoner/${summonerPsId}/spectator.json`, {

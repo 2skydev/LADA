@@ -14,6 +14,7 @@ export interface ConfigStoreValues {
   game: {
     autoAccept: boolean
     autoAcceptDelaySeconds: number
+    useCurrentPositionChampionData: boolean
   }
 }
 
@@ -29,6 +30,7 @@ export const configStore = new Store<ConfigStoreValues>({
     game: {
       autoAccept: false,
       autoAcceptDelaySeconds: 0,
+      useCurrentPositionChampionData: true,
     },
   },
 })
