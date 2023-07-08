@@ -55,6 +55,11 @@ const Sidebar = ({ className }: SidebarProps) => {
         title: '라이브 게임',
         items: [
           {
+            icon: 'bx-user-check',
+            link: '/live/champion-select',
+            text: '챔피언 선택',
+          },
+          {
             icon: 'bx-search-alt',
             link: '/live/in-game',
             text: '인게임 정보',
