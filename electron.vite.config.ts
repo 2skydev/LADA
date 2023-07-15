@@ -1,6 +1,7 @@
 import { defineConfig, externalizeDepsPlugin, swcPlugin } from 'electron-vite'
 
 import react from '@vitejs/plugin-react'
+import jotaiReactRefresh from 'jotai/babel/plugin-react-refresh'
 import { resolve } from 'path'
 
 export default defineConfig({
@@ -19,7 +20,13 @@ export default defineConfig({
     plugins: [externalizeDepsPlugin()],
   },
   renderer: {
-    plugins: [react()],
+    plugins: [
+      react({
+        babel: {
+          plugins: [jotaiReactRefresh],
+        },
+      }),
+    ],
     resolve: {
       alias: {
         '@main': resolve('src/main'),
