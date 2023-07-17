@@ -1,3 +1,4 @@
+import { useEffect } from 'react'
 import { Controller } from 'react-hook-form'
 import { useNavigate } from 'react-router-dom'
 
@@ -55,7 +56,7 @@ const TierTable = ({ className }: TierTableProps) => {
     }
   }, [query.laneId])
 
-  useDidUpdateEffect(() => {
+  useEffect(() => {
     setTierTableLaneIdId(laneId)
   }, [laneId])
 

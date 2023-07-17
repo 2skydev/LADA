@@ -41,19 +41,9 @@ export class PSModule {
     this.server.add('/summoner-ps-id/:summonerName', async ({ params }) => {
       const { summonerName } = params
 
-      const { data: html } = await axios.get(`https://lol.ps/summoner/${summonerName}`)
-      const $ = cheerio.load(html)
+      const summoner = await this.getSummoner(summonerName)
 
-      const [
-        ,
-        ,
-        ,
-        {
-          data: { summary },
-        },
-      ] = JSON.parse($('script[sveltekit\\:data-type="server_data"]').text())
-
-      return summary._id
+      return summoner?.summonerPsId ?? null
     })
 
     this.server.add('/summoners', async ({ payload }) => {

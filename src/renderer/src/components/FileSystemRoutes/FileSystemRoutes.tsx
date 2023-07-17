@@ -1,6 +1,8 @@
 import { Fragment } from 'react'
 import { RouteObject, RouterProvider, createHashRouter } from 'react-router-dom'
 
+import ErrorFallback from '@renderer/components/ErrorFallback/ErrorFallback'
+
 type Element = () => JSX.Element
 
 interface Module {
@@ -25,6 +27,7 @@ const router = createHashRouter([
   {
     path: '/',
     element: <App />,
+    errorElement: <ErrorFallback />,
     children: Object.keys(ROUTES).reduce<RouteObject[]>(
       (routes, key) => {
         const module = ROUTES[key]
