@@ -1,9 +1,4 @@
-import { useMemo } from 'react'
 import { Outlet, useLocation } from 'react-router-dom'
-
-import { ConfigProvider, GlobalToken, theme } from 'antd'
-import antdLocaleKR from 'antd/locale/ko_KR'
-import { ThemeProvider } from 'styled-components'
 
 import Layout from '@renderer/components/Layout'
 import Titlebar from '@renderer/components/Titlebar'
@@ -17,41 +12,11 @@ import useChampionSelectSessionListener from '@renderer/hooks/listener/useChampi
 import useCurrentSummonerListener from '@renderer/hooks/listener/useCurrentSummonerListener'
 import { useUpdateContentModal } from '@renderer/hooks/useUpdateContentModal'
 import { InitGlobalStyled } from '@renderer/styles/init'
-import { antdTheme, colors, sizes } from '@renderer/styles/themes'
-
-type Sizes = typeof sizes
-type Colors = typeof colors
-
-declare module 'styled-components' {
-  export interface DefaultTheme {
-    sizes: Sizes
-    colors: Colors
-    token: GlobalToken
-  }
-}
-
-const App = () => {
-  return (
-    <ConfigProvider theme={antdTheme} locale={antdLocaleKR}>
-      <AppInner />
-    </ConfigProvider>
-  )
-}
 
 const noLayoutPaths = [/\/windows\/.+/, /\/overlays\/.+/]
 
-const AppInner = () => {
+const App = () => {
   const { pathname } = useLocation()
-  const antdToken = theme.useToken()
-
-  const styledTheme = useMemo(
-    () => ({
-      sizes: sizes,
-      colors: colors,
-      token: antdToken.token,
-    }),
-    [],
-  )
 
   const isNoLayout = noLayoutPaths.some(path => path.test(pathname))
 
@@ -69,7 +34,7 @@ const AppInner = () => {
   useChampionDetailPageAutoNavigate()
 
   return (
-    <ThemeProvider theme={styledTheme}>
+    <>
       <InitGlobalStyled />
 
       {isNoLayout && <Outlet />}
@@ -85,7 +50,7 @@ const AppInner = () => {
           </Layout>
         </div>
       )}
-    </ThemeProvider>
+    </>
   )
 }
 
