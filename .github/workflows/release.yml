@@ -1,4 +1,4 @@
-name: Release Drafter
+name: App build & release drafter
 
 on:
   push:
@@ -68,6 +68,16 @@ jobs:
         with:
           node-version: 18
           cache: 'yarn'
+
+      - name: Generate environment variables file
+        run: |
+          echo "SENTRY_AUTH_TOKEN=$SENTRY_AUTH_TOKEN" >> .env
+          echo "MAIN_VITE_SENTRY_DSN=$MAIN_VITE_SENTRY_DSN" >> .env
+          echo "RENDERER_VITE_SENTRY_DSN=$RENDERER_VITE_SENTRY_DSN" >> .env
+        env:
+          SENTRY_AUTH_TOKEN: ${{ secrets.SENTRY_AUTH_TOKEN }}
+          MAIN_VITE_SENTRY_DSN: ${{ vars.MAIN_VITE_SENTRY_DSN }}
+          RENDERER_VITE_SENTRY_DSN: ${{ vars.RENDERER_VITE_SENTRY_DSN }}
 
       - name: Install dependencies
         run: yarn
