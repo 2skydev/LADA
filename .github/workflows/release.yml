@@ -71,13 +71,9 @@ jobs:
 
       - name: Generate environment variables file
         run: |
-          echo "SENTRY_AUTH_TOKEN=$SENTRY_AUTH_TOKEN" >> .env
-          echo "MAIN_VITE_SENTRY_DSN=$MAIN_VITE_SENTRY_DSN" >> .env
-          echo "RENDERER_VITE_SENTRY_DSN=$RENDERER_VITE_SENTRY_DSN" >> .env
-        env:
-          SENTRY_AUTH_TOKEN: ${{ secrets.SENTRY_AUTH_TOKEN }}
-          MAIN_VITE_SENTRY_DSN: ${{ vars.MAIN_VITE_SENTRY_DSN }}
-          RENDERER_VITE_SENTRY_DSN: ${{ vars.RENDERER_VITE_SENTRY_DSN }}
+          echo "SENTRY_AUTH_TOKEN=${{ secrets.SENTRY_AUTH_TOKEN }}" >> .env
+          echo "MAIN_VITE_SENTRY_DSN=${{ vars.MAIN_VITE_SENTRY_DSN }}" >> .env
+          echo "RENDERER_VITE_SENTRY_DSN=${{ vars.RENDERER_VITE_SENTRY_DSN }}" >> .env
 
       - name: Install dependencies
         run: yarn
