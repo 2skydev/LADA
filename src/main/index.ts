@@ -1,6 +1,7 @@
 import 'reflect-metadata'
 
 import { container } from '@launchtray/tsyringe-async'
+import * as Sentry from '@sentry/electron/main'
 
 import { AppFactory } from '@main/core/factory'
 import { AppModule } from '@main/modules/app/app.module'
@@ -11,6 +12,9 @@ import { MigrationModule } from '@main/modules/migration/migration.module'
 import { PSModule } from '@main/modules/ps/ps.module'
 import { UpdateModule } from '@main/modules/update/update.module'
 
+Sentry.init({
+  dsn: import.meta.env.MAIN_VITE_SENTRY_DSN,
+})
 ;(async () => {
   const appModule = await AppFactory.create(AppModule, [
     MigrationModule,
