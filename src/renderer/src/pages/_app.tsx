@@ -1,5 +1,7 @@
 import { Outlet, useLocation } from 'react-router-dom'
 
+import { withProfiler } from '@sentry/react'
+
 import Layout from '@renderer/components/Layout'
 import Titlebar from '@renderer/components/Titlebar'
 import NeedUpdateLaterNotification from '@renderer/features/update/NeedUpdateLaterNotification'
@@ -54,4 +56,4 @@ const App = () => {
   )
 }
 
-export default App
+export default withProfiler(App)

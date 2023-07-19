@@ -1,5 +1,7 @@
 import 'reflect-metadata'
 
+import { app } from 'electron'
+
 import { container } from '@launchtray/tsyringe-async'
 import * as Sentry from '@sentry/electron/main'
 
@@ -14,7 +16,9 @@ import { UpdateModule } from '@main/modules/update/update.module'
 
 Sentry.init({
   dsn: import.meta.env.MAIN_VITE_SENTRY_DSN,
+  release: app.getVersion(),
 })
+
 ;(async () => {
   const appModule = await AppFactory.create(AppModule, [
     MigrationModule,

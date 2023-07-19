@@ -4,6 +4,8 @@ import { sentryVitePlugin } from '@sentry/vite-plugin'
 import react from '@vitejs/plugin-react'
 import { resolve } from 'path'
 
+import { version } from './package.json'
+
 export default defineConfig(({ mode }) => {
   const isDev = mode === 'development'
   const env = loadEnv(mode, process.cwd(), '')
@@ -15,6 +17,9 @@ export default defineConfig(({ mode }) => {
           org: '2skydev',
           project: 'lada',
           authToken: env.SENTRY_AUTH_TOKEN,
+          release: {
+            name: version,
+          },
         }),
       ]
 

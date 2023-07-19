@@ -41,7 +41,10 @@ export const SectionStyled = styled.div`
 
   .sectionButton {
     display: block;
-    margin-top: 1rem;
     width: 20rem;
+  }
+
+  * + .sectionButton {
+    margin-top: 1rem;
   }
 `

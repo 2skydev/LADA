@@ -1,6 +1,8 @@
 import { Fragment } from 'react'
 import { RouteObject, RouterProvider, createHashRouter } from 'react-router-dom'
 
+import { wrapCreateBrowserRouter } from '@sentry/react'
+
 import ErrorFallback from '@renderer/components/ErrorFallback/ErrorFallback'
 
 type Element = () => JSX.Element
@@ -23,7 +25,7 @@ const preservedRoutes: Partial<Record<string, Element>> = Object.keys(PRESERVED)
 const App = preservedRoutes?.['_app'] || Fragment
 const NotFound = preservedRoutes?.['404'] || Fragment
 
-const router = createHashRouter([
+const router = wrapCreateBrowserRouter(createHashRouter)([
   {
     path: '/',
     element: <App />,

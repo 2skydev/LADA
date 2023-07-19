@@ -28,6 +28,10 @@ const SettingsDevelopers = () => {
     mutate()
   }
 
+  const createError = () => {
+    throw new Error('create by developer')
+  }
+
   useEffect(() => {
     if (data && dayjs().diff(dayjs(data.time), 'minute') >= RELOAD_MINUTE) {
       mutate()
@@ -78,6 +82,15 @@ const SettingsDevelopers = () => {
 
       <Section title="Store Path" description={<div>설정 및 데이터가 저장되는 경로입니다.</div>}>
         <mark className="selectable">{data?.storePath}</mark>
+      </Section>
+
+      <Section
+        title="Create Error"
+        description={<div>디버깅을 위해 고의적인 에러를 발생시킵니다.</div>}
+      >
+        <Button danger className="sectionButton" onClick={createError}>
+          에러 실행
+        </Button>
       </Section>
 
       <Section
