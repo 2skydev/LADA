@@ -2,6 +2,7 @@ import { defineConfig, externalizeDepsPlugin, loadEnv, swcPlugin } from 'electro
 
 import { sentryVitePlugin } from '@sentry/vite-plugin'
 import react from '@vitejs/plugin-react'
+import jotaiReactRefresh from 'jotai/babel/plugin-react-refresh'
 import { resolve } from 'path'
 
 export default defineConfig(({ mode }) => {
@@ -35,7 +36,14 @@ export default defineConfig(({ mode }) => {
       plugins: [externalizeDepsPlugin()],
     },
     renderer: {
-      plugins: [react(), ...sentryVitePluginArray],
+      plugins: [
+        react({
+          babel: {
+            plugins: [jotaiReactRefresh],
+          },
+        }),
+        ...sentryVitePluginArray,
+      ],
       resolve: {
         alias: {
           '@main': resolve('src/main'),

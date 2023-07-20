@@ -5,7 +5,7 @@ import { useNavigate } from 'react-router-dom'
 import { Table, Tooltip } from 'antd'
 import clsx from 'clsx'
 import dayjs from 'dayjs'
-import { useRecoilState, useRecoilValue } from 'recoil'
+import { useAtom, useAtomValue } from 'jotai'
 
 import { LaneId } from '@main/modules/league/types/lane'
 
@@ -29,7 +29,7 @@ export interface TierTableProps {
 const TierTable = ({ className }: TierTableProps) => {
   const navigate = useNavigate()
   const query = useQS<{ laneId?: string }>()
-  const [tierTableLaneId, setTierTableLaneIdId] = useRecoilState(tierTableLaneIdAtom)
+  const [tierTableLaneId, setTierTableLaneIdId] = useAtom(tierTableLaneIdAtom)
 
   const form = useCustomForm({
     defaultValues: {
@@ -39,7 +39,7 @@ const TierTable = ({ className }: TierTableProps) => {
   })
 
   const laneId = form.watch('laneId')
-  const rankRangeId = useRecoilValue(rankRangeIdAtom)
+  const rankRangeId = useAtomValue(rankRangeIdAtom)
 
   const { data = [], isLoading } = useAPI<any[]>('ps', `/tiers/${laneId}`, {
     dedupingInterval: 1000 * 60 * 5,

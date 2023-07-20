@@ -1,15 +1,15 @@
 import { useEffect } from 'react'
 
-import { useRecoilState } from 'recoil'
+import { useAtom } from 'jotai'
 
-import { layoutStore } from '@renderer/stores/layout'
+import { layoutAtom } from '@renderer/stores/atoms/layout.atom'
 
 export interface LayoutConfigProps {
   breadcrumbs: string[]
 }
 
 const LayoutConfig = ({ breadcrumbs }: LayoutConfigProps) => {
-  const [layout, setLayout] = useRecoilState(layoutStore)
+  const [layout, setLayout] = useAtom(layoutAtom)
 
   useEffect(() => {
     setLayout({

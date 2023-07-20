@@ -1,18 +1,18 @@
 import { useEffect } from 'react'
 import { useNavigate } from 'react-router-dom'
 
-import { useRecoilValue } from 'recoil'
+import { useAtomValue } from 'jotai'
 
-import { championSelectSessionStore } from '@renderer/stores/championSelectSession'
-import { configStore } from '@renderer/stores/config'
+import { championSelectSessionAtom } from '@renderer/stores/atoms/championSelectSession.atom'
+import { configAtom } from '@renderer/stores/atoms/config.atom'
 
 const useChampionDetailPageAutoNavigate = () => {
   const navigate = useNavigate()
 
   const {
     game: { useCurrentPositionChampionData },
-  } = useRecoilValue(configStore)
-  const data = useRecoilValue(championSelectSessionStore)
+  } = useAtomValue(configAtom)
+  const data = useAtomValue(championSelectSessionAtom)
 
   const championId = data?.tempChampionId || data?.championId
 

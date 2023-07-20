@@ -2,17 +2,17 @@ import { Controller } from 'react-hook-form'
 
 import { InputNumber, Switch } from 'antd'
 import clsx from 'clsx'
-import { useRecoilState } from 'recoil'
+import { useAtom } from 'jotai'
 
 import LayoutConfig from '@renderer/components/LayoutConfig'
 import SaveButton from '@renderer/components/SaveButton'
 import Section from '@renderer/components/Section'
 import { useCustomForm } from '@renderer/hooks/useCustomForm'
-import { configStore } from '@renderer/stores/config'
+import { configAtom } from '@renderer/stores/atoms/config.atom'
 import { SettingsPageStyled } from '@renderer/styles/pageStyled/settingsPageStyled'
 
 const GameSettings = () => {
-  const [config, setConfig] = useRecoilState(configStore)
+  const [config, setConfig] = useAtom(configAtom)
 
   const form = useCustomForm({
     defaultValues: config.game,
