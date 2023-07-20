@@ -2,12 +2,12 @@ import { Fragment, useEffect, useState } from 'react'
 
 import { Modal } from 'antd'
 import axios from 'axios'
-import { useRecoilValue } from 'recoil'
+import { useAtomValue } from 'jotai'
 import styled from 'styled-components'
 import useSWRImmutable from 'swr/immutable'
 
 import { publish } from '@renderer/../../../electron-builder.json'
-import { updateStore } from '@renderer/stores/update'
+import { appUpdateAtom } from '@renderer/stores/atoms/appUpdate.atom'
 
 const UpdateContentModalStyled = styled.div`
   margin-bottom: 2rem;
@@ -30,7 +30,7 @@ export interface UseUpdateContentModalOptions {
 }
 
 export const useUpdateContentModal = (options: UseUpdateContentModalOptions = {}) => {
-  const { version } = useRecoilValue(updateStore)
+  const { version } = useAtomValue(appUpdateAtom)
   const [_open, _setOpen] = useState(localStorage.getItem('lastUpdateContentVersion') !== version)
 
   const { data } = useSWRImmutable(

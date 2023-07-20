@@ -5,7 +5,7 @@ export interface LeagueAtomValues {
   isInGame: boolean
 }
 
-export const LeagueAtom = atom<LeagueAtomValues>({
+export const leagueAtom = atom<LeagueAtomValues>({
   isReady: false,
   isInGame: false,
 })

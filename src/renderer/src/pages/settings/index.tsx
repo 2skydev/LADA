@@ -1,7 +1,7 @@
 import { Controller } from 'react-hook-form'
 
 import { Switch } from 'antd'
-import { useRecoilState, useRecoilValue } from 'recoil'
+import { useAtom, useAtomValue } from 'jotai'
 
 import LayoutConfig from '@renderer/components/LayoutConfig'
 import SaveButton from '@renderer/components/SaveButton'
@@ -9,13 +9,13 @@ import Section from '@renderer/components/Section'
 import UpdateStatus from '@renderer/features/update/UpdateStatus'
 import { useCustomForm } from '@renderer/hooks/useCustomForm'
 import { useUpdateContentModal } from '@renderer/hooks/useUpdateContentModal'
-import { configStore } from '@renderer/stores/config'
-import { updateStore } from '@renderer/stores/update'
+import { appUpdateAtom } from '@renderer/stores/atoms/appUpdate.atom'
+import { configAtom } from '@renderer/stores/atoms/config.atom'
 import { SettingsPageStyled } from '@renderer/styles/pageStyled/settingsPageStyled'
 
 const Settings = () => {
-  const [config, setConfig] = useRecoilState(configStore)
-  const { version, status } = useRecoilValue(updateStore)
+  const [config, setConfig] = useAtom(configAtom)
+  const { version, status } = useAtomValue(appUpdateAtom)
   const { open } = useUpdateContentModal()
 
   const form = useCustomForm({

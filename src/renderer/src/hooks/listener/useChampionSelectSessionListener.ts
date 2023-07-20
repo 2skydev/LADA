@@ -1,18 +1,16 @@
 import { useEffect } from 'react'
 
 import deepEqual from 'fast-deep-equal'
-import { useRecoilState, useRecoilValue } from 'recoil'
+import { useAtom, useAtomValue } from 'jotai'
 
 import { leagueChampSelectLaneStringToLaneId } from '@main/modules/league/utils/lane'
 
-import { championSelectSessionStore } from '@renderer/stores/championSelectSession'
-import { currentSummonerStore } from '@renderer/stores/currentSummoner'
+import { championSelectSessionAtom } from '@renderer/stores/atoms/championSelectSession.atom'
+import { currentSummonerAtom } from '@renderer/stores/atoms/currentSummoner.atom'
 
 const useChampionSelectSessionListener = () => {
-  const currentSummoner = useRecoilValue(currentSummonerStore)
-  const [championSelectSession, setChampionSelectSession] = useRecoilState(
-    championSelectSessionStore,
-  )
+  const currentSummoner = useAtomValue(currentSummonerAtom)
+  const [championSelectSession, setChampionSelectSession] = useAtom(championSelectSessionAtom)
 
   useEffect(() => {
     window.electron.subscribeLeague('champ-select/session', data => {

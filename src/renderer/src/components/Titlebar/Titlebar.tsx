@@ -1,9 +1,9 @@
 import clsx from 'clsx'
-import { useRecoilValue } from 'recoil'
+import { useAtomValue } from 'jotai'
 
 import { AppControlAction } from '@main/modules/app/app.module'
 
-import { configStore } from '@renderer/stores/config'
+import { configAtom } from '@renderer/stores/atoms/config.atom'
 
 import { TitlebarStyled } from './styled'
 
@@ -14,7 +14,7 @@ export interface TitlebarProps {
 const Titlebar = ({ className }: TitlebarProps) => {
   const {
     general: { developerMode },
-  } = useRecoilValue(configStore)
+  } = useAtomValue(configAtom)
 
   const appControl = (action: AppControlAction) => {
     window.electron.appControl(action)

@@ -1,16 +1,16 @@
 import { useEffect, useState } from 'react'
 
 import { Progress } from 'antd'
-import { useRecoilValue } from 'recoil'
+import { useAtomValue } from 'jotai'
 
 import logoImage from '@renderer/assets/images/logo@256.png'
-import { updateStore } from '@renderer/stores/update'
+import { appUpdateAtom } from '@renderer/stores/atoms/appUpdate.atom'
 import { WindowsUpdateLoadingPageStyled } from '@renderer/styles/pageStyled/windowsUpdatePageStyled'
 
 const WindowsUpdateLoading = () => {
   const [percent, setPercent] = useState(0)
   const [text, setText] = useState('업데이트 다운로드중...')
-  const { status } = useRecoilValue(updateStore)
+  const { status } = useAtomValue(appUpdateAtom)
 
   useEffect(() => {
     switch (status.event) {

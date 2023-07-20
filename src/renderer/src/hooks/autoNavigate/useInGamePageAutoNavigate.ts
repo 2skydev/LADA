@@ -1,20 +1,20 @@
 import { useEffect } from 'react'
 import { useNavigate } from 'react-router-dom'
 
-import { useRecoilValue } from 'recoil'
+import { useAtomValue } from 'jotai'
 
-import { appStateStore } from '@renderer/stores/app'
+import { leagueAtom } from '@renderer/stores/atoms/league.atom'
 
 const useInGamePageAutoNavigate = () => {
   const navigate = useNavigate()
 
-  const { leagueIsInGame } = useRecoilValue(appStateStore)
+  const { isInGame } = useAtomValue(leagueAtom)
 
   useEffect(() => {
-    if (leagueIsInGame) {
+    if (isInGame) {
       navigate('/live/in-game')
     }
-  }, [leagueIsInGame])
+  }, [isInGame])
 }
 
 export default useInGamePageAutoNavigate

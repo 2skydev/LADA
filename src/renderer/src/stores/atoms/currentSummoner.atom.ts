@@ -38,4 +38,9 @@ export const getCurrentSummoner = async (
   }
 }
 
-export const currentSummonerAtom = atom(() => getCurrentSummoner({ checkIsReady: true }))
+export const currentSummonerAtom = atom(
+  () => getCurrentSummoner({ checkIsReady: true }),
+  (_, set, value) => {
+    set(currentSummonerAtom, value)
+  },
+)
