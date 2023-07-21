@@ -1,8 +1,5 @@
-import { atom } from 'recoil'
+import { atom } from 'jotai'
 
 import { DuoId } from '@renderer/features/duo/DuoLaneSelect'
 
-export const duoSynergyTableDuoIdAtom = atom<DuoId>({
-  key: 'duoSynergyTableDuoId',
-  default: 0,
-})
+export const duoSynergyTableDuoIdAtom = atom<DuoId>(0)

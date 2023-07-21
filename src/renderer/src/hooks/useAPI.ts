@@ -1,7 +1,7 @@
-import { useRecoilValue } from 'recoil'
+import { useAtomValue } from 'jotai'
 import useSWR, { SWRConfiguration } from 'swr'
 
-import { appStateStore } from '@renderer/stores/app'
+import { leagueAtom } from '@renderer/stores/atoms/league.atom'
 
 import { useDidUpdateEffect } from './useDidUpdateEffect'
 
@@ -15,11 +15,11 @@ type APICategory = 'league' | 'ps'
 const useAPI = <T = any>(category: APICategory, url: string, options: useAPIOptions = {}) => {
   const { payload, revalidateOnLeagueReconnect = false, ...swrOptions } = options
 
-  const { leagueIsReady } = useRecoilValue(appStateStore)
+  const { isReady } = useAtomValue(leagueAtom)
 
   let key: any = [category, url, payload]
 
-  if (category === 'league' && !leagueIsReady) key = null
+  if (category === 'league' && !isReady) key = null
 
   const swr = useSWR<T>(key, {
     keepPreviousData: true,
@@ -41,8 +41,8 @@ const useAPI = <T = any>(category: APICategory, url: string, options: useAPIOpti
   })
 
   useDidUpdateEffect(() => {
-    if (revalidateOnLeagueReconnect && leagueIsReady) swr.mutate()
-  }, [leagueIsReady])
+    if (revalidateOnLeagueReconnect && isReady) swr.mutate()
+  }, [isReady])
 
   return {
     ...swr,

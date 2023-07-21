@@ -1,13 +1,13 @@
-import { useRecoilValue } from 'recoil'
+import { useAtomValue } from 'jotai'
 
 import LayoutConfig from '@renderer/components/LayoutConfig/LayoutConfig'
 import InGameInfo from '@renderer/features/inGame/InGameInfo'
 import SummonerNotFound from '@renderer/features/summoner/SummonerNotFound'
-import { currentSummonerStore } from '@renderer/stores/currentSummoner'
+import { currentSummonerAtom } from '@renderer/stores/atoms/currentSummoner.atom'
 import { LiveInGamePageStyled } from '@renderer/styles/pageStyled/liveInGamePageStyled'
 
 const LiveInGame = () => {
-  const currentSummoner = useRecoilValue(currentSummonerStore)
+  const currentSummoner = useAtomValue(currentSummonerAtom)
 
   return (
     <LiveInGamePageStyled>

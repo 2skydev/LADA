@@ -4,8 +4,8 @@ import { useLocation } from 'react-router-dom'
 
 import clsx from 'clsx'
 import { motion } from 'framer-motion'
+import { useAtomValue } from 'jotai'
 import QueryString from 'qs'
-import { useRecoilValue } from 'recoil'
 
 import LoadingIcon from '@renderer/components/LoadingIcon'
 import DataDragonImage from '@renderer/features/asset/DataDragonImage'
@@ -50,7 +50,7 @@ const ChampDetail = ({ className, champId }: ChampDetailProps) => {
 
   const laneId = form.watch('laneId')
   const selectedRuneStyleId = form.watch('runeStyleId')
-  const rankRangeId = useRecoilValue(rankRangeIdAtom)
+  const rankRangeId = useAtomValue(rankRangeIdAtom)
 
   const champNames = useDataDragonChampNames()
   const summonerSpells = useDataDragonSummonerSpells()

@@ -1,6 +1,6 @@
-import { atom } from 'recoil'
+import { atom } from 'jotai'
 
-export interface CurrentSummonerStoreValues {
+export interface CurrentSummonerAtomValues {
   id: string
   name: string
   profileIconId: string
@@ -14,7 +14,7 @@ export interface GetCurrentSummonerOptions {
 
 export const getCurrentSummoner = async (
   options: GetCurrentSummonerOptions = {},
-): Promise<CurrentSummonerStoreValues | null> => {
+): Promise<CurrentSummonerAtomValues | null> => {
   let data = options.preparedData
 
   if (options.checkIsReady) {
@@ -38,7 +38,9 @@ export const getCurrentSummoner = async (
   }
 }
 
-export const currentSummonerStore = atom<CurrentSummonerStoreValues | null>({
-  key: 'current-summoner',
-  default: getCurrentSummoner({ checkIsReady: true }),
-})
+export const currentSummonerAtom = atom(
+  () => getCurrentSummoner({ checkIsReady: true }),
+  (_, set, value) => {
+    set(currentSummonerAtom, value)
+  },
+)

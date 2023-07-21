@@ -4,11 +4,11 @@ import { useLocation } from 'react-router-dom'
 import { Button } from 'antd'
 import clsx from 'clsx'
 import { AnimatePresence, motion } from 'framer-motion'
-import { useRecoilValue } from 'recoil'
+import { useAtomValue } from 'jotai'
 
 import DataDragonImage from '@renderer/features/asset/DataDragonImage'
-import { currentSummonerStore } from '@renderer/stores/currentSummoner'
-import { layoutStore } from '@renderer/stores/layout'
+import { currentSummonerAtom } from '@renderer/stores/atoms/currentSummoner.atom'
+import { layoutAtom } from '@renderer/stores/atoms/layout.atom'
 
 import { ContentStyled } from './styled'
 
@@ -18,8 +18,8 @@ export interface ContentProps {
 }
 
 const Content = ({ className, children }: ContentProps) => {
-  const { breadcrumbs } = useRecoilValue(layoutStore)
-  const currentSummoner = useRecoilValue(currentSummonerStore)
+  const { breadcrumbs } = useAtomValue(layoutAtom)
+  const currentSummoner = useAtomValue(currentSummonerAtom)
   const { pathname } = useLocation()
 
   return (

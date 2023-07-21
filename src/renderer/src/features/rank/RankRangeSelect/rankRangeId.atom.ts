@@ -1,12 +1,6 @@
-import { atom } from 'recoil'
+import { atomWithStorage } from 'jotai/utils'
 
 import { RANK_RANGE_IDS } from '@main/modules/ps/constants/rank'
 import { RankRangeId } from '@main/modules/ps/types/rank'
 
-import { localStorageEffect } from '@renderer/utils/recoil'
-
-export const rankRangeIdAtom = atom<RankRangeId>({
-  key: 'rankRangeId',
-  default: RANK_RANGE_IDS[0],
-  effects: [localStorageEffect('rankRangeId')],
-})
+export const rankRangeIdAtom = atomWithStorage<RankRangeId>('rankRangeId', RANK_RANGE_IDS[0])
