@@ -1,11 +1,11 @@
 import { Fragment, useMemo } from 'react'
 import { Controller } from 'react-hook-form'
-import { useLocation } from 'react-router-dom'
 
 import clsx from 'clsx'
 import { motion } from 'framer-motion'
 import { useAtomValue } from 'jotai'
-import QueryString from 'qs'
+
+import { LaneId } from '@main/modules/league/types/lane'
 
 import LoadingIcon from '@renderer/components/LoadingIcon'
 import DataDragonImage from '@renderer/features/asset/DataDragonImage'
@@ -26,6 +26,7 @@ import { ChampDetailStyled } from './styled'
 export interface ChampDetailProps {
   className?: string
   champId: number
+  defaultLaneId?: LaneId
 }
 
 interface RuneStyle {
@@ -36,13 +37,10 @@ interface RuneStyle {
   count: number
 }
 
-const ChampDetail = ({ className, champId }: ChampDetailProps) => {
-  const { search } = useLocation()
-  const { laneId: defaultLaneId } = QueryString.parse(search, { ignoreQueryPrefix: true })
-
+const ChampDetail = ({ className, champId, defaultLaneId }: ChampDetailProps) => {
   const form = useCustomForm({
     defaultValues: {
-      laneId: defaultLaneId ? Number(defaultLaneId) : null,
+      laneId: defaultLaneId ?? null,
       runeStyleId: 0,
     },
     onSubmit: () => {},
