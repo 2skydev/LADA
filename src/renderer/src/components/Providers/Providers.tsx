@@ -3,7 +3,6 @@ import { ReactNode, useMemo } from 'react'
 import { ConfigProvider, theme } from 'antd'
 import { GlobalToken } from 'antd'
 import antdLocaleKR from 'antd/locale/ko_KR'
-import { RecoilRoot } from 'recoil'
 import { ThemeProvider as StyledThemeProvider } from 'styled-components'
 import { SWRConfig, SWRConfiguration } from 'swr'
 
@@ -33,13 +32,11 @@ const swrConfig: SWRConfiguration = {
 
 const Providers = ({ children }: ProvidersProps) => {
   return (
-    <RecoilRoot>
-      <SWRConfig value={swrConfig}>
-        <ConfigProvider theme={antdTheme} locale={antdLocaleKR}>
-          <ThemeProvider>{children}</ThemeProvider>
-        </ConfigProvider>
-      </SWRConfig>
-    </RecoilRoot>
+    <SWRConfig value={swrConfig}>
+      <ConfigProvider theme={antdTheme} locale={antdLocaleKR}>
+        <ThemeProvider>{children}</ThemeProvider>
+      </ConfigProvider>
+    </SWRConfig>
   )
 }
 

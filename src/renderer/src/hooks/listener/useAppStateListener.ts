@@ -1,28 +1,31 @@
 import { useEffect } from 'react'
 
-import { useRecoilState, useSetRecoilState } from 'recoil'
+import { useAtom, useSetAtom } from 'jotai'
 
-import { appStateStore } from '@renderer/stores/app'
-import { currentSummonerStore, getCurrentSummoner } from '@renderer/stores/currentSummoner'
+import {
+  currentSummonerAtom,
+  getCurrentSummoner,
+} from '@renderer/stores/atoms/currentSummoner.atom'
+import { leagueAtom } from '@renderer/stores/atoms/league.atom'
 
-const useAppStateListener = () => {
-  const [appState, setAppState] = useRecoilState(appStateStore)
-  const setCurrentSummoner = useSetRecoilState(currentSummonerStore)
+const useLeagueListener = () => {
+  const [league, setLeague] = useAtom(leagueAtom)
+  const setCurrentSummoner = useSetAtom(currentSummonerAtom)
 
   const register = async () => {
     const isReady = await window.electron.apis('league', '/is-ready')
 
-    setAppState({
-      ...appState,
-      leagueIsReady: isReady,
+    setLeague({
+      ...league,
+      isReady: isReady,
     })
 
     window.electron.subscribeLeague('connect-change', async state => {
-      const leagueIsReady = state === 'connect'
+      const isReady = state === 'connect'
 
-      setAppState({
-        ...appState,
-        leagueIsReady,
+      setLeague({
+        ...league,
+        isReady,
       })
 
       const currentSummoner = await getCurrentSummoner({ checkIsReady: true })
@@ -30,9 +33,9 @@ const useAppStateListener = () => {
     })
 
     window.electron.subscribeLeague('in-game', isInGame => {
-      setAppState({
-        ...appState,
-        leagueIsInGame: isInGame,
+      setLeague({
+        ...league,
+        isReady: isInGame,
       })
     })
   }
@@ -42,4 +45,4 @@ const useAppStateListener = () => {
   }, [])
 }
 
-export default useAppStateListener
+export default useLeagueListener

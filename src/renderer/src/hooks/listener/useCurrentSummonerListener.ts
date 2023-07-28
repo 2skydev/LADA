@@ -1,11 +1,14 @@
 import { useEffect } from 'react'
 
-import { useRecoilState } from 'recoil'
+import { useAtom } from 'jotai'
 
-import { currentSummonerStore, getCurrentSummoner } from '@renderer/stores/currentSummoner'
+import {
+  currentSummonerAtom,
+  getCurrentSummoner,
+} from '@renderer/stores/atoms/currentSummoner.atom'
 
 const useCurrentSummonerListener = () => {
-  const [currentSummoner, setCurrentSummoner] = useRecoilState(currentSummonerStore)
+  const [currentSummoner, setCurrentSummoner] = useAtom(currentSummonerAtom)
 
   useEffect(() => {
     window.electron.subscribeLeague('summoner/current', async data => {

@@ -1,16 +1,16 @@
 import { useEffect } from 'react'
 
-import { useRecoilState } from 'recoil'
+import { useAtom } from 'jotai'
 
-import { updateStore } from '@renderer/stores/update'
+import { appUpdateAtom } from '@renderer/stores/atoms/appUpdate.atom'
 
 const useAppUpdateListener = () => {
-  const [update, setUpdate] = useRecoilState(updateStore)
+  const [appUpdate, setAppUpdate] = useAtom(appUpdateAtom)
 
   useEffect(() => {
     window.electron.onUpdate((event, data) => {
-      setUpdate({
-        ...update,
+      setAppUpdate({
+        ...appUpdate,
         status: {
           event,
           data,

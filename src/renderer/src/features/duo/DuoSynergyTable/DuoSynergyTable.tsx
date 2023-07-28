@@ -5,8 +5,8 @@ import { useNavigate } from 'react-router-dom'
 import { Input, Table } from 'antd'
 import clsx from 'clsx'
 import { includesByCho, correctByDistance } from 'hangul-util'
+import { useAtom, useAtomValue } from 'jotai'
 import { debounce } from 'lodash'
-import { useRecoilState, useRecoilValue } from 'recoil'
 
 import { LaneId } from '@main/modules/league/types/lane'
 
@@ -89,7 +89,7 @@ export interface FilteredChampItem {
 }
 
 const DuoSynergyTable = ({ className }: DuoSynergyTableProps) => {
-  const [duoSynergyTableDuoId, setDuoSynergyTableDuoId] = useRecoilState(duoSynergyTableDuoIdAtom)
+  const [duoSynergyTableDuoId, setDuoSynergyTableDuoId] = useAtom(duoSynergyTableDuoIdAtom)
 
   const form = useCustomForm<DuoSynergyForm>({
     defaultValues: {
@@ -107,7 +107,7 @@ const DuoSynergyTable = ({ className }: DuoSynergyTableProps) => {
   const order = form.watch('order')
   const championId = form.watch('championId')
   const search = form.watch('search')
-  const rankRangeId = useRecoilValue(rankRangeIdAtom)
+  const rankRangeId = useAtomValue(rankRangeIdAtom)
 
   const { data = [], isLoading: isLoadingAPI } = useAPI<any[]>('ps', `/duo/${duoId}`, {
     dedupingInterval: 1000 * 60 * 5,

@@ -1,6 +1,6 @@
 import { Select } from 'antd'
 import clsx from 'clsx'
-import { useRecoilState } from 'recoil'
+import { useAtom } from 'jotai'
 
 import { RANK_RANGE_IDS, RANK_RANGE_ID_TO_LABEL_MAP } from '@main/modules/ps/constants/rank'
 
@@ -17,7 +17,7 @@ export interface RankRangeSelectProps {
  * 자동으로 전역 상태를 업데이트하며 값 접근은 rankRangeIdAtom을 통해 가능합니다.
  */
 const RankRangeSelect = ({ className }: RankRangeSelectProps) => {
-  const [rankRangeId, setRankRangeId] = useRecoilState(rankRangeIdAtom)
+  const [rankRangeId, setRankRangeId] = useAtom(rankRangeIdAtom)
 
   return (
     <RankRangeSelectStyled className={clsx('RankRangeSelect', className)}>
