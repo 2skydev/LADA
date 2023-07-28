@@ -3,6 +3,7 @@ import clsx from 'clsx'
 import bronzeImage from '@renderer/assets/images/rank/bronze.png'
 import challengerImage from '@renderer/assets/images/rank/challenger.png'
 import diamondImage from '@renderer/assets/images/rank/diamond.png'
+import emeraldImage from '@renderer/assets/images/rank/emerald.png'
 import goldImage from '@renderer/assets/images/rank/gold.png'
 import grandmasterImage from '@renderer/assets/images/rank/grandmaster.png'
 import ironImage from '@renderer/assets/images/rank/iron.png'
@@ -20,6 +21,7 @@ const RANK_IMAGES = {
   GOLD: goldImage,
   PLATINUM: platinumImage,
   DIAMOND: diamondImage,
+  EMERALD: emeraldImage,
   MASTER: masterImage,
   GRANDMASTER: grandmasterImage,
   CHALLENGER: challengerImage,
