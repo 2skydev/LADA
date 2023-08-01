@@ -14,6 +14,8 @@ const useChampionSelectSessionListener = () => {
 
   useEffect(() => {
     window.electron.subscribeLeague('champ-select/session', data => {
+      if (!data?.gameId) return
+
       const currentSummonerId = currentSummoner!.id
       const currentSummonerData = data.myTeam.find(
         player => player.summonerId === currentSummonerId,
