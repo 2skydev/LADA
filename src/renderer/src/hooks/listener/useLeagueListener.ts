@@ -35,7 +35,7 @@ const useLeagueListener = () => {
     window.electron.subscribeLeague('in-game', isInGame => {
       setLeague({
         ...league,
-        isReady: isInGame,
+        isInGame,
       })
     })
   }

@@ -6,10 +6,10 @@ import NeedUpdateLaterNotification from '@renderer/features/update/NeedUpdateLat
 import useChampionSelectPageAutoNavigate from '@renderer/hooks/autoNavigate/useChampionSelectPageAutoNavigate'
 import useInGamePageAutoNavigate from '@renderer/hooks/autoNavigate/useInGamePageAutoNavigate'
 import useTierListPageAutoNavigate from '@renderer/hooks/autoNavigate/useTierListPageAutoNavigate'
-import useAppStateListener from '@renderer/hooks/listener/useAppStateListener'
 import useAppUpdateListener from '@renderer/hooks/listener/useAppUpdateListener'
 import useChampionSelectSessionListener from '@renderer/hooks/listener/useChampionSelectSessionListener'
 import useCurrentSummonerListener from '@renderer/hooks/listener/useCurrentSummonerListener'
+import useLeagueListener from '@renderer/hooks/listener/useLeagueListener'
 import { useUpdateContentModal } from '@renderer/hooks/useUpdateContentModal'
 import { InitGlobalStyled } from '@renderer/styles/init'
 
@@ -23,7 +23,7 @@ const App = () => {
   useUpdateContentModal({ autoOpen: !isNoLayout })
 
   // listeners
-  useAppStateListener()
+  useLeagueListener()
   useAppUpdateListener()
   useChampionSelectSessionListener()
   useCurrentSummonerListener()

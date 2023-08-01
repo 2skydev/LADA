@@ -1,5 +1,6 @@
 import { useEffect } from 'react'
 
+import deepEqual from 'fast-deep-equal'
 import { useAtom } from 'jotai'
 
 import {
@@ -12,11 +13,15 @@ const useCurrentSummonerListener = () => {
 
   useEffect(() => {
     window.electron.subscribeLeague('summoner/current', async data => {
-      if (data && data.summonerId !== currentSummoner?.id) {
-        const result = await getCurrentSummoner({ preparedData: data })
-        setCurrentSummoner(result)
-      } else if (!data) {
+      if (!data) {
         setCurrentSummoner(null)
+        return
+      }
+
+      const result = await getCurrentSummoner({ preparedData: data })
+
+      if (!deepEqual(result, currentSummoner)) {
+        setCurrentSummoner(result)
       }
     })
   }, [])
