@@ -16,8 +16,10 @@ Sentry.init({
   dsn: import.meta.env.MAIN_VITE_SENTRY_DSN,
 })
 ;(async () => {
+  // 마이그레이션이 항상 먼저 실행되도록 처리
+  await container.resolve(MigrationModule)
+
   const appModule = await AppFactory.create(AppModule, [
-    MigrationModule,
     ConfigModule,
     UpdateModule,
     DeveloperModule,
