@@ -6,7 +6,7 @@ import axios from 'axios'
 
 import { IPCHandle } from '@main/core/decorators/ipcHandle'
 import { AppModule } from '@main/modules/app/app.module'
-import { configStore } from '@main/modules/config/stores/config.store'
+import { ConfigModule } from '@main/modules/config/config.module'
 import LeagueAPIClient from '@main/modules/league/utils/leagueAPIClient'
 import IPCServer from '@main/utils/IPCServer'
 
@@ -18,7 +18,7 @@ export class LeagueModule {
   isConnected = false
   clientOverlayWindow: BrowserWindow | null = null
 
-  constructor(private appModule: AppModule) {
+  constructor(private appModule: AppModule, private configModule: ConfigModule) {
     this.server = new IPCServer('apis/league')
     this.client = new LeagueAPIClient()
 
@@ -62,7 +62,7 @@ export class LeagueModule {
     this.client.on('ready', () => {
       // 리그 클라이언트 실행 시 LADA 창 열기
       if (
-        configStore.get('general.openWindowWhenLeagueClientLaunch') &&
+        this.configModule.store.get('general.openWindowWhenLeagueClientLaunch') &&
         !this.appModule.window &&
         this.appModule.isStarted
       ) {
@@ -93,7 +93,8 @@ export class LeagueModule {
         if (!data) return
 
         if (data.playerResponse === 'None') {
-          const { autoAccept = false, autoAcceptDelaySeconds = 0 } = configStore.get('game')
+          const { autoAccept = false, autoAcceptDelaySeconds = 0 } =
+            this.configModule.store.get('game')
 
           if (!autoAccept) return
 
