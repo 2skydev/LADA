@@ -1,4 +1,12 @@
-import { app, BrowserWindow, Menu, nativeImage, shell, Tray } from 'electron'
+import {
+  app,
+  BrowserWindow,
+  Menu,
+  MenuItemConstructorOptions,
+  nativeImage,
+  shell,
+  Tray,
+} from 'electron'
 
 import { initializer, singleton } from '@launchtray/tsyringe-async'
 import { join } from 'path'
@@ -6,6 +14,8 @@ import { match } from 'path-to-regexp'
 
 import { productName, protocols } from '@main/../../electron-builder.json'
 import { IPCHandle } from '@main/core/decorators/ipcHandle'
+import { ZOOM_PERCENT_ARRAY } from '@main/modules/app/constants/size'
+import { ConfigModule } from '@main/modules/config/config.module'
 
 export type AppControlAction = 'devtools' | 'minimize' | 'maximize' | 'close'
 
@@ -25,8 +35,15 @@ export class AppModule {
   )
   readonly IS_HIDDEN_LAUNCH = process.argv.includes('--hidden')
 
+  readonly APP_WIDTH = 1800
+  readonly APP_HEIGHT = 1000
+
+  readonly ZOOM_PERCENT_ARRAY = ZOOM_PERCENT_ARRAY
+
   // main window
   window: BrowserWindow | null = null
+
+  tray: Tray | null = null
 
   // deep link handlers
   deepLinkHandlers: Record<string, (params: object) => void> = {}
@@ -37,9 +54,39 @@ export class AppModule {
 
   isStarted = false
 
-  constructor() {
+  zoom: number
+
+  contextMenu: MenuItemConstructorOptions[] = [
+    { label: 'LADA 홈 화면 보기', type: 'normal', click: () => this.createWindow() },
+    {
+      label: '앱 비율 설정',
+      type: 'submenu',
+      submenu: [
+        ...this.ZOOM_PERCENT_ARRAY.map(
+          percent =>
+            ({
+              label: `${percent}%`,
+              type: 'normal',
+              click: () => this.setZoom(percent / 100),
+            } as MenuItemConstructorOptions),
+        ),
+      ],
+    },
+    { type: 'separator' },
+    { label: '앱 끄기', role: 'quit', type: 'normal' },
+  ]
+
+  constructor(private configModule: ConfigModule) {
+    // smooth scrolling
     app.commandLine.appendSwitch(`--enable-smooth-scrolling`)
+
+    // protocol
     app.setAsDefaultProtocolClient(this.PROTOCOL)
+
+    // zoom
+    this.zoom = this.configModule.store.get('general.zoom')
+    const index = this.ZOOM_PERCENT_ARRAY.findIndex(percent => percent === this.zoom * 100)
+    this.contextMenu[1].submenu![index].label = `${this.zoom * 100}% (현재값)`
   }
 
   @initializer()
@@ -80,8 +127,8 @@ export class AppModule {
       }
 
       this.window = new BrowserWindow({
-        width: 1800,
-        height: 1000,
+        width: this.APP_WIDTH,
+        height: this.APP_HEIGHT,
         backgroundColor: '#36393F',
         darkTheme: true,
         show: false,
@@ -104,7 +151,8 @@ export class AppModule {
       }
 
       this.window.on('ready-to-show', () => {
-        this.window?.show()
+        this.applyZoom(this.zoom)
+        this.window!.show()
         resolve()
       })
 
@@ -120,6 +168,35 @@ export class AppModule {
         return { action: 'deny' }
       })
     })
+  }
+
+  setZoom(zoom: number) {
+    if (!this.window) return
+
+    if (this.tray) {
+      const beforeIndex = this.ZOOM_PERCENT_ARRAY.findIndex(percent => percent === this.zoom * 100)
+      const afterIndex = this.ZOOM_PERCENT_ARRAY.findIndex(percent => percent === zoom * 100)
+
+      this.contextMenu[1].submenu![beforeIndex].label = `${this.zoom * 100}%`
+      this.contextMenu[1].submenu![afterIndex].label = `${zoom * 100}% (현재값)`
+
+      this.tray.setContextMenu(Menu.buildFromTemplate(this.contextMenu))
+    }
+
+    this.zoom = zoom
+    this.configModule.store.set('general.zoom', zoom)
+
+    this.applyZoom(zoom)
+  }
+
+  private applyZoom(zoom: number) {
+    if (!this.window) return
+
+    // setMinimumSize를 사용하는 이유는 아래 setSize만 사용했을 때 의도된 설계인지 모르겠지만 최소 크기가 자동으로 변경되어 크기를 줄일 수 없다.
+    // 그래서 setMinimumSize를 사용하여 직접 최소 크기를 변경 후 setSize를 사용하여 크기를 변경한다.
+    this.window.setMinimumSize(this.APP_WIDTH * zoom, this.APP_HEIGHT * zoom)
+    this.window.setSize(this.APP_WIDTH * zoom, this.APP_HEIGHT * zoom, true)
+    this.window.webContents.setZoomFactor(zoom)
   }
 
   registerEvents() {
@@ -141,20 +218,23 @@ export class AppModule {
     app.on('open-url', (_, url) => {
       this.resolveDeepLink(url)
     })
+
+    this.configModule.store.onDidAnyChange(newValue => {
+      if (!this.window) return
+      this.window.webContents.send('configChanged', newValue)
+    })
+
+    this.configModule.onChange('general.zoom', value => {
+      this.setZoom(value)
+    })
   }
 
   createTray() {
-    let tray = new Tray(this.ICON.resize({ width: 20, height: 20 }))
+    this.tray = new Tray(this.ICON.resize({ width: 20, height: 20 }))
 
-    const contextMenu = Menu.buildFromTemplate([
-      { label: 'LADA 홈 화면 보기', type: 'normal', click: () => this.createWindow() },
-      { type: 'separator' },
-      { label: '앱 끄기', role: 'quit', type: 'normal' },
-    ])
-
-    tray.on('double-click', () => this.createWindow())
-    tray.setToolTip(productName)
-    tray.setContextMenu(contextMenu)
+    this.tray.on('double-click', () => this.createWindow())
+    this.tray.setToolTip(productName)
+    this.tray.setContextMenu(Menu.buildFromTemplate(this.contextMenu))
   }
 
   resolveDeepLink(url: string) {

@@ -8,6 +8,7 @@ import useInGamePageAutoNavigate from '@renderer/hooks/autoNavigate/useInGamePag
 import useTierListPageAutoNavigate from '@renderer/hooks/autoNavigate/useTierListPageAutoNavigate'
 import useAppUpdateListener from '@renderer/hooks/listener/useAppUpdateListener'
 import useChampionSelectSessionListener from '@renderer/hooks/listener/useChampionSelectSessionListener'
+import useConfigListener from '@renderer/hooks/listener/useConfigListener'
 import useCurrentSummonerListener from '@renderer/hooks/listener/useCurrentSummonerListener'
 import useLeagueListener from '@renderer/hooks/listener/useLeagueListener'
 import { useUpdateContentModal } from '@renderer/hooks/useUpdateContentModal'
@@ -23,6 +24,7 @@ const App = () => {
   useUpdateContentModal({ autoOpen: !isNoLayout })
 
   // listeners
+  useConfigListener()
   useLeagueListener()
   useAppUpdateListener()
   useChampionSelectSessionListener()

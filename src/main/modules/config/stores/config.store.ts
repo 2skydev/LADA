@@ -10,6 +10,7 @@ export interface ConfigStoreValues {
     autoLaunch: boolean
     developerMode: boolean
     openWindowWhenLeagueClientLaunch: boolean
+    zoom: number
   }
   game: {
     autoAccept: boolean
@@ -26,6 +27,7 @@ export const configStore = new Store<ConfigStoreValues>({
       autoLaunch: false,
       developerMode: IS_DEV,
       openWindowWhenLeagueClientLaunch: true,
+      zoom: 1.0,
     },
     game: {
       autoAccept: false,

@@ -5,12 +5,12 @@ import { initializer, singleton } from '@launchtray/tsyringe-async'
 import AutoLaunch from 'auto-launch'
 import { valid, gt } from 'semver'
 
-import { configStore } from '@main/modules/config/stores/config.store'
+import { ConfigModule } from '@main/modules/config/config.module'
 import { migrationStore } from '@main/modules/migration/stores/migration.store'
 
 @singleton()
 export class MigrationModule {
-  constructor() {}
+  constructor(private configModule: ConfigModule) {}
 
   @initializer()
   async migrate() {
@@ -38,9 +38,9 @@ export class MigrationModule {
   }
 
   async 'v0.0.5'() {
-    configStore.set('general.openWindowWhenLeagueClientLaunch', true)
+    this.configModule.store.set('general.openWindowWhenLeagueClientLaunch', true)
 
-    if (configStore.get('general.autoLaunch')) {
+    if (this.configModule.store.get('general.autoLaunch')) {
       const ladaAutoLauncher = new AutoLaunch({
         name: 'LADA',
         path: app.getPath('exe'),
@@ -53,6 +53,10 @@ export class MigrationModule {
   }
 
   async 'v0.0.11'() {
-    configStore.set('game.useCurrentPositionChampionData', true)
+    this.configModule.store.set('game.useCurrentPositionChampionData', true)
+  }
+
+  async 'v0.0.16'() {
+    this.configModule.store.set('general.zoom', 1.0)
   }
 }
