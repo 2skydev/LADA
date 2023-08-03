@@ -40,6 +40,12 @@ const electronContext = {
     ipcRenderer.invoke('setConfig', config),
 
   /**
+   * 설정 변경 이벤트 리스너
+   */
+  onChangeConfig: (callback: (newValue: ConfigStoreValues) => void) =>
+    ipcRenderer.on('configChanged', (_, newValue) => callback(newValue)),
+
+  /**
    * =================================
    * UpdateModule IPCs
    * =================================

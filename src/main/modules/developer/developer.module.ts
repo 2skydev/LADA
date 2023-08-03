@@ -3,7 +3,7 @@ import log from 'electron-log'
 import { singleton } from '@launchtray/tsyringe-async'
 
 import { IPCHandle } from '@main/core/decorators/ipcHandle'
-import { configStore } from '@main/modules/config/stores/config.store'
+import { ConfigModule } from '@main/modules/config/config.module'
 
 export interface Log {
   size: number
@@ -13,9 +13,11 @@ export interface Log {
 
 @singleton()
 export class DeveloperModule {
+  constructor(private configModule: ConfigModule) {}
+
   @IPCHandle()
   async getStorePath() {
-    return configStore.path
+    return this.configModule.store.path
   }
 
   @IPCHandle()
