@@ -4,7 +4,7 @@ export const appUpdateAtom = atom(
   (async () => {
     return {
       version: await window.electron.getVersion(),
-      status: await window.electron.getUpdaterStatus(),
+      status: await window.electron.getUpdateStatus(),
     }
   })(),
   (_, set, value) => {

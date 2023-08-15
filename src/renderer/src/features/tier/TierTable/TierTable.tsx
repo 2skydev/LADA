@@ -7,7 +7,7 @@ import clsx from 'clsx'
 import dayjs from 'dayjs'
 import { useAtom, useAtomValue } from 'jotai'
 
-import { LaneId } from '@main/modules/league/types/lane'
+import { LaneId } from '@main/modules/league/types/lane.types'
 
 import RankingVariation from '@renderer/components/RankingVariation'
 import ChampionProfileSmall from '@renderer/features/asset/ChampionProfileSmall'
@@ -41,11 +41,9 @@ const TierTable = ({ className }: TierTableProps) => {
   const laneId = form.watch('laneId')
   const rankRangeId = useAtomValue(rankRangeIdAtom)
 
-  const { data = [], isLoading } = useAPI<any[]>('ps', `/tiers/${laneId}`, {
+  const { data = [], isLoading } = useAPI('getChampionTierList', {
     dedupingInterval: 1000 * 60 * 5,
-    payload: {
-      rankRangeId,
-    },
+    params: [laneId, rankRangeId],
   })
 
   const updatedAt = data[0]?.updatedAt

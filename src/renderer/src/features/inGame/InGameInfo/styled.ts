@@ -105,12 +105,13 @@ export const InGameInfoStyled = styled.div`
               .spells {
                 margin-right: 0.5rem;
 
-                .DataDragonImage {
+                img {
                   width: 20px;
                   height: 20px;
                   border-radius: 3px;
+                  display: block;
 
-                  + .DataDragonImage {
+                  + img {
                     margin-top: 0.2rem;
                   }
                 }
@@ -168,7 +169,7 @@ export const InGameInfoStyled = styled.div`
                   }
                 }
 
-                .championStat {
+                .championStats {
                   color: ${props => lighten(0.1, props.theme.colors.textColor2)};
                   font-size: 0.7rem;
                   display: flex;
@@ -216,7 +217,7 @@ export const InGameInfoStyled = styled.div`
                     border-color: ${props => props.theme.colors.green};
                   }
 
-                  .ChampionImage {
+                  img {
                     width: 16px;
                     height: 16px;
                   }
@@ -241,7 +242,7 @@ export const InGameInfoStyled = styled.div`
             }
           }
 
-          .seasonStat {
+          .seasonStats {
             display: flex;
             align-items: center;
             flex-direction: column;

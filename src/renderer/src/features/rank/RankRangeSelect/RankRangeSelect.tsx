@@ -2,7 +2,7 @@ import { Select } from 'antd'
 import clsx from 'clsx'
 import { useAtom } from 'jotai'
 
-import { RANK_RANGE_IDS, RANK_RANGE_ID_TO_LABEL_MAP } from '@main/modules/ps/constants/rank'
+import { RANK_RANGE_IDS, RANK_RANGE_ID_TO_LABEL_MAP } from '@main/modules/ps/ps.constants'
 
 import { rankRangeIdAtom } from '@renderer/features/rank/RankRangeSelect/rankRangeId.atom'
 

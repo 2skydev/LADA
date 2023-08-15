@@ -3,7 +3,7 @@ import { useEffect } from 'react'
 import deepEqual from 'fast-deep-equal'
 import { useAtom, useAtomValue } from 'jotai'
 
-import { leagueChampSelectLaneStringToLaneId } from '@main/modules/league/utils/lane'
+import { convertLaneEnToLaneId } from '@main/modules/league/utils/lane.utils'
 
 import { championSelectSessionAtom } from '@renderer/stores/atoms/championSelectSession.atom'
 import { currentSummonerAtom } from '@renderer/stores/atoms/currentSummoner.atom'
@@ -26,7 +26,7 @@ const useChampionSelectSessionListener = () => {
 
       const newChampionSelectSession = {
         gameId: data.gameId,
-        laneId: leagueChampSelectLaneStringToLaneId(currentLane),
+        laneId: convertLaneEnToLaneId(currentLane),
         championId: currentChampionId,
         tempChampionId: currentTempChampionId,
       }

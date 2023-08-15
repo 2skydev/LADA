@@ -13,7 +13,7 @@ const useLeagueListener = () => {
   const setCurrentSummoner = useSetAtom(currentSummonerAtom)
 
   const register = async () => {
-    const isReady = await window.electron.apis('league', '/is-ready')
+    const isReady = await window.electron.isReady()
 
     setLeague({
       ...league,

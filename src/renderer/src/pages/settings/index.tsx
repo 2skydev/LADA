@@ -3,7 +3,7 @@ import { Controller } from 'react-hook-form'
 import { Select, Switch } from 'antd'
 import { useAtom, useAtomValue } from 'jotai'
 
-import { ZOOM_PERCENT_ARRAY } from '@main/modules/app/constants/size'
+import { ZOOM_PERCENT_ARRAY } from '@main/modules/electron/electron.constants'
 
 import LayoutConfig from '@renderer/components/LayoutConfig'
 import SaveButton from '@renderer/components/SaveButton'

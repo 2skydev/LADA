@@ -3,7 +3,7 @@ import { forwardRef } from 'react'
 import { Radio, RadioGroupProps } from 'antd'
 import clsx from 'clsx'
 
-import { LANE_ID_ENUM } from '@main/modules/league/types/lane'
+import { LANE_ID_ENUM } from '@main/modules/league/types/lane.types'
 
 import LaneIcon from '@renderer/features/asset/LaneIcon'
 

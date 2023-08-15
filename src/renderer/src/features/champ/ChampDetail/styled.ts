@@ -167,7 +167,7 @@ export const ChampDetailStyled = styled.div`
           }
         }
 
-        .spellskill {
+        .spellAndSkill {
           display: flex;
 
           .spell {
@@ -195,6 +195,7 @@ export const ChampDetailStyled = styled.div`
                   display: flex;
                   justify-content: center;
                   align-items: center;
+                  line-height: 0;
                 }
               }
             }
@@ -300,7 +301,7 @@ export const ChampDetailStyled = styled.div`
           overflow: hidden;
           border-radius: 50%;
 
-          .DataDragonImage {
+          img {
             width: 100%;
             height: 100%;
             transform: scale(1.1);

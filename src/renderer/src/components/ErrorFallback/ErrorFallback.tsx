@@ -20,7 +20,11 @@ const ErrorFallback = () => {
 
   const handleReload = () => {
     setLoading(true)
-    setTimeout(() => window.location.reload(), 500)
+
+    setTimeout(() => {
+      history.pushState(null, '', '/')
+      window.location.reload()
+    }, 500)
   }
 
   if (isIgnore) return null
