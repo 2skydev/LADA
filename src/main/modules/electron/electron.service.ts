@@ -132,10 +132,12 @@ export class ElectronService implements OnModuleInit, OnApplicationBootstrap {
       this.deepLinkHandlers[path] = handler.bind(instance)
     })
 
-    await this.generateIpcPreloadScriptFile()
+    await this.generateIpcInvokeContextPreloadFile()
   }
 
-  public async generateIpcPreloadScriptFile() {
+  public async generateIpcInvokeContextPreloadFile() {
+    if (app.isPackaged) return
+
     const groups = groupBy([...IPCHandleMap.values()], 'target.name')
 
     let importString = `import { ipcRenderer } from 'electron';\n\n`
