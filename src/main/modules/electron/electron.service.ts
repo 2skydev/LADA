@@ -133,8 +133,6 @@ export class ElectronService implements OnModuleInit, OnApplicationBootstrap {
     })
 
     await this.generateIpcPreloadScriptFile()
-
-    await this.start()
   }
 
   public async generateIpcPreloadScriptFile() {
@@ -172,6 +170,7 @@ export class ElectronService implements OnModuleInit, OnApplicationBootstrap {
     )
   }
 
+  // 앱 시작 (src/main/index.ts에서 실행)
   public async start() {
     if (!this.IS_HIDDEN_LAUNCH && !this.isNeedUpdate) {
       await this.createWindow()

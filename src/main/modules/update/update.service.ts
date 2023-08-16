@@ -2,15 +2,14 @@ import { BrowserWindow, app } from 'electron'
 import log from 'electron-log'
 import { autoUpdater } from 'electron-updater'
 
-import { Injectable, OnModuleInit } from '@nestjs/common'
+import { Injectable } from '@nestjs/common'
 
-import { ExecuteLog } from '@main/decorators/execute-log.decorator'
 import { ElectronService } from '@main/modules/electron/electron.service'
 import { LeagueService } from '@main/modules/league/league.service'
 import { UpdateStatus, UpdateStatusEvent } from '@main/modules/update/types/update-status.type'
 
 @Injectable()
-export class UpdateService implements OnModuleInit {
+export class UpdateService {
   private listenEvents = [
     'checking-for-update',
     'update-available',
@@ -38,12 +37,7 @@ export class UpdateService implements OnModuleInit {
     })
   }
 
-  @ExecuteLog()
-  async onModuleInit() {
-    await this.autoUpdate()
-  }
-
-  // 자동 업데이트 (앱 처음 켰을 때 실행)
+  // 자동 업데이트 (src/main/index.ts에서 실행)
   async autoUpdate() {
     return new Promise<boolean>(async resolve => {
       let isLeagueChampSelectingPromise: Promise<boolean> | null = null
