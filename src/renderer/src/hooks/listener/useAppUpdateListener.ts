@@ -8,14 +8,10 @@ const useAppUpdateListener = () => {
   const [appUpdate, setAppUpdate] = useAtom(appUpdateAtom)
 
   useEffect(() => {
-    window.electron.onUpdate((event, data) => {
+    window.electron.onUpdate(status => {
       setAppUpdate({
         ...appUpdate,
-        status: {
-          event,
-          data,
-          time: new Date().getTime(),
-        },
+        status,
       })
     })
   }, [])

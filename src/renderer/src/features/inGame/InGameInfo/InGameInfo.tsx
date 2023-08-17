@@ -4,27 +4,23 @@ import { useNavigate } from 'react-router-dom'
 import { Divider, Space, Tag } from 'antd'
 import clsx from 'clsx'
 import dayjs from 'dayjs'
+import { useAtomValue } from 'jotai'
 import { match, P } from 'ts-pattern'
 
-import { NO_DIVISION_TIERS } from '@main/modules/league/constants/rank'
-import { PSInGame } from '@main/modules/ps/types/stat'
+import { NO_DIVISION_TIERS } from '@main/modules/league/league.constants'
 
-import ChampionImage from '@renderer/features/asset/ChampionImage'
 import ChampionProfileSmall from '@renderer/features/asset/ChampionProfileSmall/ChampionProfileSmall'
-import DataDragonImage from '@renderer/features/asset/DataDragonImage/DataDragonImage'
 import LaneIcon from '@renderer/features/asset/LaneIcon/LaneIcon'
 import RankIcon from '@renderer/features/asset/RankIcon/RankIcon'
 import InGameNotFound from '@renderer/features/inGame/InGameNotFound/InGameNotFound'
 import RuneIcon from '@renderer/features/rune/RuneIcon/RuneIcon'
 import useAPI from '@renderer/hooks/useAPI'
-import useDataDragonChampNames from '@renderer/hooks/useDataDragonChampNames'
-import useDataDragonSummonerSpells from '@renderer/hooks/useDataDragonSummonerSpells'
+import { currentSummonerAtom } from '@renderer/stores/atoms/currentSummoner.atom'
 
 import { InGameInfoStyled } from './styled'
 
 export interface InGameInfoProps {
   className?: string
-  summonerPsId: string
 }
 
 const GameTime = ({ gameStartTime }: { gameStartTime: number }) => {
@@ -41,12 +37,18 @@ const GameTime = ({ gameStartTime }: { gameStartTime: number }) => {
   return <>{dayjs(time).format('mm:ss')}</>
 }
 
-const InGameInfo = ({ className, summonerPsId }: InGameInfoProps) => {
-  const { data, isValidating, mutate: reload } = useAPI<PSInGame>('ps', `/in-game/${summonerPsId}`)
+const InGameInfo = ({ className }: InGameInfoProps) => {
+  const summoner = useAtomValue(currentSummonerAtom)
+
+  const {
+    data,
+    isValidating,
+    mutate: reload,
+  } = useAPI('getInGame', {
+    disabled: !summoner,
+  })
 
   const navigate = useNavigate()
-  const summonerSpells = useDataDragonSummonerSpells()
-  const champNames = useDataDragonChampNames()
 
   const openExternalSearchPage = (summonerName: string) => {
     window.open(`https://lol.ps/summoner/${encodeURIComponent(summonerName)}?region=kr`)
@@ -58,7 +60,7 @@ const InGameInfo = ({ className, summonerPsId }: InGameInfoProps) => {
 
   return (
     <InGameInfoStyled className={clsx('InGameInfo', className)}>
-      {data && summonerSpells && champNames && (
+      {data && summoner && (
         <>
           <header>
             <h2>인게임 정보</h2>
@@ -96,14 +98,14 @@ const InGameInfo = ({ className, summonerPsId }: InGameInfoProps) => {
                 </div>
 
                 {data[team].players.map(player => {
-                  const kdaClassName = match(player.championStat.kda)
+                  const kdaClassName = match(player.championStats.kda)
                     .with(
                       P.when(kda => kda >= 3),
                       () => 'green',
                     )
                     .otherwise(() => '')
 
-                  const seasonWinRateClassName = match(+player.seasonStat.winRate.toFixed(0))
+                  const seasonWinRateClassName = match(+player.seasonStats.winRate.toFixed(0))
                     .with(
                       P.when(winRate => winRate >= 55),
                       () => 'green',
@@ -113,26 +115,20 @@ const InGameInfo = ({ className, summonerPsId }: InGameInfoProps) => {
                   return (
                     <div className="item" key={player.summonerPsId}>
                       <div
-                        className={clsx('player', player.summonerPsId === summonerPsId && 'self')}
+                        className={clsx('player', player.summonerName === summoner.name && 'self')}
                       >
                         <div className="playerSummary">
                           <div className="top">
                             <div className="spells">
-                              <DataDragonImage
-                                type="spell"
-                                filename={summonerSpells[player.spellIds[0]].en}
-                              />
-                              <DataDragonImage
-                                type="spell"
-                                filename={summonerSpells[player.spellIds[1]].en}
-                              />
+                              <img src={player.spells[0].image} />
+                              <img src={player.spells[1].image} />
                             </div>
 
                             <div
                               className="championProfile"
-                              onClick={() => moveChampionDetailPage(player.championId)}
+                              onClick={() => moveChampionDetailPage(player.champion.id)}
                             >
-                              <ChampionProfileSmall championId={player.championId} />
+                              <ChampionProfileSmall championId={player.champion.id} />
 
                               <div className="laneIconContainer">
                                 <LaneIcon laneId={player.laneId} />
@@ -147,16 +143,16 @@ const InGameInfo = ({ className, summonerPsId }: InGameInfoProps) => {
                                 </span>
                               </div>
 
-                              <div className="championStat">
+                              <div className="championStats">
                                 <div>
-                                  {player.championStat.gameCount} 게임{' '}
+                                  {player.championStats.gameCount} 게임{' '}
                                   <span
                                     className={clsx(
                                       'winRate',
-                                      player.championStat.winRate > 60 && 'high',
+                                      player.championStats.winRate > 60 && 'high',
                                     )}
                                   >
-                                    {player.championStat.winRate.toFixed(0)}%
+                                    {player.championStats.winRate.toFixed(0)}%
                                   </span>
                                 </div>
 
@@ -165,7 +161,7 @@ const InGameInfo = ({ className, summonerPsId }: InGameInfoProps) => {
                                 <div className="kda">
                                   KDA{' '}
                                   <span className={clsx('value', kdaClassName)}>
-                                    {player.championStat.kda.toFixed(2)}
+                                    {player.championStats.kda.toFixed(2)}
                                   </span>
                                 </div>
                               </div>
@@ -177,18 +173,18 @@ const InGameInfo = ({ className, summonerPsId }: InGameInfoProps) => {
                               {player.recentMatches.map((match, index) => (
                                 <div
                                   className={clsx('item', match.isWin && 'win')}
-                                  key={`${index}.${match.championId}`}
+                                  key={`${index}.${match.champion.id}`}
                                 >
-                                  <ChampionImage championId={match.championId} />
+                                  <img src={match.champion.imageFormats.small} />
                                 </div>
                               ))}
                             </div>
                           </div>
                         </div>
 
-                        <div className="seasonStat">
+                        <div className="seasonStats">
                           <div className="top">
-                            <RankIcon rank={player.tier} />
+                            <RankIcon tier={player.tier} />
 
                             <div className="tier">
                               {player.tier[0]}
@@ -198,9 +194,9 @@ const InGameInfo = ({ className, summonerPsId }: InGameInfoProps) => {
 
                           <div className="bottom">
                             <div className={clsx('winRate', seasonWinRateClassName)}>
-                              {player.seasonStat.winRate.toFixed(0)}%
+                              {player.seasonStats.winRate.toFixed(0)}%
                             </div>
-                            <div className="gameCount">{player.seasonStat.gameCount} 게임</div>
+                            <div className="gameCount">{player.seasonStats.gameCount} 게임</div>
                           </div>
                         </div>
 

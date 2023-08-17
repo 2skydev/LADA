@@ -28,8 +28,12 @@ export const TeamManagerStyled = styled.div`
           display: flex;
           align-items: center;
 
-          .DataDragonImage {
+          img {
             margin-right: 0.5rem;
+            width: 40px;
+            height: 40px;
+            border-radius: 50%;
+            object-fit: cover;
           }
 
           .emptyText {
@@ -44,7 +48,7 @@ export const TeamManagerStyled = styled.div`
               margin-left: 1rem;
             }
 
-            .tier {
+            .division {
               display: inline-block;
               width: 1.5rem;
               text-align: right;

@@ -4,7 +4,7 @@ import { Button } from 'antd'
 import clsx from 'clsx'
 import dayjs from 'dayjs'
 
-import { UpdateStatus as UpdateStatusType } from '@main/modules/update/stores/update.store'
+import type { UpdateStatus as UpdateStatusType } from '@main/modules/update/types/update-status.type'
 
 import { UpdateStatusStyled } from './styled'
 

@@ -1,8 +1,7 @@
 import clsx from 'clsx'
 
-import DataDragonImage from '@renderer/features/asset/DataDragonImage'
 import { RuneIconStyled } from '@renderer/features/rune/RuneIcon/styled'
-import useDataDragonRunes from '@renderer/hooks/useDataDragonRunes'
+import useAPI from '@renderer/hooks/useAPI'
 
 export interface RuneIconProps {
   className?: string
@@ -27,12 +26,15 @@ const RuneIcon = ({
   useCategoryImage,
   onClick,
 }: RuneIconProps) => {
-  const data = useDataDragonRunes()
+  const { data } = useAPI('getRuneData', {
+    revalidateIfStale: false,
+  })
+
   if (!data) return null
 
   const imageOnly = _imageOnly || useCategoryImage
   const categoryData = data.categories[data.categoryFindMap[runeId]]
-  const filename = useCategoryImage ? categoryData.icon : data.icons[runeId]
+  const src = useCategoryImage ? categoryData.icon : data.icons[runeId]
 
   return (
     <RuneIconStyled
@@ -46,7 +48,8 @@ const RuneIcon = ({
       size={size}
       onClick={() => onClick && onClick(runeId)}
     >
-      <DataDragonImage type="perk-images" filename={filename} circle />
+      <img src={src} />
+
       {!imageOnly && (
         <>
           <div className="ring" />

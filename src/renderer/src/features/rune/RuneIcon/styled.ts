@@ -31,22 +31,23 @@ export const RuneIconStyled = styled.div<RuneIconStyledProps>`
     opacity: 0.5;
   }
 
-  .DataDragonImage {
+  img {
     width: calc(100% - 4px);
     height: calc(100% - 4px);
+    border-radius: 50%;
   }
 
   &.imageOnly {
     background: none;
 
-    .DataDragonImage {
+    img {
       width: 100%;
       height: 100%;
     }
   }
 
   &.largeImage {
-    .DataDragonImage {
+    img {
       position: absolute;
       z-index: 2;
       width: 175%;
