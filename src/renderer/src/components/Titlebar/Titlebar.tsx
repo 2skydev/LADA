@@ -1,7 +1,7 @@
 import clsx from 'clsx'
 import { useAtomValue } from 'jotai'
 
-import { AppControlAction } from '@main/modules/app/app.module'
+import { AppControlAction } from '@main/modules/electron/types/app-control.type'
 
 import { configAtom } from '@renderer/stores/atoms/config.atom'
 
