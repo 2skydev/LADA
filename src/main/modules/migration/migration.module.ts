@@ -1,26 +1,21 @@
 import { app } from 'electron'
 import log from 'electron-log'
 
-import { initializer, singleton } from '@launchtray/tsyringe-async'
+import { Module } from '@nestjs/common'
 import AutoLaunch from 'auto-launch'
-import { valid, gt } from 'semver'
+import { gt, valid } from 'semver'
 
-import { configStore } from '@main/modules/config/stores/config.store'
-import { migrationStore } from '@main/modules/migration/stores/migration.store'
+import { configStore } from '@main/modules/config/config.store'
+import { migrationStore } from '@main/modules/migration/migration.store'
 
-@singleton()
+@Module({})
 export class MigrationModule {
-  constructor() {}
-
-  @initializer()
-  async migrate() {
+  public static async forRootAsync() {
     let currentVersion = `v${app.getVersion()}`
 
     // 개발 모드에서는 가장 최신 버전으로 마이그레이션
     if (!app.isPackaged) {
-      const versions = Object.getOwnPropertyNames(this.constructor.prototype).filter(propertyName =>
-        valid(propertyName),
-      )
+      const versions = Object.getOwnPropertyNames(this).filter(propertyName => valid(propertyName))
       const latestVersion = versions.find(version => gt(version, currentVersion))
       currentVersion = latestVersion || currentVersion
     }
@@ -35,9 +30,13 @@ export class MigrationModule {
 
       migrationStore.set(currentVersion, true)
     }
+
+    return {
+      module: MigrationModule,
+    }
   }
 
-  async 'v0.0.5'() {
+  public static async 'v0.0.5'() {
     configStore.set('general.openWindowWhenLeagueClientLaunch', true)
 
     if (configStore.get('general.autoLaunch')) {
@@ -52,7 +51,15 @@ export class MigrationModule {
     }
   }
 
-  async 'v0.0.11'() {
+  public static async 'v0.0.11'() {
     configStore.set('game.useCurrentPositionChampionData', true)
+  }
+
+  public static async 'v0.0.16'() {
+    configStore.set('general.zoom', 1.0)
+  }
+
+  public static async 'v0.0.17'() {
+    configStore.set('game.statsProvider', 'LOL.PS')
   }
 }

@@ -18,7 +18,7 @@ const useCurrentSummonerListener = () => {
         return
       }
 
-      const result = await getCurrentSummoner({ preparedData: data })
+      const result = await getCurrentSummoner()
 
       if (!deepEqual(result, currentSummoner)) {
         setCurrentSummoner(result)

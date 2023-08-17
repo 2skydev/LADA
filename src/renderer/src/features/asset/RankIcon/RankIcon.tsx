@@ -1,5 +1,7 @@
 import clsx from 'clsx'
 
+import { Tier } from '@main/modules/league/types/rank.types'
+
 import bronzeImage from '@renderer/assets/images/rank/bronze.png'
 import challengerImage from '@renderer/assets/images/rank/challenger.png'
 import diamondImage from '@renderer/assets/images/rank/diamond.png'
@@ -14,30 +16,30 @@ import unrankedImage from '@renderer/assets/images/rank/unranked.png'
 
 import { RankIconStyled } from './styled'
 
-const RANK_IMAGES = {
+const RANK_IMAGES: Record<Tier, string> = {
+  UNRANKED: unrankedImage,
   IRON: ironImage,
   BRONZE: bronzeImage,
   SILVER: silverImage,
   GOLD: goldImage,
   PLATINUM: platinumImage,
-  DIAMOND: diamondImage,
   EMERALD: emeraldImage,
+  DIAMOND: diamondImage,
   MASTER: masterImage,
   GRANDMASTER: grandmasterImage,
   CHALLENGER: challengerImage,
-  UNRANKED: unrankedImage,
 }
 
 export type Rank = keyof typeof RANK_IMAGES
 
 export interface RankIconProps {
   className?: string
-  rank: Rank
+  tier: Tier
 }
 
-const RankIcon = ({ className, rank }: RankIconProps) => {
+const RankIcon = ({ className, tier }: RankIconProps) => {
   return (
-    <RankIconStyled className={clsx('RankIcon', className)} src={RANK_IMAGES[rank]} alt={rank} />
+    <RankIconStyled className={clsx('RankIcon', className)} src={RANK_IMAGES[tier]} alt={tier} />
   )
 }
 

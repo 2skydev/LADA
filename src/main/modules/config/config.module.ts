@@ -1,18 +1,10 @@
-import { singleton } from '@launchtray/tsyringe-async'
+import { Module } from '@nestjs/common'
 
-import { IPCHandle } from '@main/core/decorators/ipcHandle'
-import type { ConfigStoreValues } from '@main/modules/config/stores/config.store'
-import { configStore } from '@main/modules/config/stores/config.store'
+import { ConfigController } from '@main/modules/config/config.controller'
+import { ConfigService } from '@main/modules/config/config.service'
 
-@singleton()
-export class ConfigModule {
-  @IPCHandle()
-  async getConfig() {
-    return configStore.store
-  }
-
-  @IPCHandle()
-  async setConfig(config: ConfigStoreValues) {
-    return (configStore.store = config)
-  }
-}
+@Module({
+  providers: [ConfigController, ConfigService],
+  exports: [ConfigService],
+})
+export class ConfigModule {}

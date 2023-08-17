@@ -1,37 +1,30 @@
-import { useAtomValue } from 'jotai'
+import type { ElectronContext } from 'src/preload/electron'
 import useSWR, { SWRConfiguration } from 'swr'
 
-import { leagueAtom } from '@renderer/stores/atoms/league.atom'
-
-import { useDidUpdateEffect } from './useDidUpdateEffect'
-
-export interface useAPIOptions extends SWRConfiguration {
-  payload?: any
-  revalidateOnLeagueReconnect?: boolean
+export interface useAPIOptions<Args> extends SWRConfiguration {
+  params?: Args
+  disabled?: boolean
 }
 
-type APICategory = 'league' | 'ps'
+type ElectronContextPropertyName = keyof ElectronContext
 
-const useAPI = <T = any>(category: APICategory, url: string, options: useAPIOptions = {}) => {
-  const { payload, revalidateOnLeagueReconnect = false, ...swrOptions } = options
+const useAPI = <FnName extends ElectronContextPropertyName>(
+  fnName: FnName,
+  options: useAPIOptions<Parameters<ElectronContext[FnName]>> = {},
+) => {
+  const { params = [], disabled, ...swrOptions } = options
 
-  const { isReady } = useAtomValue(leagueAtom)
+  const key = [fnName, params] as const
 
-  let key: any = [category, url, payload]
-
-  if (category === 'league' && !isReady) key = null
-
-  const swr = useSWR<T>(key, {
+  const swr = useSWR<Awaited<ReturnType<ElectronContext[FnName]>>>(disabled ? null : key, {
     keepPreviousData: true,
     revalidateIfStale: true,
     revalidateOnMount: true,
     revalidateOnFocus: false,
     revalidateOnReconnect: false,
-    fetcher: async ([category, url, payload]: [APICategory, string, any]) => {
-      const response = await window.electron.apis(category, url, payload)
-      console.groupCollapsed(`%c[useAPI - ${category}]`, 'color: grey', url, payload || '')
-      console.log(response)
-      console.groupEnd()
+    fetcher: async ([, args]: typeof key) => {
+      // @ts-ignore
+      const response = await window.electron[fnName](...args)
 
       if (response?.errorCode) throw new Error(response?.message || 'Unknown Error')
 
@@ -40,13 +33,7 @@ const useAPI = <T = any>(category: APICategory, url: string, options: useAPIOpti
     ...swrOptions,
   })
 
-  useDidUpdateEffect(() => {
-    if (revalidateOnLeagueReconnect && isReady) swr.mutate()
-  }, [isReady])
-
-  return {
-    ...swr,
-  }
+  return swr
 }
 
 export default useAPI

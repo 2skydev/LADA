@@ -5,7 +5,7 @@ import clsx from 'clsx'
 import { motion, LayoutGroup, AnimatePresence } from 'framer-motion'
 import { useAtomValue } from 'jotai'
 
-import { LANE_ID_ENUM } from '@main/modules/league/types/lane'
+import { LANE_ID_ENUM } from '@main/modules/league/types/lane.types'
 
 import logoImage from '@renderer/assets/images/logo@256.png'
 import LaneIcon from '@renderer/features/asset/LaneIcon'

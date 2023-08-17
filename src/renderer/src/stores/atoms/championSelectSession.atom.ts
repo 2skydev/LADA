@@ -1,6 +1,6 @@
 import { atom } from 'jotai'
 
-import { LaneId } from '@main/modules/league/types/lane'
+import { LaneId } from '@main/modules/league/types/lane.types'
 
 export interface ChampionSelectSessionAtomValues {
   gameId: string

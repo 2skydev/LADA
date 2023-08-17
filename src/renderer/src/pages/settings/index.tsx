@@ -1,7 +1,9 @@
 import { Controller } from 'react-hook-form'
 
-import { Switch } from 'antd'
+import { Select, Switch } from 'antd'
 import { useAtom, useAtomValue } from 'jotai'
+
+import { ZOOM_PERCENT_ARRAY } from '@main/modules/electron/electron.constants'
 
 import LayoutConfig from '@renderer/components/LayoutConfig'
 import SaveButton from '@renderer/components/SaveButton'
@@ -20,6 +22,7 @@ const Settings = () => {
 
   const form = useCustomForm({
     defaultValues: config.general,
+    syncDefaultValues: true,
     onSubmit: values => {
       setConfig({
         ...config,
@@ -69,6 +72,32 @@ const Settings = () => {
               onChange={checked => field.onChange(checked)}
               checkedChildren={<i className="bx bx-check" />}
               unCheckedChildren={<i className="bx bx-x" />}
+            />
+          )}
+        />
+      </Section>
+
+      <Section
+        title="앱 비율 설정"
+        description={
+          <div>
+            앱 화면의 비율을 설정합니다.
+            <br />
+            기본 값은 100% 입니다.
+          </div>
+        }
+      >
+        <Controller
+          name="zoom"
+          control={form.control}
+          render={({ field }) => (
+            <Select
+              value={field.value}
+              onChange={value => field.onChange(value)}
+              options={ZOOM_PERCENT_ARRAY.map(percent => ({
+                label: `${percent}%`,
+                value: percent / 100,
+              }))}
             />
           )}
         />
