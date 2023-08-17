@@ -2,7 +2,7 @@ import { Injectable, OnModuleInit } from '@nestjs/common'
 import axios from 'axios'
 
 import { ExecuteLog } from '@main/decorators/execute-log.decorator'
-import { ReturnValueCaching } from '@main/modules/league/decorators/return-value-caching.decorator'
+import { ReturnValueCaching } from '@main/decorators/return-value-caching.decorator'
 import {
   FORCE_MYTHICAL_LEVEL_ITEM_NAME_WORDS,
   SHARD_RUNES,
