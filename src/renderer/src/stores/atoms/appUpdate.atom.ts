@@ -1,5 +1,12 @@
 import { atom } from 'jotai'
 
+import { UpdateStatus } from '@main/modules/update/types/update-status.type'
+
+export interface AppUpdateAtomValue {
+  version: string
+  status: UpdateStatus
+}
+
 export const appUpdateAtom = atom(
   (async () => {
     return {
@@ -7,7 +14,7 @@ export const appUpdateAtom = atom(
       status: await window.electron.getUpdateStatus(),
     }
   })(),
-  (_, set, value) => {
+  (_, set, value: AppUpdateAtomValue) => {
     set(appUpdateAtom, value)
   },
 )

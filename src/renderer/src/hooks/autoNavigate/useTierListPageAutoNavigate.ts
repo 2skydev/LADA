@@ -7,7 +7,7 @@ import { championSelectSessionAtom } from '@renderer/stores/atoms/championSelect
 
 const useTierListPageAutoNavigate = () => {
   const navigate = useNavigate()
-  const [prevGameId, setPrevGameId] = useState<string | null>(null)
+  const [prevGameId, setPrevGameId] = useState<number | null>(null)
 
   const data = useAtomValue(championSelectSessionAtom)
 

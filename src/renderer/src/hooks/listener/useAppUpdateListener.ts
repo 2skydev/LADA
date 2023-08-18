@@ -8,7 +8,7 @@ const useAppUpdateListener = () => {
   const [appUpdate, setAppUpdate] = useAtom(appUpdateAtom)
 
   useEffect(() => {
-    window.electron.onUpdate(status => {
+    window.electron.onChangeUpdateStatus(status => {
       setAppUpdate({
         ...appUpdate,
         status,

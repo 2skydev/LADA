@@ -5,7 +5,6 @@ import {
   createWebSocketConnection,
   Credentials,
   EventCallback,
-  HttpRequestOptions,
   LeagueClient,
   LeagueWebSocket,
 } from 'league-connect'
@@ -121,14 +120,9 @@ export class LeagueAPIClient {
     await pRetry(
       () =>
         new Promise((resolve, reject) => {
-          this.request({
-            method: 'GET',
-            url: '/lol-summoner/v1/current-summoner',
-          })
-            .then(response => {
-              const data = response.json()
-
-              if (data.httpStatus === 404) return reject(new Error('Not logged in'))
+          this.get('/lol-summoner/v1/current-summoner')
+            .then(data => {
+              if (!data || data.httpStatus === 404) return reject(new Error('Not logged in'))
               if (!data.summonerId) return reject(new Error('Summoner not found'))
               resolve(data)
             })
@@ -145,10 +139,33 @@ export class LeagueAPIClient {
     return this.credentials !== null
   }
 
-  public async request(options: HttpRequestOptions) {
+  public async get(url: string) {
+    if (!this.credentials) return null
+
+    const res = await createHttp1Request(
+      {
+        method: 'GET',
+        url,
+      },
+      this.credentials,
+    )
+
+    return res.json()
+  }
+
+  public async post(url: string, body?: any) {
     if (!this.credentials) throw new Error('Credentials not found')
 
-    return await createHttp1Request(options, this.credentials)
+    const res = await createHttp1Request(
+      {
+        method: 'POST',
+        url,
+        body,
+      },
+      this.credentials,
+    )
+
+    return res
   }
 
   public async subscribe(path: string, effect: EventCallback) {
