@@ -61,5 +61,6 @@ export class MigrationModule {
 
   public static async 'v0.0.17'() {
     configStore.set('game.statsProvider', 'LOL.PS')
+    configStore.set('game.autoRuneSetting', true)
   }
 }
