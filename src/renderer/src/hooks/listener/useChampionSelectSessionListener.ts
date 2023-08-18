@@ -3,8 +3,6 @@ import { useEffect } from 'react'
 import deepEqual from 'fast-deep-equal'
 import { useAtom, useAtomValue } from 'jotai'
 
-import { convertLaneEnToLaneId } from '@main/modules/league/utils/lane.utils'
-
 import { championSelectSessionAtom } from '@renderer/stores/atoms/championSelectSession.atom'
 import { currentSummonerAtom } from '@renderer/stores/atoms/currentSummoner.atom'
 
@@ -13,31 +11,16 @@ const useChampionSelectSessionListener = () => {
   const [championSelectSession, setChampionSelectSession] = useAtom(championSelectSessionAtom)
 
   useEffect(() => {
-    window.electron.subscribeLeague('champ-select/session', data => {
-      if (!data?.gameId) return
+    const unsubscribe = window.electron.onChangeChampionSelectSession(data => {
+      if (!data.gameId) return
 
-      const currentSummonerId = currentSummoner!.id
-      const currentSummonerData = data.myTeam.find(
-        player => player.summonerId === currentSummonerId,
-      )
-      const currentLane = currentSummonerData?.assignedPosition || null
-      const currentChampionId = currentSummonerData?.championId || null
-      const currentTempChampionId = currentSummonerData?.championPickIntent || null
-
-      const newChampionSelectSession = {
-        gameId: data.gameId,
-        laneId: convertLaneEnToLaneId(currentLane),
-        championId: currentChampionId,
-        tempChampionId: currentTempChampionId,
-      }
-
-      if (!deepEqual(newChampionSelectSession, championSelectSession)) {
-        setChampionSelectSession(newChampionSelectSession)
+      if (!deepEqual(data, championSelectSession)) {
+        setChampionSelectSession(data)
       }
     })
 
     return () => {
-      window.electron.unsubscribeLeague('champ-select/session')
+      unsubscribe()
     }
   }, [currentSummoner?.id, championSelectSession])
 }

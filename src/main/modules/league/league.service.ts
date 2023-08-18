@@ -2,45 +2,62 @@ import { BrowserWindow, app } from 'electron'
 import { OverlayController, OVERLAY_WINDOW_OPTS } from 'electron-overlay-window'
 
 import { Injectable, OnModuleInit } from '@nestjs/common'
+import { ModuleRef } from '@nestjs/core'
 
 import { ExecuteLog } from '@main/decorators/execute-log.decorator'
 import { ConfigService } from '@main/modules/config/config.service'
+import { AppWindow } from '@main/modules/electron/decorators/app-window.decorator'
 import { ElectronService } from '@main/modules/electron/electron.service'
 import { LeagueDataDragonProvider } from '@main/modules/league/league-data-dragon.provider'
 import { LeagueAPIClient } from '@main/modules/league/league.client'
+import { LEAGUE_CLIENT_OVERLAY_WINDOW_KEY } from '@main/modules/league/league.constants'
+import { LeagueController } from '@main/modules/league/league.controller'
+import { ChampionSelectSession } from '@main/modules/league/types/champion-select-session.types'
 import { Lobby } from '@main/modules/league/types/lobby.types'
 import { Summoner } from '@main/modules/league/types/summoner.types'
 import { convertLaneEnToLaneId } from '@main/modules/league/utils/lane.utils'
 
 @Injectable()
 export class LeagueService implements OnModuleInit {
-  public readonly client: LeagueAPIClient
+  public readonly client: LeagueAPIClient = new LeagueAPIClient()
   public isConnected = false
 
+  @AppWindow(LEAGUE_CLIENT_OVERLAY_WINDOW_KEY)
   private clientOverlayWindow: BrowserWindow | null = null
+
+  private controller: LeagueController
 
   constructor(
     private readonly electronService: ElectronService,
     private readonly configService: ConfigService,
     private readonly leagueDataDragonProvider: LeagueDataDragonProvider,
-  ) {
-    this.client = new LeagueAPIClient()
+    private readonly moduleRef: ModuleRef,
+  ) {}
 
+  @ExecuteLog()
+  async onModuleInit() {
+    this.controller = this.moduleRef.get(LeagueController)
+    this.registerEvents()
+  }
+
+  public async clientInitialize() {
+    this.isConnected = await this.client.initialize()
+  }
+
+  registerEvents() {
     this.client.on('connect', () => {
       this.isConnected = true
-      this.electronService.window?.webContents.send('league/connect')
-      this.electronService.window?.webContents.send('league/connect-change', 'connect')
+      this.controller.onChangeLeagueClientConnection('connect')
     })
 
     this.client.on('disconnect', () => {
       this.isConnected = false
       this.clientOverlayWindow?.hide()
-      this.electronService.window?.webContents.send('league/disconnect')
-      this.electronService.window?.webContents.send('league/connect-change', 'disconnect')
+      this.controller.onChangeLeagueClientConnection('disconnect')
     })
 
     this.client.on('in-game', isInGame => {
-      this.electronService.window?.webContents.send('league/in-game', isInGame)
+      this.controller.onChangeIsInGame(isInGame)
     })
 
     this.client.on('ready', () => {
@@ -59,68 +76,19 @@ export class LeagueService implements OnModuleInit {
         OverlayController.activateOverlay()
       })
 
-      this.electronService.window?.webContents.send('league/connect-change', 'connect')
+      this.controller.onChangeLeagueClientConnection('connect')
 
-      this.client.subscribe('/lol-champ-select/v1/session', data => {
-        this.electronService.window?.webContents.send('league/champ-select/session', data)
-      })
-
-      this.client.subscribe('/lol-summoner/v1/current-summoner', data => {
-        this.electronService.window?.webContents.send('league/summoner/current', data)
-      })
-
-      this.client.subscribe('/lol-lobby/v2/lobby', data => {
-        this.electronService.window?.webContents.send('league/lobby', data)
-      })
-
-      this.client.subscribe('/lol-matchmaking/v1/ready-check', async data => {
-        if (!data) return
-
-        if (data.playerResponse === 'None') {
-          const { autoAccept = false, autoAcceptDelaySeconds = 0 } = this.configService.get('game')
-
-          if (!autoAccept) return
-
-          this.clientOverlayWindow?.show()
-          this.clientOverlayWindow?.focus()
-          OverlayController.focusTarget()
-
-          this.clientOverlayWindow?.webContents.send('league/auto-accept', {
-            timer: data.timer,
-            playerResponse: data.playerResponse,
-            autoAcceptDelaySeconds,
-          })
-
-          if (data.timer < autoAcceptDelaySeconds) return
-
-          await this.client.request({
-            method: 'POST',
-            url: '/lol-matchmaking/v1/ready-check/accept',
-          })
-        } else {
-          this.clientOverlayWindow?.webContents.send('league/auto-accept', {
-            playerResponse: data.playerResponse,
-          })
-        }
-      })
+      this.client.subscribe(
+        '/lol-summoner/v1/current-summoner',
+        this.handleCurrentSummoner.bind(this),
+      )
+      this.client.subscribe('/lol-lobby/v2/lobby', this.handleLobby.bind(this))
+      this.client.subscribe(
+        '/lol-champ-select/v1/session',
+        this.handleChampionSelectSession.bind(this),
+      )
+      this.client.subscribe('/lol-matchmaking/v1/ready-check', this.handleAutoAccept.bind(this))
     })
-  }
-
-  @ExecuteLog()
-  async onModuleInit() {
-    this.isConnected = await this.client.initialize()
-  }
-
-  // 현재 롤 클라이언트가 챔피언 선택 중인지 확인
-  public async isLeagueChampSelecting() {
-    if (!this.isConnected) return false
-
-    const { status } = await this.client.request({
-      method: 'GET',
-      url: '/lol-champ-select/v1/session',
-    })
-
-    return status === 200
   }
 
   // 리그 클라이언트 오버레이 창 생성
@@ -148,13 +116,80 @@ export class LeagueService implements OnModuleInit {
     return true
   }
 
-  public async getCurrentSummoner(): Promise<Summoner> {
-    const res = await this.client.request({
-      method: 'GET',
-      url: '/lol-summoner/v1/current-summoner',
-    })
+  // 현재 롤 클라이언트가 챔피언 선택 중인지 확인
+  public async isLeagueChampSelecting() {
+    if (!this.isConnected) return false
 
-    const { summonerId, displayName, summonerLevel, profileIconId } = res.json() as any
+    const data = await this.client.get('/lol-champ-select/v1/session')
+
+    return data !== null
+  }
+
+  // 현재 로그인된 소환사 가져오기
+  public async getCurrentSummoner() {
+    const data = await this.client.get('/lol-summoner/v1/current-summoner')
+    return this.convertSummonerData(data)
+  }
+
+  // 현재 로비 가져오기
+  public async getLobby() {
+    const data = await this.client.get('/lol-lobby/v2/lobby')
+    return this.convertLobbyData(data)
+  }
+
+  // 현재 챔피언 선택 세션 가져오기
+  public async getChampionSelectSession() {
+    const data = await this.client.get('/lol-champ-select/v1/session')
+    return this.convertChampionSelectSessionData(data)
+  }
+
+  private async handleCurrentSummoner(data: any) {
+    const convertedData = await this.convertSummonerData(data)
+    this.controller.onChangeCurrentSummoner(convertedData!)
+  }
+
+  private async handleLobby(data: any) {
+    const convertedData = await this.convertLobbyData(data)
+    this.controller.onChangeLobby(convertedData!)
+  }
+
+  private async handleChampionSelectSession(data: any) {
+    const convertedData = await this.convertChampionSelectSessionData(data)
+    this.controller.onChangeChampionSelectSession(convertedData!)
+  }
+
+  private async handleAutoAccept(data: any) {
+    if (!data) return
+
+    if (data.playerResponse === 'None') {
+      const { autoAccept = false, autoAcceptDelaySeconds = 0 } = this.configService.get('game')
+
+      if (!autoAccept) return
+
+      this.clientOverlayWindow?.show()
+      this.clientOverlayWindow?.focus()
+      OverlayController.focusTarget()
+
+      this.controller.onAutoAccept({
+        timer: data.timer,
+        autoAcceptDelaySeconds,
+        playerResponse: data.playerResponse,
+      })
+
+      if (data.timer < autoAcceptDelaySeconds) return
+
+      await this.client.post('/lol-matchmaking/v1/ready-check/accept')
+    } else {
+      this.controller.onAutoAccept({
+        playerResponse: data.playerResponse,
+      })
+    }
+  }
+
+  private convertSummonerData(data: any): Summoner | null {
+    if (!data || data?.httpStatus === 404) return null
+
+    const { summonerId, displayName, summonerLevel, profileIconId } = data
 
     return {
       id: summonerId,
@@ -164,15 +199,8 @@ export class LeagueService implements OnModuleInit {
     }
   }
 
-  public async getLobby(): Promise<Lobby> {
-    console.log('getLobby', Date.now())
-
-    const res = await this.client.request({
-      method: 'GET',
-      url: '/lol-lobby/v2/lobby',
-    })
-
-    const data = res.json() as any
+  private convertLobbyData(data: any): Lobby | null {
+    if (!data || data?.httpStatus === 404) return null
 
     const summoners = data.members.map((member: any) => {
       return {
@@ -222,6 +250,27 @@ export class LeagueService implements OnModuleInit {
       summoners,
       spectators,
       teams,
+    }
+  }
+
+  private async convertChampionSelectSessionData(data: any): Promise<ChampionSelectSession | null> {
+    if (!data || data?.httpStatus === 404) return null
+
+    const summoner = (await this.getCurrentSummoner())!
+
+    const currentSummonerData = data.myTeam.find(player => player.summonerId === summoner.id)
+
+    const {
+      assignedPosition: laneEn = null,
+      championId = null,
+      championPickIntent: tempChampionId = null,
+    } = currentSummonerData
+
+    return {
+      gameId: data.gameId,
+      laneId: convertLaneEnToLaneId(laneEn),
+      championId,
+      tempChampionId,
     }
   }
 }

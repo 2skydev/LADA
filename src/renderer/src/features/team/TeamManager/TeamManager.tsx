@@ -19,7 +19,7 @@ export interface TeamManagerProps {
 
 const ANIMATE_DELAY = 0.1
 
-const createKey = (lobby: Lobby | undefined) => {
+const createKey = (lobby: Lobby | null | undefined) => {
   if (!lobby) return ''
 
   const allSummoners = [...lobby.summoners, ...lobby.spectators]
@@ -71,24 +71,20 @@ const TeamManager = ({ className }: TeamManagerProps) => {
   }, [lobby])
 
   useEffect(() => {
-    const onChangeLobbyData = async () => {
-      const lobby = await window.electron.getLobby()
-
-      if (!result || (result && key !== createKey(lobby))) {
+    const unsubscribe = window.electron.onChangeLobby(data => {
+      if (!result || (result && key !== createKey(data))) {
         mutate()
       }
-    }
-
-    window.electron.subscribeLeague('lobby', onChangeLobbyData)
+    })
 
     return () => {
-      window.electron.unsubscribeLeague('lobby')
+      unsubscribe()
     }
   }, [key, result])
 
   return (
     <TeamManagerStyled className={clsx('TeamManager', className)}>
-      {!lobby?.isCustom && (
+      {(!lobby || !lobby.isCustom) && (
         <Result
           status="warning"
           title="사용자 설정 게임을 생성해주세요."

@@ -5,7 +5,14 @@ export interface LeagueAtomValues {
   isInGame: boolean
 }
 
-export const leagueAtom = atom<LeagueAtomValues>({
-  isReady: false,
-  isInGame: false,
-})
+export const leagueAtom = atom(
+  (async () => {
+    return {
+      isReady: await window.electron.isReady(),
+      isInGame: await window.electron.isInGame(),
+    }
+  })(),
+  (_, set, value: LeagueAtomValues) => {
+    set(leagueAtom, value)
+  },
+)
