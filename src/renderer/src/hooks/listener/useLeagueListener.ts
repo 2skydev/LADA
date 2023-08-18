@@ -2,46 +2,32 @@ import { useEffect } from 'react'
 
 import { useAtom, useSetAtom } from 'jotai'
 
-import {
-  currentSummonerAtom,
-  getCurrentSummoner,
-} from '@renderer/stores/atoms/currentSummoner.atom'
+import { currentSummonerAtom } from '@renderer/stores/atoms/currentSummoner.atom'
 import { leagueAtom } from '@renderer/stores/atoms/league.atom'
 
 const useLeagueListener = () => {
   const [league, setLeague] = useAtom(leagueAtom)
   const setCurrentSummoner = useSetAtom(currentSummonerAtom)
 
-  const register = async () => {
-    const isReady = await window.electron.isReady()
-
-    setLeague({
-      ...league,
-      isReady: isReady,
-    })
-
-    window.electron.subscribeLeague('connect-change', async state => {
-      const isReady = state === 'connect'
+  useEffect(() => {
+    window.electron.onChangeLeagueClientConnection(async status => {
+      const isReady = status === 'connect'
 
       setLeague({
         ...league,
         isReady,
       })
 
-      const currentSummoner = await getCurrentSummoner({ checkIsReady: true })
-      setCurrentSummoner(currentSummoner)
+      const summoner = await window.electron.getCurrentSummoner()
+      setCurrentSummoner(summoner)
     })
 
-    window.electron.subscribeLeague('in-game', isInGame => {
+    window.electron.onChangeIsInGame(isInGame => {
       setLeague({
         ...league,
         isInGame,
       })
     })
-  }
-
-  useEffect(() => {
-    register()
   }, [])
 }
 

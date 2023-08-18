@@ -21,9 +21,15 @@ import { match } from 'path-to-regexp'
 import { productName, protocols } from '@main/../../electron-builder.json'
 import { ExecuteLog } from '@main/decorators/execute-log.decorator'
 import { ConfigService } from '@main/modules/config/config.service'
+import { AppWindow, AppWindowMap } from '@main/modules/electron/decorators/app-window.decorator'
 import { DeepLinkHandleMap } from '@main/modules/electron/decorators/deep-link-handle.decorator'
 import { IPCHandleMap } from '@main/modules/electron/decorators/ipc-handle.decorator'
-import { ZOOM_PERCENT_ARRAY } from '@main/modules/electron/electron.constants'
+import { IPCSenderMap } from '@main/modules/electron/decorators/ipc-sender.decorator'
+import {
+  ELECTRON_MAIN_WINDOW_KEY,
+  ZOOM_PERCENT_ARRAY,
+} from '@main/modules/electron/electron.constants'
+import { ElectronController } from '@main/modules/electron/electron.controller'
 import { AppControlAction } from '@main/modules/electron/types/app-control.type'
 
 @Injectable()
@@ -48,6 +54,7 @@ export class ElectronService implements OnModuleInit, OnApplicationBootstrap {
   public readonly ZOOM_PERCENT_ARRAY = ZOOM_PERCENT_ARRAY
 
   // main window
+  @AppWindow(ELECTRON_MAIN_WINDOW_KEY)
   public window: BrowserWindow | null = null
 
   public tray: Tray | null = null
@@ -89,6 +96,8 @@ export class ElectronService implements OnModuleInit, OnApplicationBootstrap {
     isHidden: true,
   })
 
+  private controller: ElectronController
+
   constructor(
     private readonly configService: ConfigService,
     private readonly moduleRef: ModuleRef,
@@ -107,6 +116,8 @@ export class ElectronService implements OnModuleInit, OnApplicationBootstrap {
 
   @ExecuteLog()
   public async onModuleInit() {
+    this.controller = this.moduleRef.get(ElectronController)
+
     await app.whenReady()
 
     const gotTheLock = app.requestSingleInstanceLock()
@@ -132,7 +143,37 @@ export class ElectronService implements OnModuleInit, OnApplicationBootstrap {
       this.deepLinkHandlers[path] = handler.bind(instance)
     })
 
+    IPCSenderMap.forEach(({ channel, windowKeys, handler, target }) => {
+      const instance = this.moduleRef.get(target, { strict: false })
+
+      const windows = windowKeys.map(windowKey => {
+        const windowMetadata = AppWindowMap.get(windowKey)
+
+        if (!windowMetadata) throw new Error(`[ @AppWindow ] Window key '${windowKey}' not found.`)
+
+        const instance = this.moduleRef.get(windowMetadata.target, { strict: false })
+
+        return {
+          propertyName: windowMetadata.propertyName,
+          instance,
+        }
+      })
+
+      const originalHandler = handler
+
+      const newHandler = function (...args: any[]) {
+        const result = originalHandler.apply(instance, args)
+
+        windows.forEach(({ propertyName, instance }) => {
+          instance[propertyName]?.webContents.send(channel, result)
+        })
+      }
+
+      instance[channel] = newHandler
+    })
+
     await this.generateIpcInvokeContextPreloadFile()
+    await this.generateIpcOnContextPreloadFile()
   }
 
   public async generateIpcInvokeContextPreloadFile() {
@@ -141,14 +182,14 @@ export class ElectronService implements OnModuleInit, OnApplicationBootstrap {
     const groups = groupBy([...IPCHandleMap.values()], 'target.name')
 
     let importString = `import { ipcRenderer } from 'electron';\n\n`
-    let contentString = `export const generatedIpcInvokeContext = {\n`
+    let contentString = `export const generatedIpcInvokeContext = {`
 
     Object.entries(groups).forEach(([controllerName, handlers]) => {
       const controllerFilename = paramCase(controllerName.replace('Controller', ''))
 
       importString += `import { ${controllerName} } from '@main/modules/${controllerFilename}/${controllerFilename}.controller';\n`
 
-      contentString += `  // ${controllerName}\n`
+      contentString += `\n  // ${controllerName}\n`
 
       handlers.forEach(item => {
         const type = item.type === 'on' || item.type === 'once' ? 'send' : 'invoke'
@@ -160,16 +201,49 @@ export class ElectronService implements OnModuleInit, OnApplicationBootstrap {
 
         contentString += `  ${item.handler.name}: ${asyncString}(${args}): ${returnType} => ${fn},\n`
       })
-
-      contentString += `\n`
     })
 
     contentString += `};\n`
 
     await writeFile(
       `src/preload/generated-ipc-invoke-context.ts`,
-      `${importString}\n\n${contentString}`,
+      `${importString}\n${contentString}`,
     )
+  }
+
+  public async generateIpcOnContextPreloadFile() {
+    if (app.isPackaged) return
+
+    const groups = groupBy([...IPCSenderMap.values()], 'target.name')
+
+    let importString = `import { ipcRenderer } from 'electron';\n\n`
+    let contentString = `type Unsubscribe = () => void
+
+export const generatedIpcOnContext = {`
+
+    Object.entries(groups).forEach(([controllerName, handlers]) => {
+      const controllerFilename = paramCase(controllerName.replace('Controller', ''))
+
+      importString += `import { ${controllerName} } from '@main/modules/${controllerFilename}/${controllerFilename}.controller';\n`
+
+      contentString += `\n  // ${controllerName}\n`
+
+      handlers.forEach(item => {
+        const handlerType = `typeof ${controllerName}.prototype.${item.handler.name}`
+        const callback = `callback: (data: ReturnType<${handlerType}>) => void`
+        const fn = `{
+    const handler = (_, data) => callback(data)
+    ipcRenderer.on('${item.channel}', handler)
+    return () => ipcRenderer.off('${item.channel}', handler)
+  }`
+
+        contentString += `  ${item.handler.name}: (${callback}): Unsubscribe => ${fn},\n`
+      })
+    })
+
+    contentString += `};\n`
+
+    await writeFile(`src/preload/generated-ipc-on-context.ts`, `${importString}\n${contentString}`)
   }
 
   // 앱 시작 (src/main/index.ts에서 실행)
@@ -179,7 +253,7 @@ export class ElectronService implements OnModuleInit, OnApplicationBootstrap {
 
       if (this.isNeedUpdateLater) {
         setTimeout(() => {
-          this.window?.webContents.send('needUpdateLater')
+          this.controller.onNeedUpdateLater()
         }, 3000)
       }
     }
@@ -315,8 +389,8 @@ export class ElectronService implements OnModuleInit, OnApplicationBootstrap {
     })
 
     this.configService.onAnyChange(newValue => {
-      if (!this.window) return
-      this.window.webContents.send('configChanged', newValue)
+      if (!this.window || !newValue) return
+      this.controller.onChangeConfigValue(newValue)
     })
 
     this.configService.onChange('general.zoom', value => {

@@ -2,24 +2,20 @@ import { useEffect, useState } from 'react'
 
 import clsx from 'clsx'
 
+import { AutoAcceptEvent } from '@main/modules/league/types/auto-accept.types'
+
 import { ReadyTimerOverlayStyled } from './styled'
 
 export interface ReadyTimerOverlayProps {
   className?: string
 }
 
-interface AutoAcceptData {
-  timer?: number
-  playerResponse: string
-  autoAcceptDelaySeconds?: number
-}
-
 const ReadyTimerOverlay = ({ className }: ReadyTimerOverlayProps) => {
-  const [data, setData] = useState<AutoAcceptData | null>(null)
+  const [data, setData] = useState<AutoAcceptEvent | null>(null)
 
   useEffect(() => {
-    window.electron.subscribeLeague('auto-accept', (data: AutoAcceptData) => {
-      if (data.playerResponse === 'None') {
+    const unsubscribe = window.electron.onAutoAccept(event => {
+      if (event.playerResponse === 'None') {
         setData(data)
       } else {
         setData(null)
@@ -27,7 +23,7 @@ const ReadyTimerOverlay = ({ className }: ReadyTimerOverlayProps) => {
     })
 
     return () => {
-      window.electron.unsubscribeLeague('auto-accept')
+      unsubscribe()
     }
   }, [])
 

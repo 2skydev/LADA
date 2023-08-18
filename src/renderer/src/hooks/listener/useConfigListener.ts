@@ -10,7 +10,7 @@ const useConfigListener = () => {
   const setConfig = useSetAtom(configAtom)
 
   useEffect(() => {
-    window.electron.onChangeConfig(value => {
+    window.electron.onChangeConfigValue(value => {
       if (deepEqual(value, defaultStore.get(configAtom))) return
       setConfig(value)
     })

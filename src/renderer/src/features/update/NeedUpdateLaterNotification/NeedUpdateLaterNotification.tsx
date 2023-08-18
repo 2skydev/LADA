@@ -6,7 +6,7 @@ const NeedUpdateLaterNotification = () => {
   const [api, contextHolder] = notification.useNotification()
 
   useEffect(() => {
-    window.electron.onUpdateLater(() => {
+    window.electron.onNeedUpdateLater(() => {
       api.warning({
         message: '업데이트 미뤄짐',
         description: (

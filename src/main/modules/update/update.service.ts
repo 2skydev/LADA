@@ -2,14 +2,18 @@ import { BrowserWindow, app } from 'electron'
 import log from 'electron-log'
 import { autoUpdater } from 'electron-updater'
 
-import { Injectable } from '@nestjs/common'
+import { Injectable, OnModuleInit } from '@nestjs/common'
+import { ModuleRef } from '@nestjs/core'
 
+import { AppWindow } from '@main/modules/electron/decorators/app-window.decorator'
 import { ElectronService } from '@main/modules/electron/electron.service'
 import { LeagueService } from '@main/modules/league/league.service'
 import { UpdateStatus, UpdateStatusEvent } from '@main/modules/update/types/update-status.type'
+import { UPDATE_LOADING_WINDOW_KEY } from '@main/modules/update/update.constants'
+import { UpdateController } from '@main/modules/update/update.controller'
 
 @Injectable()
-export class UpdateService {
+export class UpdateService implements OnModuleInit {
   private listenEvents = [
     'checking-for-update',
     'update-available',
@@ -25,9 +29,16 @@ export class UpdateService {
     time: new Date().getTime(),
   }
 
+  @AppWindow(UPDATE_LOADING_WINDOW_KEY)
   public updateLoadingWindow: BrowserWindow | null = null
 
-  constructor(private electronService: ElectronService, private leagueService: LeagueService) {
+  private controller: UpdateController
+
+  constructor(
+    private readonly electronService: ElectronService,
+    private readonly leagueService: LeagueService,
+    private readonly moduleRef: ModuleRef,
+  ) {
     autoUpdater.logger = log
     autoUpdater.autoInstallOnAppQuit = true
     autoUpdater.disableWebInstaller = true
@@ -35,6 +46,10 @@ export class UpdateService {
     this.listenEvents.forEach(event => {
       autoUpdater.on(event, this.handleUpdateEvent(event))
     })
+  }
+
+  onModuleInit() {
+    this.controller = this.moduleRef.get(UpdateController)
   }
 
   // 자동 업데이트 (src/main/index.ts에서 실행)
@@ -125,13 +140,7 @@ export class UpdateService {
         time: new Date().getTime(),
       }
 
-      if (this.electronService.window) {
-        this.electronService.window.webContents.send('updateStatus', this.status)
-      }
-
-      if (this.updateLoadingWindow) {
-        this.updateLoadingWindow.webContents.send('updateStatus', this.status)
-      }
+      this.controller.onChangeUpdateStatus(this.status)
     }
   }
 
