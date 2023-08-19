@@ -12,8 +12,6 @@ const useChampionSelectSessionListener = () => {
 
   useEffect(() => {
     const unsubscribe = window.electron.onChangeChampionSelectSession(data => {
-      if (!data.gameId) return
-
       if (!deepEqual(data, championSelectSession)) {
         setChampionSelectSession(data)
       }

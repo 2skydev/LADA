@@ -1,11 +1,14 @@
-import { Fragment } from 'react'
+import { Fragment, useEffect, useState } from 'react'
 import { Controller } from 'react-hook-form'
 
 import clsx from 'clsx'
+import deepEqual from 'fast-deep-equal'
 import { motion } from 'framer-motion'
 import { useAtomValue } from 'jotai'
 
+import { LANE_ID_TO_LABEL_MAP } from '@main/modules/league/league.constants'
 import { LaneId } from '@main/modules/league/types/lane.types'
+import { RuneIdsGroupByType } from '@main/modules/league/types/rune.types'
 import { CounterChampionsItem } from '@main/modules/league/types/stat.types'
 
 import LoadingIcon from '@renderer/components/LoadingIcon'
@@ -21,17 +24,30 @@ import { useCustomForm } from '@renderer/hooks/useCustomForm'
 
 import { ChampDetailStyled } from './styled'
 
+export interface ChampDetailFormValue {
+  laneId: LaneId | null
+  runeBuildIndex: number
+  customRuneIdsGroupByType: RuneIdsGroupByType | null
+}
+
 export interface ChampDetailProps {
   className?: string
   champId: number
   defaultLaneId?: LaneId
+  autoRuneSetting?: boolean
 }
 
-const ChampDetail = ({ className, champId, defaultLaneId }: ChampDetailProps) => {
-  const form = useCustomForm({
+const ChampDetail = ({ className, champId, defaultLaneId, autoRuneSetting }: ChampDetailProps) => {
+  const [autoRuneSettingArguments, setAutoRuneSettingArguments] = useState<{
+    runeIds: number[]
+    name: string
+  } | null>(null)
+
+  const form = useCustomForm<ChampDetailFormValue>({
     defaultValues: {
       laneId: defaultLaneId ?? null,
       runeBuildIndex: 0,
+      customRuneIdsGroupByType: null,
     },
     onSubmit: () => {},
   })
@@ -39,6 +55,7 @@ const ChampDetail = ({ className, champId, defaultLaneId }: ChampDetailProps) =>
   const laneId = form.watch('laneId')
   const selectedRuneBuildIndex = form.watch('runeBuildIndex')
   const rankRangeId = useAtomValue(rankRangeIdAtom)
+  const customRuneIdsGroupByType = form.watch('customRuneIdsGroupByType')
 
   const { data, isValidating } = useAPI('getChampionStats', {
     dedupingInterval: 1000 * 60 * 5,
@@ -51,11 +68,55 @@ const ChampDetail = ({ className, champId, defaultLaneId }: ChampDetailProps) =>
     ],
   })
 
-  console.log(data)
-
   const isNoData = data && !data.summary.skillMasterList.length
 
   const selectedRuneBuild = data?.runeBuilds[selectedRuneBuildIndex]
+
+  const handleRuneChange = autoRuneSetting
+    ? (value: RuneIdsGroupByType) => form.setValue('customRuneIdsGroupByType', value)
+    : undefined
+
+  useEffect(() => {}, [])
+
+  useEffect(() => {
+    if (selectedRuneBuild && !isNoData) {
+      form.setValue('customRuneIdsGroupByType', {
+        mainRuneIds: selectedRuneBuild.mainRuneIds,
+        subRuneIds: selectedRuneBuild.subRuneIds,
+        shardRuneIds: selectedRuneBuild.shardRuneIds,
+      })
+    }
+  }, [selectedRuneBuild, isNoData])
+
+  useEffect(() => {
+    if (autoRuneSetting && data && customRuneIdsGroupByType && !isNoData) {
+      const runeIds = [
+        ...customRuneIdsGroupByType.mainRuneIds,
+        ...customRuneIdsGroupByType.subRuneIds,
+        ...customRuneIdsGroupByType.shardRuneIds,
+      ]
+
+      const args = {
+        runeIds,
+        name: `${LANE_ID_TO_LABEL_MAP[data.summary.laneId]} ${data.champion.name}`,
+      }
+
+      if (!deepEqual(args, autoRuneSettingArguments)) {
+        setAutoRuneSettingArguments(args)
+      }
+    }
+  }, [autoRuneSetting, customRuneIdsGroupByType, data, isNoData, autoRuneSettingArguments])
+
+  useEffect(() => {
+    if (autoRuneSettingArguments) {
+      console.log(autoRuneSettingArguments.name, autoRuneSettingArguments.runeIds)
+
+      window.electron.setRunePageByRuneIds(
+        autoRuneSettingArguments.runeIds,
+        autoRuneSettingArguments.name,
+      )
+    }
+  }, [autoRuneSettingArguments])
 
   return (
     <ChampDetailStyled className={clsx('ChampDetail', className)}>
@@ -75,6 +136,10 @@ const ChampDetail = ({ className, champId, defaultLaneId }: ChampDetailProps) =>
                 <LaneSelect
                   {...field}
                   value={field.value === null ? data.summary.laneId : field.value}
+                  onChange={e => {
+                    form.setValue('laneId', e.target.value)
+                    form.setValue('runeBuildIndex', 0)
+                  }}
                   hideLabel
                 />
               )}
@@ -197,7 +262,7 @@ const ChampDetail = ({ className, champId, defaultLaneId }: ChampDetailProps) =>
               {!isNoData && <ItemBuildGroups itemBuildGroups={data.itemBuildGroups} />}
             </div>
 
-            {!isNoData && Boolean(selectedRuneBuild) && (
+            {!isNoData && customRuneIdsGroupByType && (
               <div className="right runeContainer">
                 <RuneBuildButtonRadioList
                   items={data.runeBuilds}
@@ -206,9 +271,10 @@ const ChampDetail = ({ className, champId, defaultLaneId }: ChampDetailProps) =>
                 />
 
                 <RunePage
-                  mainRuneIds={selectedRuneBuild!.mainRuneIds}
-                  subRuneIds={selectedRuneBuild!.subRuneIds}
-                  shardRuneIds={selectedRuneBuild!.shardRuneIds}
+                  mainRuneIds={customRuneIdsGroupByType.mainRuneIds}
+                  subRuneIds={customRuneIdsGroupByType.subRuneIds}
+                  shardRuneIds={customRuneIdsGroupByType.shardRuneIds}
+                  onChange={handleRuneChange}
                 />
               </div>
             )}

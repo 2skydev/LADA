@@ -2,19 +2,35 @@ import { ReactNode } from 'react'
 
 import clsx from 'clsx'
 
+import { RuneIdsGroupByType, RuneType } from '@main/modules/league/types/rune.types'
+
 import RuneIcon from '@renderer/features/rune/RuneIcon/RuneIcon'
 import useAPI from '@renderer/hooks/useAPI'
 
 import { RuneGroupStyled } from './styled'
 
-export interface RuneGroupProps {
+export type RuneGroupValue<Type extends RuneType> = RuneIdsGroupByType[`${Type}RuneIds`]
+
+export interface RuneGroupProps<
+  Type extends RuneType,
+  Value extends RuneGroupValue<Type> = RuneGroupValue<Type>,
+> {
   className?: string
   children?: ReactNode
-  type: 'main' | 'sub' | 'shard'
-  activeRuneIds: number[]
+  type: Type
+  activeRuneIds: Value
+  onChange?: (value: Value) => void
 }
 
-const RuneGroup = ({ className, type, activeRuneIds }: RuneGroupProps) => {
+const RuneGroup = <
+  Type extends RuneType,
+  Value extends RuneGroupValue<Type> = RuneGroupValue<Type>,
+>({
+  className,
+  type,
+  activeRuneIds,
+  onChange,
+}: RuneGroupProps<Type, Value>) => {
   const { data } = useAPI('getRuneData', {
     revalidateIfStale: false,
   })
@@ -22,6 +38,37 @@ const RuneGroup = ({ className, type, activeRuneIds }: RuneGroupProps) => {
   if (!data) return null
 
   const categoryData = data.categories[data.categoryFindMap[activeRuneIds[0]]]
+
+  const handleClick = (slotId: number) => (clickedRuneId: number) => {
+    if (type !== 'sub' && activeRuneIds[slotId] === clickedRuneId) return
+    if (type === 'sub' && activeRuneIds.includes(clickedRuneId)) return
+
+    let runeIds: Value = [...activeRuneIds]
+
+    if (type === 'sub') {
+      const result: [number, number] = [0, 0]
+
+      const usedSlotIds = runeIds.map(runeId =>
+        categoryData.slots.slice(1).findIndex(runes => runes.some(rune => rune.id === runeId)),
+      )
+
+      const runeIndexUsingSameSlotId = usedSlotIds.findIndex(usedSlotId => usedSlotId === slotId)
+
+      if (runeIndexUsingSameSlotId !== -1) {
+        result[0] = clickedRuneId
+        result[1] = runeIds[+!runeIndexUsingSameSlotId]
+      } else {
+        result[0] = clickedRuneId
+        result[1] = runeIds[0]
+      }
+
+      runeIds = result as Value
+    } else {
+      runeIds[slotId] = clickedRuneId
+    }
+
+    onChange!(runeIds)
+  }
 
   return (
     <RuneGroupStyled
@@ -39,7 +86,7 @@ const RuneGroup = ({ className, type, activeRuneIds }: RuneGroupProps) => {
               active={
                 type === 'sub' ? activeRuneIds.includes(rune.id) : activeRuneIds[i] === rune.id
               }
-              onClick={() => {}}
+              onClick={onChange && handleClick(i)}
             />
           ))}
         </div>

@@ -2,6 +2,8 @@ import type { Rune } from '@main/modules/league/types/rune.types'
 
 export const LEAGUE_CLIENT_OVERLAY_WINDOW_KEY = 'league_client_overlay_window'
 
+export const LADA_RUNE_PAGE_NAME_PREFIX = 'LADA '
+
 export const LANE_IDS = [0, 1, 2, 3, 4] as const
 
 export const LANE_EN_TO_LANE_ID_MAP = {

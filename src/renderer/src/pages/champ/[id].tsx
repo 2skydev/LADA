@@ -2,7 +2,7 @@ import { useLocation, useParams } from 'react-router-dom'
 
 import QueryString from 'qs'
 
-import { LaneId } from '@main/modules/league/types/lane'
+import { LaneId } from '@main/modules/league/types/lane.types'
 
 import LayoutConfig from '@renderer/components/LayoutConfig'
 import ChampDetail from '@renderer/features/champ/ChampDetail'

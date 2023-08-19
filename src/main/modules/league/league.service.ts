@@ -11,6 +11,7 @@ import { ElectronService } from '@main/modules/electron/electron.service'
 import { LeagueDataDragonProvider } from '@main/modules/league/league-data-dragon.provider'
 import { LeagueAPIClient } from '@main/modules/league/league.client'
 import {
+  LADA_RUNE_PAGE_NAME_PREFIX,
   LANE_ID_TO_LABEL_MAP,
   LEAGUE_CLIENT_OVERLAY_WINDOW_KEY,
 } from '@main/modules/league/league.constants'
@@ -39,6 +40,8 @@ export class LeagueService implements OnModuleInit {
 
   private controller: LeagueController
   private statsProviderIntegrationService: StatsProviderIntegrationService
+
+  private beforeChampionId: number | null = null
 
   constructor(
     private readonly electronService: ElectronService,
@@ -184,7 +187,7 @@ export class LeagueService implements OnModuleInit {
 
     if (!data) return null
 
-    return data.find(item => item.name.includes('LADA - '))?.id || null
+    return data.find(item => item.name.includes(LADA_RUNE_PAGE_NAME_PREFIX))?.id || null
   }
 
   private async createNewLADARunePage(runeIds: number[], pageName: string) {
@@ -194,7 +197,7 @@ export class LeagueService implements OnModuleInit {
     if (!isCanAddRunePage) await this.deleteOldRunePage()
 
     await this.client.post('/lol-perks/v1/pages', {
-      name: `LADA - ${pageName}`,
+      name: LADA_RUNE_PAGE_NAME_PREFIX + pageName,
       selectedPerkIds: runeIds,
       primaryStyleId: categoryFindMap[runeIds[0]],
       subStyleId: categoryFindMap[runeIds[4]],
@@ -227,7 +230,7 @@ export class LeagueService implements OnModuleInit {
       await this.createNewLADARunePage(runeIds, pageName)
     } else {
       await this.client.put(`/lol-perks/v1/pages/${ladaRunePageId}`, {
-        name: `LADA - ${pageName}`,
+        name: LADA_RUNE_PAGE_NAME_PREFIX + pageName,
         selectedPerkIds: runeIds,
         primaryStyleId: categoryFindMap[runeIds[0]],
         subStyleId: categoryFindMap[runeIds[4]],
@@ -275,14 +278,20 @@ export class LeagueService implements OnModuleInit {
   }
 
   private async handleChampionSelectSession(data: any) {
-    const convertedData = (await this.convertChampionSelectSessionData(data))!
-
-    this.triggerAutoRuneSetting(
-      convertedData.championId || convertedData.tempChampionId,
-      convertedData.laneId,
-    )
+    const convertedData = await this.convertChampionSelectSessionData(data)
+    if (!convertedData) return
 
     this.controller.onChangeChampionSelectSession(convertedData!)
+
+    const championId = convertedData.championId || convertedData.tempChampionId
+
+    if (this.beforeChampionId !== championId) {
+      this.beforeChampionId = championId
+
+      if (!this.electronService.window) {
+        this.triggerAutoRuneSetting(championId, convertedData.laneId)
+      }
+    }
   }
 
   private async handleAutoAccept(data: any) {
@@ -398,8 +407,8 @@ export class LeagueService implements OnModuleInit {
     return {
       gameId: data.gameId,
       laneId: convertLaneEnToLaneId(laneEn),
-      championId,
-      tempChampionId,
+      championId: championId || null,
+      tempChampionId: tempChampionId || null,
     }
   }
 }

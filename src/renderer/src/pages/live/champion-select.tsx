@@ -9,34 +9,32 @@ import { LiveChampionSelectPageStyled } from '@renderer/styles/pageStyled/liveCh
 
 const LiveChampionSelect = () => {
   const data = useAtomValue(championSelectSessionAtom)
-  const gameId = data?.gameId
+
+  const hasChampionId = data && Boolean(data.championId || data.tempChampionId)
 
   return (
     <LiveChampionSelectPageStyled>
       <LayoutConfig breadcrumbs={['라이브 게임', '챔피언 선택']} />
 
-      {!gameId && <LiveChampionSelectNotFound />}
-
-      {gameId && (
-        <>
-          <LiveChampionDetail />
-        </>
-      )}
+      {hasChampionId && <LiveChampionDetail />}
+      {!hasChampionId && <LiveChampionSelectNotFound />}
     </LiveChampionSelectPageStyled>
   )
 }
 
 const LiveChampionDetail = () => {
   const {
-    game: { useCurrentPositionChampionData },
+    game: { useCurrentPositionChampionData, autoRuneSetting },
   } = useAtomValue(configAtom)
 
-  const { championId, tempChampionId, laneId } = useAtomValue(championSelectSessionAtom) || {}
+  const { championId, tempChampionId, laneId } = useAtomValue(championSelectSessionAtom)!
 
   const id = championId || tempChampionId
   const defaultLaneId = laneId === null || !useCurrentPositionChampionData ? undefined : laneId
 
-  return <ChampDetail champId={Number(id)} defaultLaneId={defaultLaneId} />
+  return (
+    <ChampDetail champId={id!} defaultLaneId={defaultLaneId} autoRuneSetting={autoRuneSetting} />
+  )
 }
 
 export default LiveChampionSelect

@@ -1,8 +1,9 @@
-import { Champion } from '@main/modules/league/types/champion.types'
-import { GameItem } from '@main/modules/league/types/item.types'
+import type { Champion } from '@main/modules/league/types/champion.types'
+import type { GameItem } from '@main/modules/league/types/item.types'
 import type { Rank } from '@main/modules/league/types/rank.types'
-import { SummonerSpell } from '@main/modules/league/types/summoner-spell.types'
-import { Summoner } from '@main/modules/league/types/summoner.types'
+import type { RuneIdsGroupByType } from '@main/modules/league/types/rune.types'
+import type { SummonerSpell } from '@main/modules/league/types/summoner-spell.types'
+import type { Summoner } from '@main/modules/league/types/summoner.types'
 
 export interface CounterChampionsItem {
   champion: Champion
@@ -14,10 +15,7 @@ export interface CounterChampions {
   down: CounterChampionsItem[]
 }
 
-export interface RuneBuild {
-  mainRuneIds: [number, number, number, number]
-  subRuneIds: [number, number]
-  shardRuneIds: [number, number, number]
+export interface RuneBuild extends RuneIdsGroupByType {
   winRate: number
   pickRate: number
   count: number
