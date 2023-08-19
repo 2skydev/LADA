@@ -87,6 +87,24 @@ const GameSettings = () => {
       </Section>
 
       <Section
+        title="자동 룬 설정"
+        description={<div>챔피언 선택 시 자동으로 룬 페이지를 설정합니다.</div>}
+      >
+        <Controller
+          name="autoRuneSetting"
+          control={form.control}
+          render={({ field }) => (
+            <Switch
+              checked={field.value}
+              onChange={checked => field.onChange(checked)}
+              checkedChildren={<i className="bx bx-check" />}
+              unCheckedChildren={<i className="bx bx-x" />}
+            />
+          )}
+        />
+      </Section>
+
+      <Section
         title="매칭 자동 수락"
         description={
           <div>

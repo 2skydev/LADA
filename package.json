@@ -61,7 +61,7 @@
     "@types/styled-components": "^5.1.26",
     "@types/tcp-port-used": "^1.0.1",
     "@vitejs/plugin-react": "^4.0.0",
-    "antd": "^5.1.5",
+    "antd": "^5.7.3",
     "clsx": "^1.2.1",
     "dayjs": "^1.11.7",
     "electron": "^24.2.0",

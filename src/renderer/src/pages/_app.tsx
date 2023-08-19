@@ -3,7 +3,7 @@ import { Outlet, useLocation } from 'react-router-dom'
 import Layout from '@renderer/components/Layout'
 import Titlebar from '@renderer/components/Titlebar'
 import NeedUpdateLaterNotification from '@renderer/features/update/NeedUpdateLaterNotification'
-import useChampionDetailPageAutoNavigate from '@renderer/hooks/autoNavigate/useChampionDetailPageAutoNavigate'
+import useChampionSelectPageAutoNavigate from '@renderer/hooks/autoNavigate/useChampionSelectPageAutoNavigate'
 import useInGamePageAutoNavigate from '@renderer/hooks/autoNavigate/useInGamePageAutoNavigate'
 import useTierListPageAutoNavigate from '@renderer/hooks/autoNavigate/useTierListPageAutoNavigate'
 import useAppUpdateListener from '@renderer/hooks/listener/useAppUpdateListener'
@@ -54,7 +54,7 @@ const App = () => {
 const AutoNavigateHooks = () => {
   useTierListPageAutoNavigate()
   useInGamePageAutoNavigate()
-  useChampionDetailPageAutoNavigate()
+  useChampionSelectPageAutoNavigate()
 
   return null
 }

@@ -16,6 +16,7 @@ export interface ConfigStoreValues {
     autoAccept: boolean
     autoAcceptDelaySeconds: number
     useCurrentPositionChampionData: boolean
+    autoRuneSetting: boolean
   }
 }
 
@@ -34,6 +35,7 @@ export const configStore = new Store<ConfigStoreValues>({
       autoAccept: false,
       autoAcceptDelaySeconds: 0,
       useCurrentPositionChampionData: true,
+      autoRuneSetting: true,
     },
   },
 })

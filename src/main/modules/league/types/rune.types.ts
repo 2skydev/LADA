@@ -23,3 +23,11 @@ export interface RuneData {
   categoryFindMap: RuneCategoryFindMap
   icons: RuneIcons
 }
+
+export type RuneType = 'main' | 'sub' | 'shard'
+
+export interface RuneIdsGroupByType {
+  mainRuneIds: [number, number, number, number]
+  subRuneIds: [number, number]
+  shardRuneIds: [number, number, number]
+}

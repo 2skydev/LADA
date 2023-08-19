@@ -53,6 +53,11 @@ export class LeagueController {
     return this.leagueService.getChampionSelectSession()
   }
 
+  @IPCHandle()
+  public async setRunePageByRuneIds(...args: Parameters<LeagueService['setRunePageByRuneIds']>) {
+    return this.leagueService.setRunePageByRuneIds(...args)
+  }
+
   @IPCSender({
     windowKeys: [ELECTRON_MAIN_WINDOW_KEY, LEAGUE_CLIENT_OVERLAY_WINDOW_KEY],
   })

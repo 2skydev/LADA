@@ -28,6 +28,7 @@ export const generatedIpcInvokeContext = {
   getCurrentSummoner: async (...args: Parameters<typeof LeagueController.prototype.getCurrentSummoner>): Promise<ReturnType<typeof LeagueController.prototype.getCurrentSummoner>> => ipcRenderer.invoke('getCurrentSummoner', ...args),
   getLobby: async (...args: Parameters<typeof LeagueController.prototype.getLobby>): Promise<ReturnType<typeof LeagueController.prototype.getLobby>> => ipcRenderer.invoke('getLobby', ...args),
   getChampionSelectSession: async (...args: Parameters<typeof LeagueController.prototype.getChampionSelectSession>): Promise<ReturnType<typeof LeagueController.prototype.getChampionSelectSession>> => ipcRenderer.invoke('getChampionSelectSession', ...args),
+  setRunePageByRuneIds: async (...args: Parameters<typeof LeagueController.prototype.setRunePageByRuneIds>): Promise<ReturnType<typeof LeagueController.prototype.setRunePageByRuneIds>> => ipcRenderer.invoke('setRunePageByRuneIds', ...args),
 
   // StatsProviderIntegrationController
   getChampionStats: async (...args: Parameters<typeof StatsProviderIntegrationController.prototype.getChampionStats>): Promise<ReturnType<typeof StatsProviderIntegrationController.prototype.getChampionStats>> => ipcRenderer.invoke('getChampionStats', ...args),

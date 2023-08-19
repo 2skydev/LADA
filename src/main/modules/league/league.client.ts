@@ -168,6 +168,36 @@ export class LeagueAPIClient {
     return res
   }
 
+  public async put(url: string, body?: any) {
+    if (!this.credentials) throw new Error('Credentials not found')
+
+    const res = await createHttp1Request(
+      {
+        method: 'PUT',
+        url,
+        body,
+      },
+      this.credentials,
+    )
+
+    return res
+  }
+
+  public async delete(url: string, body?: any) {
+    if (!this.credentials) throw new Error('Credentials not found')
+
+    const res = await createHttp1Request(
+      {
+        method: 'DELETE',
+        url,
+        body,
+      },
+      this.credentials,
+    )
+
+    return res
+  }
+
   public async subscribe(path: string, effect: EventCallback) {
     if (!this.ws) throw new Error('WebSocket not found')
     this.ws.subscribe(path, effect)
