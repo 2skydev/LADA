@@ -44,11 +44,12 @@ export class StatsProviderIntegrationService {
 
   // 인게임 정보
   public async getInGameByCurrentSummoner() {
-    const summoner = await this.leagueService.getCurrentSummoner()
+    if (!this.leagueService.client.isInGame) return null
 
+    const summoner = await this.leagueService.getCurrentSummoner()
     if (!summoner) return null
 
-    return this.psService.getSummonerStatsByName(summoner.name)
+    return this.psService.getInGameByName(summoner.name)
   }
 
   // 소환사 통계

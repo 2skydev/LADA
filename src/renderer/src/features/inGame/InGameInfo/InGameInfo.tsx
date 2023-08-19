@@ -16,6 +16,7 @@ import InGameNotFound from '@renderer/features/inGame/InGameNotFound/InGameNotFo
 import RuneIcon from '@renderer/features/rune/RuneIcon/RuneIcon'
 import useAPI from '@renderer/hooks/useAPI'
 import { currentSummonerAtom } from '@renderer/stores/atoms/currentSummoner.atom'
+import { leagueAtom } from '@renderer/stores/atoms/league.atom'
 
 import { InGameInfoStyled } from './styled'
 
@@ -39,13 +40,14 @@ const GameTime = ({ gameStartTime }: { gameStartTime: number }) => {
 
 const InGameInfo = ({ className }: InGameInfoProps) => {
   const summoner = useAtomValue(currentSummonerAtom)
+  const { isInGame } = useAtomValue(leagueAtom)
 
   const {
     data,
     isValidating,
     mutate: reload,
-  } = useAPI('getInGame', {
-    disabled: !summoner,
+  } = useAPI('getInGameByCurrentSummoner', {
+    disabled: !summoner || !isInGame,
   })
 
   const navigate = useNavigate()
