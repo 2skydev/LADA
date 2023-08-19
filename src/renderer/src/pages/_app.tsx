@@ -30,19 +30,14 @@ const App = () => {
   useChampionSelectSessionListener()
   useCurrentSummonerListener()
 
-  // auto navigate
-  useTierListPageAutoNavigate()
-  useInGamePageAutoNavigate()
-  useChampionDetailPageAutoNavigate()
-
   return (
     <>
       <InitGlobalStyled />
-
       {isNoLayout && <Outlet />}
 
       {!isNoLayout && (
         <div id="app">
+          <AutoNavigateHooks />
           <NeedUpdateLaterNotification />
 
           <Titlebar />
@@ -54,6 +49,14 @@ const App = () => {
       )}
     </>
   )
+}
+
+const AutoNavigateHooks = () => {
+  useTierListPageAutoNavigate()
+  useInGamePageAutoNavigate()
+  useChampionDetailPageAutoNavigate()
+
+  return null
 }
 
 export default App
