@@ -12,12 +12,12 @@ export function ExecuteLog(options: ExecuteLogOptions = {}) {
   return function (target: any, key: string, descriptor: PropertyDescriptor) {
     const originalMethod = descriptor.value
 
-    descriptor.value = function (...args: any[]) {
+    descriptor.value = async function (...args: any[]) {
       const now = Date.now()
 
       startLog && Logger.log(`${target.constructor.name} ${key}()`, 'ExecuteLog')
 
-      const result = originalMethod.apply(this, args)
+      const result = await originalMethod.apply(this, args)
 
       Logger.log(
         `${target.constructor.name} ${key}() ${yellow(`+${Date.now() - now}ms`)}`,
