@@ -1,96 +1,120 @@
-import { Fragment, useMemo } from 'react'
+import { Fragment, useEffect, useState } from 'react'
 import { Controller } from 'react-hook-form'
-import { useLocation } from 'react-router-dom'
 
 import clsx from 'clsx'
+import deepEqual from 'fast-deep-equal'
 import { motion } from 'framer-motion'
 import { useAtomValue } from 'jotai'
-import QueryString from 'qs'
+
+import { LANE_ID_TO_LABEL_MAP } from '@main/modules/league/league.constants'
+import { LaneId } from '@main/modules/league/types/lane.types'
+import { RuneIdsGroupByType } from '@main/modules/league/types/rune.types'
+import { CounterChampionsItem } from '@main/modules/league/types/stat.types'
 
 import LoadingIcon from '@renderer/components/LoadingIcon'
-import DataDragonImage from '@renderer/features/asset/DataDragonImage'
 import TierIcon, { HoneyIcon, OpIcon } from '@renderer/features/asset/TierIcon'
-import ItemBuilds from '@renderer/features/item/ItemBuilds'
+import ItemBuildGroups from '@renderer/features/item/ItemBuildGroups'
 import LaneSelect from '@renderer/features/lane/LaneSelect'
 import RankRangeSelect from '@renderer/features/rank/RankRangeSelect'
 import { rankRangeIdAtom } from '@renderer/features/rank/RankRangeSelect/rankRangeId.atom'
+import RuneBuildButtonRadioList from '@renderer/features/rune/RuneBuildButtonRadioList'
 import RunePage from '@renderer/features/rune/RunePage'
-import RuneStyleButtonRadioList from '@renderer/features/rune/RuneStyleButtonRadioList'
 import useAPI from '@renderer/hooks/useAPI'
 import { useCustomForm } from '@renderer/hooks/useCustomForm'
-import useDataDragonChampNames from '@renderer/hooks/useDataDragonChampNames'
-import useDataDragonSummonerSpells from '@renderer/hooks/useDataDragonSummonerSpells'
 
 import { ChampDetailStyled } from './styled'
+
+export interface ChampDetailFormValue {
+  laneId: LaneId | null
+  runeBuildIndex: number
+  customRuneIdsGroupByType: RuneIdsGroupByType | null
+}
 
 export interface ChampDetailProps {
   className?: string
   champId: number
+  defaultLaneId?: LaneId
+  autoRuneSetting?: boolean
 }
 
-interface RuneStyle {
-  mainRuneIds: [number, number, number, number]
-  subRuneIds: [number, number]
-  winRate: number
-  pickRate: number
-  count: number
-}
+const ChampDetail = ({ className, champId, defaultLaneId, autoRuneSetting }: ChampDetailProps) => {
+  const [autoRuneSettingArguments, setAutoRuneSettingArguments] = useState<{
+    runeIds: number[]
+    name: string
+  } | null>(null)
 
-const ChampDetail = ({ className, champId }: ChampDetailProps) => {
-  const { search } = useLocation()
-  const { laneId: defaultLaneId } = QueryString.parse(search, { ignoreQueryPrefix: true })
-
-  const form = useCustomForm({
+  const form = useCustomForm<ChampDetailFormValue>({
     defaultValues: {
-      laneId: defaultLaneId ? Number(defaultLaneId) : null,
-      runeStyleId: 0,
+      laneId: defaultLaneId ?? null,
+      runeBuildIndex: 0,
+      customRuneIdsGroupByType: null,
     },
     onSubmit: () => {},
   })
 
   const laneId = form.watch('laneId')
-  const selectedRuneStyleId = form.watch('runeStyleId')
+  const selectedRuneBuildIndex = form.watch('runeBuildIndex')
   const rankRangeId = useAtomValue(rankRangeIdAtom)
+  const customRuneIdsGroupByType = form.watch('customRuneIdsGroupByType')
 
-  const champNames = useDataDragonChampNames()
-  const summonerSpells = useDataDragonSummonerSpells()
-
-  const { data, isValidating } = useAPI('ps', `/champ/${champId}`, {
+  const { data, isValidating } = useAPI('getChampionStats', {
     dedupingInterval: 1000 * 60 * 5,
-    payload: {
-      laneId,
-      rankRangeId,
-    },
+    params: [
+      champId,
+      {
+        laneId: laneId ?? undefined,
+        rankRangeId,
+      },
+    ],
   })
 
-  const champSummary = data ? data.summary[0] : null
-  const isNoData = data && (champSummary.spell1Id === null || !champSummary.skillMasterList.length)
-  const runeStyles: RuneStyle[] = data
-    ? data.runestatperk.runeWinrates.total.reduce((acc, item) => {
-        acc.push({
-          mainRuneIds: item.category1RuneIdList,
-          subRuneIds: item.category2RuneIdList,
-          winRate: item.winRate,
-          pickRate: item.pickRate,
-          count: item.count,
-        })
+  const isNoData = data && !data.summary.skillMasterList.length
 
-        return acc
-      }, [])
-    : []
+  const selectedRuneBuild = data?.runeBuilds[selectedRuneBuildIndex]
 
-  const itemBuilds = useMemo(
-    () =>
-      data
-        ? [...data.item.till2, ...data.item.till3, ...data.item.till4, ...data.item.till5].map(
-            itemBuild => ({
-              ...itemBuild,
-              itemIdList: itemBuild.itemIdList.map(itemId => String(itemId)),
-            }),
-          )
-        : [],
-    [data],
-  )
+  const handleRuneChange = autoRuneSetting
+    ? (value: RuneIdsGroupByType) => form.setValue('customRuneIdsGroupByType', value)
+    : undefined
+
+  useEffect(() => {}, [])
+
+  useEffect(() => {
+    if (selectedRuneBuild && !isNoData) {
+      form.setValue('customRuneIdsGroupByType', {
+        mainRuneIds: selectedRuneBuild.mainRuneIds,
+        subRuneIds: selectedRuneBuild.subRuneIds,
+        shardRuneIds: selectedRuneBuild.shardRuneIds,
+      })
+    }
+  }, [selectedRuneBuild, isNoData])
+
+  useEffect(() => {
+    if (autoRuneSetting && data && customRuneIdsGroupByType && !isNoData) {
+      const runeIds = [
+        ...customRuneIdsGroupByType.mainRuneIds,
+        ...customRuneIdsGroupByType.subRuneIds,
+        ...customRuneIdsGroupByType.shardRuneIds,
+      ]
+
+      const args = {
+        runeIds,
+        name: `${LANE_ID_TO_LABEL_MAP[data.summary.laneId]} ${data.champion.name}`,
+      }
+
+      if (!deepEqual(args, autoRuneSettingArguments)) {
+        setAutoRuneSettingArguments(args)
+      }
+    }
+  }, [autoRuneSetting, customRuneIdsGroupByType, data, isNoData, autoRuneSettingArguments])
+
+  useEffect(() => {
+    if (autoRuneSettingArguments) {
+      window.electron.setRunePageByRuneIds(
+        autoRuneSettingArguments.runeIds,
+        autoRuneSettingArguments.name,
+      )
+    }
+  }, [autoRuneSettingArguments])
 
   return (
     <ChampDetailStyled className={clsx('ChampDetail', className)}>
@@ -100,7 +124,7 @@ const ChampDetail = ({ className, champId }: ChampDetailProps) => {
         </div>
       )}
 
-      {data && champNames && summonerSpells && (
+      {data && (
         <motion.div initial={{ opacity: 0 }} animate={{ opacity: 1 }}>
           <div className="arguments">
             <Controller
@@ -109,7 +133,11 @@ const ChampDetail = ({ className, champId }: ChampDetailProps) => {
               render={({ field }) => (
                 <LaneSelect
                   {...field}
-                  value={field.value === null ? champSummary.laneId : field.value}
+                  value={field.value === null ? data.summary.laneId : field.value}
+                  onChange={e => {
+                    form.setValue('laneId', e.target.value)
+                    form.setValue('runeBuildIndex', 0)
+                  }}
                   hideLabel
                 />
               )}
@@ -119,7 +147,7 @@ const ChampDetail = ({ className, champId }: ChampDetailProps) => {
           </div>
 
           <section className="summary">
-            {isValidating && laneId !== champSummary.laneId && (
+            {isValidating && laneId !== data.summary.laneId && (
               <motion.div
                 className="loadingOverlay"
                 initial={{ opacity: 0 }}
@@ -132,68 +160,52 @@ const ChampDetail = ({ className, champId }: ChampDetailProps) => {
             <div className="left">
               <div className="champion">
                 <div className="championImageContainer">
-                  <TierIcon tier={champSummary.psTier} />
-                  {champSummary.isOp && <OpIcon />}
-                  {champSummary.isHoney && <HoneyIcon />}
+                  <TierIcon tier={data.summary.tier} />
+                  {data.summary.isOp && <OpIcon />}
+                  {data.summary.isHoney && <HoneyIcon />}
 
                   <div className="imageOverflowBox">
-                    <DataDragonImage
-                      className="championImage"
-                      type="champion/loading"
-                      filename={champNames[champSummary.championId].en + '_0'}
-                    />
+                    <img className="championImage" src={data.champion.imageFormats.loading} />
                   </div>
                 </div>
 
                 <div className="right">
                   <h2 className="championName">
-                    {champNames[champSummary.championId].ko}
+                    {data.champion.name}
                     <span>
-                      표본수: {champSummary.count.toLocaleString()} · 승률: {champSummary.winRate}%
+                      표본수: {data.summary.count.toLocaleString()} · 승률: {data.summary.winRate}%
                     </span>
                   </h2>
 
                   {!isNoData && (
-                    <div className="spellskill">
+                    <div className="spellAndSkill">
                       <div className="spell imageGroup">
                         <div className="title">스펠</div>
                         <div className="images">
-                          <DataDragonImage
-                            type="spell"
-                            filename={summonerSpells[champSummary.spell2Id].en}
-                          />
-
-                          <DataDragonImage
-                            type="spell"
-                            filename={summonerSpells[champSummary.spell1Id].en}
-                          />
+                          <img src={data.summary.spells[0].image} />
+                          <img src={data.summary.spells[1].image} />
                         </div>
                       </div>
 
                       <div className="skill imageGroup">
                         <div className="title">스킬 빌드</div>
+
                         <div className="images">
-                          {champSummary.skillMasterList.map((skill: string, i: number) => (
-                            <Fragment key={skill}>
+                          {data.summary.skillMasterList.map((skillId, i: number) => (
+                            <Fragment key={skillId}>
                               <div className="skillImageContainer">
-                                {/* <DataDragonImage
-                            key={skill}
-                            type="spell"
-                            filename={`${champNames[champSummary.championId].en}${skill}`}
-                          /> */}
-                                <img
-                                  src={`https://cdn.lol.ps/assets/img/skills/${champId}_${skill.toLocaleLowerCase()}_40.webp`}
-                                />
-                                <div className="label">{skill}</div>
+                                <img src={data.champion.skills[skillId].image} />
+                                <div className="label">{skillId}</div>
                               </div>
                               {i !== 2 && <i className="bx bx-chevron-right" />}
                             </Fragment>
                           ))}
                         </div>
+
                         <div className="skillList">
-                          {champSummary.skillLv15List.map((skill: string, i: number) => (
-                            <div key={i} className={`item ${skill}`}>
-                              <span>{skill}</span>
+                          {data.summary.skillLv15List.map((skillId, i: number) => (
+                            <div key={i} className={`item ${skillId}`}>
+                              <span>{skillId}</span>
                             </div>
                           ))}
                         </div>
@@ -219,59 +231,48 @@ const ChampDetail = ({ className, champId }: ChampDetailProps) => {
                   <div className="imageGroup">
                     <div className="title">시작 아이템</div>
                     <div className="images">
-                      {champSummary.startingItemIdList.map((itemIds: number[]) =>
-                        itemIds.map((itemId, i) => (
-                          <DataDragonImage key={`${itemId}.${i}`} type="item" filename={itemId} />
-                        )),
-                      )}
+                      {data.summary.startingItemList.map((item, i) => (
+                        <img key={`${i}.${item.id}`} src={item.image} />
+                      ))}
                     </div>
                   </div>
 
                   <div className="imageGroup">
                     <div className="title">신발</div>
                     <div className="images">
-                      {champSummary.shoesId !== null && (
-                        <DataDragonImage type="item" filename={champSummary.shoesId} />
-                      )}
+                      {data.summary.shoesItemList.map(item => (
+                        <img key={item.id} src={item.image} />
+                      ))}
                     </div>
                   </div>
 
                   <div className="imageGroup">
                     <div className="title">코어 아이템</div>
                     <div className="images">
-                      {champSummary.coreItemIdList.map((itemId: number, i: number) => (
-                        <DataDragonImage key={`${itemId}.${i}`} type="item" filename={itemId} />
+                      {data.summary.coreItemList.map(item => (
+                        <img key={item.id} src={item.image} />
                       ))}
                     </div>
                   </div>
                 </div>
               )}
 
-              {!isNoData && <ItemBuilds itemBuilds={itemBuilds} />}
+              {!isNoData && <ItemBuildGroups itemBuildGroups={data.itemBuildGroups} />}
             </div>
 
-            {!isNoData && (
+            {!isNoData && customRuneIdsGroupByType && (
               <div className="right runeContainer">
-                <RuneStyleButtonRadioList
-                  items={runeStyles.map(runeStyle => ({
-                    mainRuneId: runeStyle.mainRuneIds[0],
-                    subRuneId: runeStyle.subRuneIds[0],
-                    winRate: runeStyle.winRate,
-                    pickRate: runeStyle.pickRate,
-                    count: runeStyle.count,
-                  }))}
-                  value={selectedRuneStyleId}
-                  onChange={value => form.setValue('runeStyleId', value)}
+                <RuneBuildButtonRadioList
+                  items={data.runeBuilds}
+                  value={selectedRuneBuildIndex}
+                  onChange={value => form.setValue('runeBuildIndex', value)}
                 />
 
                 <RunePage
-                  mainRuneIds={runeStyles[selectedRuneStyleId].mainRuneIds}
-                  subRuneIds={runeStyles[selectedRuneStyleId].subRuneIds}
-                  shardRuneIds={[
-                    champSummary.statperk1Id,
-                    champSummary.statperk2Id,
-                    champSummary.statperk3Id,
-                  ]}
+                  mainRuneIds={customRuneIdsGroupByType.mainRuneIds}
+                  subRuneIds={customRuneIdsGroupByType.subRuneIds}
+                  shardRuneIds={customRuneIdsGroupByType.shardRuneIds}
+                  onChange={handleRuneChange}
                 />
               </div>
             )}
@@ -286,22 +287,23 @@ const ChampDetail = ({ className, champId }: ChampDetailProps) => {
                   </div>
 
                   <div className="championList">
-                    {data.counterChampions[counterType].slice(0, 10).map((counter: any) => (
-                      <div className="item" key={counter.champId}>
-                        <div className="imageMask">
-                          <DataDragonImage
-                            type="champion"
-                            filename={champNames[counter.champId].en}
-                          />
-                        </div>
-                        <div className="texts">
-                          <div className="label">승률</div>
-                          <div className={`value ${counterType}`}>
-                            {counter.winrate.toFixed(2)}%
+                    {data.counterChampions[counterType]
+                      .slice(0, 10)
+                      .map((counter: CounterChampionsItem) => (
+                        <div className="item" key={counter.champion.id}>
+                          <div className="imageMask">
+                            <img src={counter.champion.imageFormats.small} />
+                          </div>
+
+                          <div className="texts">
+                            <div className="label">승률</div>
+
+                            <div className={`value ${counterType}`}>
+                              {counter.winRate.toFixed(2)}%
+                            </div>
                           </div>
                         </div>
-                      </div>
-                    ))}
+                      ))}
                   </div>
                 </section>
               ))}

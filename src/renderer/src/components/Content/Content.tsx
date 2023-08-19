@@ -6,7 +6,6 @@ import clsx from 'clsx'
 import { AnimatePresence, motion } from 'framer-motion'
 import { useAtomValue } from 'jotai'
 
-import DataDragonImage from '@renderer/features/asset/DataDragonImage'
 import { currentSummonerAtom } from '@renderer/stores/atoms/currentSummoner.atom'
 import { layoutAtom } from '@renderer/stores/atoms/layout.atom'
 
@@ -53,18 +52,7 @@ const Content = ({ className, children }: ContentProps) => {
         </div>
 
         {currentSummoner && (
-          <Button
-            type="text"
-            className="right"
-            icon={
-              <DataDragonImage
-                type="profileicon"
-                filename={currentSummoner.profileIconId}
-                size="28px"
-                circle
-              />
-            }
-          >
+          <Button type="text" className="right" icon={<img src={currentSummoner.profileIcon} />}>
             <span>{currentSummoner.name}</span>
           </Button>
         )}

@@ -3,7 +3,7 @@ import { Outlet, useLocation } from 'react-router-dom'
 import Layout from '@renderer/components/Layout'
 import Titlebar from '@renderer/components/Titlebar'
 import NeedUpdateLaterNotification from '@renderer/features/update/NeedUpdateLaterNotification'
-import useChampionDetailPageAutoNavigate from '@renderer/hooks/autoNavigate/useChampionDetailPageAutoNavigate'
+import useChampionSelectPageAutoNavigate from '@renderer/hooks/autoNavigate/useChampionSelectPageAutoNavigate'
 import useInGamePageAutoNavigate from '@renderer/hooks/autoNavigate/useInGamePageAutoNavigate'
 import useTierListPageAutoNavigate from '@renderer/hooks/autoNavigate/useTierListPageAutoNavigate'
 import useAppUpdateListener from '@renderer/hooks/listener/useAppUpdateListener'
@@ -30,19 +30,14 @@ const App = () => {
   useChampionSelectSessionListener()
   useCurrentSummonerListener()
 
-  // auto navigate
-  useTierListPageAutoNavigate()
-  useInGamePageAutoNavigate()
-  useChampionDetailPageAutoNavigate()
-
   return (
     <>
       <InitGlobalStyled />
-
       {isNoLayout && <Outlet />}
 
       {!isNoLayout && (
         <div id="app">
+          <AutoNavigateHooks />
           <NeedUpdateLaterNotification />
 
           <Titlebar />
@@ -54,6 +49,14 @@ const App = () => {
       )}
     </>
   )
+}
+
+const AutoNavigateHooks = () => {
+  useTierListPageAutoNavigate()
+  useInGamePageAutoNavigate()
+  useChampionSelectPageAutoNavigate()
+
+  return null
 }
 
 export default App

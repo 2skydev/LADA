@@ -1,8 +1,10 @@
 import { Controller } from 'react-hook-form'
 
-import { InputNumber, Switch } from 'antd'
+import { InputNumber, Select, Switch } from 'antd'
 import clsx from 'clsx'
 import { useAtom } from 'jotai'
+
+import { STATS_PROVIDERS } from '@main/modules/league/league.constants'
 
 import LayoutConfig from '@renderer/components/LayoutConfig'
 import SaveButton from '@renderer/components/SaveButton'
@@ -29,6 +31,78 @@ const GameSettings = () => {
   return (
     <SettingsPageStyled>
       <LayoutConfig breadcrumbs={['설정', '게임 설정']} />
+
+      <Section
+        title="통계 정보 제공자"
+        description={
+          <div>
+            통계 정보를 제공하는 서비스를 선택합니다.
+            <br />
+            챔피언 티어와 같은 통계 관련된 데이터를 제공하는 서비스를 변경할 수 있습니다.
+            <br />
+            <br />
+            현재는 LOL.PS 만 지원합니다.
+          </div>
+        }
+      >
+        <Controller
+          name="statsProvider"
+          control={form.control}
+          render={({ field }) => (
+            <Select
+              style={{ width: '7rem' }}
+              value={field.value}
+              onChange={value => field.onChange(value)}
+              options={STATS_PROVIDERS.map(provider => ({
+                label: provider,
+                value: provider,
+                disabled: provider !== 'LOL.PS',
+              }))}
+            />
+          )}
+        />
+      </Section>
+
+      <Section
+        title="챔피언 정보 - 배치된 포지션 우선"
+        description={
+          <div>
+            챔피언 선택 시 보여주는 정보를 현재 배치된 포지션 우선으로 표시됩니다.
+            <br />이 설정을 비활성화하면 챔피언 선택 시 해당 챔피언의 주 포지션으로 표시됩니다.
+          </div>
+        }
+      >
+        <Controller
+          name="useCurrentPositionChampionData"
+          control={form.control}
+          render={({ field }) => (
+            <Switch
+              checked={field.value}
+              onChange={checked => field.onChange(checked)}
+              checkedChildren={<i className="bx bx-check" />}
+              unCheckedChildren={<i className="bx bx-x" />}
+            />
+          )}
+        />
+      </Section>
+
+      <Section
+        title="자동 룬 설정"
+        description={<div>챔피언 선택 시 자동으로 룬 페이지를 설정합니다.</div>}
+      >
+        <Controller
+          name="autoRuneSetting"
+          control={form.control}
+          render={({ field }) => (
+            <Switch
+              checked={field.value}
+              onChange={checked => field.onChange(checked)}
+              checkedChildren={<i className="bx bx-check" />}
+              unCheckedChildren={<i className="bx bx-x" />}
+            />
+          )}
+        />
+      </Section>
 
       <Section
         title="매칭 자동 수락"
@@ -71,29 +145,6 @@ const GameSettings = () => {
             <div>초</div>
           </div>
         </div>
-      </Section>
-
-      <Section
-        title="챔피언 정보 - 배치된 포지션 우선"
-        description={
-          <div>
-            챔피언 선택 시 보여주는 정보를 현재 배치된 포지션 우선으로 표시됩니다.
-            <br />이 설정을 비활성화하면 챔피언 선택 시 해당 챔피언의 주 포지션으로 표시됩니다.
-          </div>
-        }
-      >
-        <Controller
-          name="useCurrentPositionChampionData"
-          control={form.control}
-          render={({ field }) => (
-            <Switch
-              checked={field.value}
-              onChange={checked => field.onChange(checked)}
-              checkedChildren={<i className="bx bx-check" />}
-              unCheckedChildren={<i className="bx bx-x" />}
-            />
-          )}
-        />
       </Section>
 
       <SaveButton defaultValues={config.game} form={form} />

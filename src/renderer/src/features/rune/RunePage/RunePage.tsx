@@ -1,34 +1,56 @@
 import clsx from 'clsx'
-import { motion } from 'framer-motion'
 
-import RuneGroup from '../RuneGroup'
+import { RuneIdsGroupByType, RuneType } from '@main/modules/league/types/rune.types'
+
+import RuneGroup, { RuneGroupValue } from '../RuneGroup'
 import { RunePageStyled } from './styled'
 
-export interface RunePageProps {
+export interface RunePageProps extends RuneIdsGroupByType {
   className?: string
-  mainRuneIds: [number, number, number, number]
-  subRuneIds: [number, number]
-  shardRuneIds: [number, number, number]
+  onChange?: (value: RuneIdsGroupByType) => void
 }
 
-const RunePage = ({ className, mainRuneIds, subRuneIds, shardRuneIds }: RunePageProps) => {
-  const key = `${mainRuneIds.join('')}${subRuneIds.join('')}${shardRuneIds.join('')}`
+const RunePage = ({
+  className,
+  mainRuneIds,
+  subRuneIds,
+  shardRuneIds,
+  onChange,
+}: RunePageProps) => {
+  const handleChange =
+    <Type extends RuneType>(type: Type) =>
+    (runeIds: RuneGroupValue<Type>) => {
+      const runeIdsGroupByType: RuneIdsGroupByType = {
+        mainRuneIds: [...mainRuneIds],
+        subRuneIds: [...subRuneIds],
+        shardRuneIds: [...shardRuneIds],
+      }
+
+      runeIdsGroupByType[`${type}RuneIds`] = runeIds
+
+      onChange && onChange(runeIdsGroupByType)
+    }
 
   return (
     <RunePageStyled className={clsx('RunePage', className)}>
-      <motion.div
-        key={key}
-        initial={{ opacity: 0 }}
-        animate={{ opacity: 1 }}
-        transition={{ duration: 0.3 }}
-      >
-        <RuneGroup type="main" activeRuneIds={mainRuneIds} />
+      <RuneGroup
+        type="main"
+        activeRuneIds={mainRuneIds}
+        onChange={onChange && handleChange('main')}
+      />
 
-        <div className="right">
-          <RuneGroup type="sub" activeRuneIds={subRuneIds} />
-          <RuneGroup type="shard" activeRuneIds={shardRuneIds} />
-        </div>
-      </motion.div>
+      <div className="right">
+        <RuneGroup
+          type="sub"
+          activeRuneIds={subRuneIds}
+          onChange={onChange && handleChange('sub')}
+        />
+        <RuneGroup
+          type="shard"
+          activeRuneIds={shardRuneIds}
+          onChange={onChange && handleChange('shard')}
+        />
+      </div>
     </RunePageStyled>
   )
 }

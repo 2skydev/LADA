@@ -1,34 +1,29 @@
 import 'reflect-metadata'
 
-import { container } from '@launchtray/tsyringe-async'
+import { NestFactory } from '@nestjs/core'
 import * as Sentry from '@sentry/electron/main'
 
-import { AppFactory } from '@main/core/factory'
 import { AppModule } from '@main/modules/app/app.module'
-import { ConfigModule } from '@main/modules/config/config.module'
-import { DeveloperModule } from '@main/modules/developer/developer.module'
-import { LeagueModule } from '@main/modules/league/league.module'
-import { MigrationModule } from '@main/modules/migration/migration.module'
-import { PSModule } from '@main/modules/ps/ps.module'
-import { UpdateModule } from '@main/modules/update/update.module'
+import { ElectronService } from '@main/modules/electron/electron.service'
+import { LeagueService } from '@main/modules/league/league.service'
+import { UpdateService } from '@main/modules/update/update.service'
 
-Sentry.init({
-  dsn: import.meta.env.MAIN_VITE_SENTRY_DSN,
-})
-;(async () => {
-  // 마이그레이션이 항상 먼저 실행되도록 처리
-  await container.resolve(MigrationModule)
+if (process.env.NODE_ENV !== 'development') {
+  Sentry.init({
+    dsn: import.meta.env.MAIN_VITE_SENTRY_DSN,
+  })
+}
 
-  const appModule = await AppFactory.create(AppModule, [
-    ConfigModule,
-    UpdateModule,
-    DeveloperModule,
-    LeagueModule,
-    PSModule,
-  ])
+const bootstrap = async () => {
+  const app = await NestFactory.createApplicationContext(AppModule)
 
-  const updateModule = await container.resolve(UpdateModule)
+  const leagueService = app.get(LeagueService)
+  const updateService = app.get(UpdateService)
+  const electronService = app.get(ElectronService)
 
-  await updateModule.autoUpdate()
-  await appModule.start()
-})()
+  await leagueService.clientInitialize()
+  await updateService.autoUpdate()
+  await electronService.start()
+}
+
+bootstrap()
