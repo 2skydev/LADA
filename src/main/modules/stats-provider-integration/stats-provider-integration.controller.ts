@@ -29,8 +29,10 @@ export class StatsProviderIntegrationController {
   }
 
   @IPCHandle()
-  async getInGame(...args: Parameters<typeof this.statsProviderIntegrationService.getInGame>) {
-    return this.statsProviderIntegrationService.getInGame(...args)
+  async getInGameByCurrentSummoner(
+    ...args: Parameters<typeof this.statsProviderIntegrationService.getInGameByCurrentSummoner>
+  ) {
+    return this.statsProviderIntegrationService.getInGameByCurrentSummoner(...args)
   }
 
   @IPCHandle()
