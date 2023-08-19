@@ -1,8 +1,9 @@
-import { Injectable, OnModuleInit } from '@nestjs/common'
+import { Injectable } from '@nestjs/common'
 import axios from 'axios'
 import { omit } from 'lodash'
 
 import { ExecuteLog } from '@main/decorators/execute-log.decorator'
+import { ReturnValueCaching } from '@main/decorators/return-value-caching.decorator'
 import { LeagueDataDragonProvider } from '@main/modules/league/league-data-dragon.provider'
 import { ChampionStats, GetChampionStatsOptions } from '@main/modules/league/types/champion.types'
 import { LaneId } from '@main/modules/league/types/lane.types'
@@ -24,16 +25,24 @@ import {
 import { getDivision } from '@main/modules/ps/utils/rank.utils'
 
 @Injectable()
-export class PSService implements OnModuleInit {
-  version: number
-
+export class PSService {
   constructor(private readonly leagueDataDragonProvider: LeagueDataDragonProvider) {}
 
-  @ExecuteLog()
-  async onModuleInit() {
-    this.version = await this.getLatestVersion()
+  private async fetch(url: string, params?: Record<string, any>) {
+    const version = await this.getLatestVersion()
+
+    return axios.get(url, {
+      baseURL: 'https://lol.ps/api',
+      params: {
+        version,
+        region: 0,
+        ...params,
+      },
+    })
   }
 
+  @ReturnValueCaching()
+  @ExecuteLog()
   async getLatestVersion(): Promise<number> {
     const {
       data: {
@@ -44,22 +53,18 @@ export class PSService implements OnModuleInit {
     return latestVersion.versionId
   }
 
-  async getChampionTierList(laneId: LaneId, rankRangeId: RankRangeId = 2) {
+  public async getChampionTierList(laneId: LaneId, rankRangeId: RankRangeId = 2) {
     const {
       data: { data },
-    } = await axios.get(`https://lol.ps/api/statistics/tierlist.json`, {
-      params: {
-        region: 0,
-        version: this.version,
-        tier: rankRangeId,
-        lane: laneId,
-      },
+    } = await this.fetch(`/statistics/tierlist.json`, {
+      tier: rankRangeId,
+      lane: laneId,
     })
 
     return data
   }
 
-  async getSummonerStatsByName(summonerName: string): Promise<PSSummonerStats | null> {
+  public async getSummonerStatsByName(summonerName: string): Promise<PSSummonerStats | null> {
     try {
       const {
         data: { data },
@@ -85,14 +90,17 @@ export class PSService implements OnModuleInit {
     }
   }
 
-  async getInGameBySummonerPsId(summonerPsId: string): Promise<PSInGame | null> {
+  public async getInGameByName(summonerName: string): Promise<PSInGame | null> {
     try {
+      const summonerStats = await this.getSummonerStatsByName(summonerName)
+      if (!summonerStats) throw new Error('소환사 정보를 가져올 수 없습니다.')
+
       const champions = await this.leagueDataDragonProvider.getChampions()
       const summonerSpells = await this.leagueDataDragonProvider.getSummonerSpells()
 
       const {
         data: { data },
-      } = await axios.get(`https://lol.ps/api/summoner/${summonerPsId}/spectator.json`, {
+      } = await axios.get(`https://lol.ps/api/summoner/${summonerStats.psId}/spectator.json`, {
         params: {
           region: 'kr',
         },
@@ -112,26 +120,7 @@ export class PSService implements OnModuleInit {
         gameStartTime: data.gameStartTime,
       }
 
-      // const promises = (['blue', 'red'] as const)
-      //   .map(team => {
-      //     return result[team].players.map(player => {
-      //       return this.getSummoner(player.summonerName)
-      //     })
-      //   })
-      //   .flat()
-
-      // const summoners = await Promise.all(promises)
-
-      // ;(['blue', 'red'] as const).forEach(team => {
-      //   result[team].players.forEach((player, i) => {
-      //     const { promotion } = summoners[i + (team === 'red' ? 5 : 0)]!
-
-      //     console.log(promotion, i + (team === 'red' ? 5 : 0))
-      //     if (promotion) player.promotion = promotion
-      //   })
-      // })
-
-      if (result.blue.players.find(player => player.summonerPsId === summonerPsId)) {
+      if (result.blue.players.find(player => player.summonerPsId === summonerStats.psId)) {
         result.myTeam = 'blue'
         result.enemyTeam = 'red'
       }
@@ -150,7 +139,7 @@ export class PSService implements OnModuleInit {
     }
   }
 
-  async getDuoSynergyList(
+  public async getDuoSynergyList(
     duoId: DuoId,
     options?: GetDuoSynergyListOptions,
   ): Promise<DuoSynergyList> {
@@ -165,16 +154,12 @@ export class PSService implements OnModuleInit {
 
     const {
       data: { data },
-    } = await axios.get(`https://lol.ps/api/lab/duo-list.json`, {
-      params: {
-        region: 0,
-        version: this.version,
-        tier: rankRangeId,
-        duo: duoId,
-        criterion,
-        order,
-        ...(championId !== undefined && championId !== null && { championId }),
-      },
+    } = await this.fetch(`https://lol.ps/api/lab/duo-list.json`, {
+      tier: rankRangeId,
+      duo: duoId,
+      criterion,
+      order,
+      ...(championId !== undefined && championId !== null && { championId }),
     })
 
     return data.map((item, i) => ({
@@ -196,7 +181,7 @@ export class PSService implements OnModuleInit {
     }))
   }
 
-  async getChampionStats(
+  public async getChampionStats(
     championId: number,
     options?: GetChampionStatsOptions,
   ): Promise<ChampionStats> {
@@ -211,46 +196,20 @@ export class PSService implements OnModuleInit {
       laneId = Number(champArgs.laneId) as LaneId
     }
 
+    const fetchParams = {
+      tier: rankRangeId,
+      lane: laneId,
+    }
+
     let promises = [
       this.leagueDataDragonProvider.getChampions(),
       this.leagueDataDragonProvider.getGameItemData(),
       this.leagueDataDragonProvider.getSummonerSpells(),
 
-      axios.get(`https://lol.ps/api/champ/${championId}/summary.json`, {
-        params: {
-          region: 0,
-          version: this.version,
-          tier: rankRangeId,
-          lane: laneId,
-        },
-      }),
-
-      axios.get(`https://lol.ps/api/champ/${championId}/spellitem.json`, {
-        params: {
-          region: 0,
-          version: this.version,
-          tier: rankRangeId,
-          lane: laneId,
-        },
-      }),
-
-      axios.get(`https://lol.ps/api/champ/${championId}/runestatperk.json`, {
-        params: {
-          region: 0,
-          version: this.version,
-          tier: rankRangeId,
-          lane: laneId,
-        },
-      }),
-
-      axios.get(`https://lol.ps/api/champ/${championId}/versus.json`, {
-        params: {
-          region: 0,
-          version: this.version,
-          tier: rankRangeId,
-          lane: laneId,
-        },
-      }),
+      this.fetch(`https://lol.ps/api/champ/${championId}/summary.json`, fetchParams),
+      this.fetch(`https://lol.ps/api/champ/${championId}/spellitem.json`, fetchParams),
+      this.fetch(`https://lol.ps/api/champ/${championId}/runestatperk.json`, fetchParams),
+      this.fetch(`https://lol.ps/api/champ/${championId}/versus.json`, fetchParams),
     ] as const
 
     const [

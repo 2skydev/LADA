@@ -16,9 +16,9 @@ export class StatsProviderIntegrationService {
   private provider: StatsProvider
 
   constructor(
-    private readonly leagueService: LeagueService,
-    private readonly psService: PSService,
     readonly configService: ConfigService,
+    private readonly psService: PSService,
+    private readonly leagueService: LeagueService,
   ) {
     this.provider = configService.get('game.statsProvider')
 
@@ -28,7 +28,7 @@ export class StatsProviderIntegrationService {
   }
 
   // 챔피언 통계
-  public async getChampionStats(championId: number, options: GetChampionStatsOptions) {
+  public async getChampionStats(championId: number, options?: GetChampionStatsOptions) {
     return this.psService.getChampionStats(championId, options)
   }
 
@@ -43,16 +43,12 @@ export class StatsProviderIntegrationService {
   }
 
   // 인게임 정보
-  public async getInGame() {
+  public async getInGameByCurrentSummoner() {
     const summoner = await this.leagueService.getCurrentSummoner()
 
     if (!summoner) return null
 
-    const summonerStats = await this.psService.getSummonerStatsByName(summoner.name)
-
-    if (!summonerStats) return null
-
-    return this.psService.getInGameBySummonerPsId(summonerStats.psId)
+    return this.psService.getSummonerStatsByName(summoner.name)
   }
 
   // 소환사 통계

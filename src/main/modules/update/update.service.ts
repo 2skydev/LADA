@@ -5,6 +5,7 @@ import { autoUpdater } from 'electron-updater'
 import { Injectable, OnModuleInit } from '@nestjs/common'
 import { ModuleRef } from '@nestjs/core'
 
+import { ExecuteLog } from '@main/decorators/execute-log.decorator'
 import { AppWindow } from '@main/modules/electron/decorators/app-window.decorator'
 import { ElectronService } from '@main/modules/electron/electron.service'
 import { LeagueService } from '@main/modules/league/league.service'
@@ -53,6 +54,7 @@ export class UpdateService implements OnModuleInit {
   }
 
   // 자동 업데이트 (src/main/index.ts에서 실행)
+  @ExecuteLog()
   async autoUpdate() {
     return new Promise<boolean>(async resolve => {
       let isLeagueChampSelectingPromise: Promise<boolean> | null = null
