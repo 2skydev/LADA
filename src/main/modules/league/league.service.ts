@@ -10,12 +10,24 @@ import { AppWindow } from '@main/modules/electron/decorators/app-window.decorato
 import { ElectronService } from '@main/modules/electron/electron.service'
 import { LeagueDataDragonProvider } from '@main/modules/league/league-data-dragon.provider'
 import { LeagueAPIClient } from '@main/modules/league/league.client'
-import { LEAGUE_CLIENT_OVERLAY_WINDOW_KEY } from '@main/modules/league/league.constants'
+import {
+  LANE_ID_TO_LABEL_MAP,
+  LEAGUE_CLIENT_OVERLAY_WINDOW_KEY,
+} from '@main/modules/league/league.constants'
 import { LeagueController } from '@main/modules/league/league.controller'
 import { ChampionSelectSession } from '@main/modules/league/types/champion-select-session.types'
+import { LaneId } from '@main/modules/league/types/lane.types'
 import { Lobby } from '@main/modules/league/types/lobby.types'
 import { Summoner } from '@main/modules/league/types/summoner.types'
 import { convertLaneEnToLaneId } from '@main/modules/league/utils/lane.utils'
+
+/**
+ * Description
+ *
+ * 아래 import는 `LeagueService.statsProviderIntegrationService`의 타입을 위해 필요합니다.
+ * 빌드 시 사라지는 코드입니다.
+ */
+import { StatsProviderIntegrationService } from '@main/modules/stats-provider-integration/stats-provider-integration.service'
 
 @Injectable()
 export class LeagueService implements OnModuleInit {
@@ -26,6 +38,7 @@ export class LeagueService implements OnModuleInit {
   private clientOverlayWindow: BrowserWindow | null = null
 
   private controller: LeagueController
+  private statsProviderIntegrationService: StatsProviderIntegrationService
 
   constructor(
     private readonly electronService: ElectronService,
@@ -37,9 +50,30 @@ export class LeagueService implements OnModuleInit {
   @ExecuteLog()
   async onModuleInit() {
     this.controller = this.moduleRef.get(LeagueController)
+
+    /**
+     * Description
+     *
+     * 아래 동적 import는 의도한 코드입니다.
+     * 빌드시 한개의 파일로 번들링이 되는데 이때 TDZ(Temporal Dead Zone)에 걸리는 문제가 있습니다.
+     *
+     * 이를 해결하기 위해 `electron.vite.config.ts` 파일의 `main.build.rollupOptions.output.preserveModules` 옵션을 사용하여
+     * 여러개의 파일로 나누고 nestjs의 forwardRef를 사용하여 순환 참조를 해결할 수 있지만,
+     * electron 공식 문서에 따르면 한 개의 파일로 번들링하는 것이 성능상 이점이 있다고 합니다.
+     *
+     * @see https://www.electronjs.org/docs/latest/tutorial/performance#7-bundle-your-code
+     */
+    const { StatsProviderIntegrationService } = await import(
+      '@main/modules/stats-provider-integration/stats-provider-integration.service'
+    )
+    this.statsProviderIntegrationService = this.moduleRef.get(StatsProviderIntegrationService, {
+      strict: false,
+    })
+
     this.registerEvents()
   }
 
+  @ExecuteLog()
   public async clientInitialize() {
     this.isConnected = await this.client.initialize()
   }
@@ -125,6 +159,48 @@ export class LeagueService implements OnModuleInit {
     return data !== null
   }
 
+  private async isCanAddRunePage(): Promise<boolean> {
+    const data = await this.client.get('/lol-perks/v1/inventory')
+
+    if (!data) return false
+
+    return data.canAddCustomPage as boolean
+  }
+
+  private async deleteOldRunePage() {
+    const data = (await this.client.get('/lol-perks/v1/pages')) as any[] | null
+
+    if (!data) return
+
+    data.sort((a, b) => a.lastModified - b.lastModified)
+
+    const oldRunePageId = data[0].id
+
+    await this.client.delete(`/lol-perks/v1/pages/${oldRunePageId}`)
+  }
+
+  private async getLADARunePageId(): Promise<number | null> {
+    const data = (await this.client.get('/lol-perks/v1/pages')) as any[] | null
+
+    if (!data) return null
+
+    return data.find(item => item.name.includes('LADA - '))?.id || null
+  }
+
+  private async createNewLADARunePage(runeIds: number[], pageName: string) {
+    const { categoryFindMap } = await this.leagueDataDragonProvider.getRuneData()
+
+    const isCanAddRunePage = await this.isCanAddRunePage()
+    if (!isCanAddRunePage) await this.deleteOldRunePage()
+
+    await this.client.post('/lol-perks/v1/pages', {
+      name: `LADA - ${pageName}`,
+      selectedPerkIds: runeIds,
+      primaryStyleId: categoryFindMap[runeIds[0]],
+      subStyleId: categoryFindMap[runeIds[4]],
+    })
+  }
+
   // 현재 로그인된 소환사 가져오기
   public async getCurrentSummoner() {
     const data = await this.client.get('/lol-summoner/v1/current-summoner')
@@ -143,18 +219,69 @@ export class LeagueService implements OnModuleInit {
     return this.convertChampionSelectSessionData(data)
   }
 
-  private async handleCurrentSummoner(data: any) {
-    const convertedData = await this.convertSummonerData(data)
+  public async setRunePageByRuneIds(runeIds: number[], pageName: string) {
+    const { categoryFindMap } = await this.leagueDataDragonProvider.getRuneData()
+    const ladaRunePageId = await this.getLADARunePageId()
+
+    if (ladaRunePageId === null) {
+      await this.createNewLADARunePage(runeIds, pageName)
+    } else {
+      await this.client.put(`/lol-perks/v1/pages/${ladaRunePageId}`, {
+        name: `LADA - ${pageName}`,
+        selectedPerkIds: runeIds,
+        primaryStyleId: categoryFindMap[runeIds[0]],
+        subStyleId: categoryFindMap[runeIds[4]],
+      })
+    }
+  }
+
+  // 자동 룬 설정 트리거 (설정에서 활성화 시에만 동작)
+  public async triggerAutoRuneSetting(championId: number | null, laneId: LaneId | null) {
+    if (championId === null) return
+    if (!this.configService.get('game.autoRuneSetting')) return
+
+    const useCurrentPositionChampionData = this.configService.get(
+      'game.useCurrentPositionChampionData',
+    )
+
+    const {
+      runeBuilds,
+      champion: { name },
+      summary: { laneId: laneIdFromStats },
+    } = await this.statsProviderIntegrationService.getChampionStats(championId, {
+      laneId: useCurrentPositionChampionData ? laneId ?? undefined : undefined,
+    })
+
+    const mainRuneBuild = runeBuilds[0]
+
+    if (!mainRuneBuild) {
+      return
+    }
+
+    await this.setRunePageByRuneIds(
+      [...mainRuneBuild.mainRuneIds, ...mainRuneBuild.subRuneIds, ...mainRuneBuild.shardRuneIds],
+      `${LANE_ID_TO_LABEL_MAP[laneIdFromStats]} ${name}`,
+    )
+  }
+
+  private handleCurrentSummoner(data: any) {
+    const convertedData = this.convertSummonerData(data)
     this.controller.onChangeCurrentSummoner(convertedData!)
   }
 
-  private async handleLobby(data: any) {
-    const convertedData = await this.convertLobbyData(data)
+  private handleLobby(data: any) {
+    const convertedData = this.convertLobbyData(data)
     this.controller.onChangeLobby(convertedData!)
   }
 
   private async handleChampionSelectSession(data: any) {
-    const convertedData = await this.convertChampionSelectSessionData(data)
+    const convertedData = (await this.convertChampionSelectSessionData(data))!
+
+    this.triggerAutoRuneSetting(
+      convertedData.championId || convertedData.tempChampionId,
+      convertedData.laneId,
+    )
+
     this.controller.onChangeChampionSelectSession(convertedData!)
   }
 
@@ -259,6 +386,8 @@ export class LeagueService implements OnModuleInit {
     const summoner = (await this.getCurrentSummoner())!
 
     const currentSummonerData = data.myTeam.find(player => player.summonerId === summoner.id)
+
+    if (!currentSummonerData) return null
 
     const {
       assignedPosition: laneEn = null,
