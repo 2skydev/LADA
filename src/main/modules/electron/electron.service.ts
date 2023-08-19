@@ -247,6 +247,7 @@ export const generatedIpcOnContext = {`
   }
 
   // 앱 시작 (src/main/index.ts에서 실행)
+  @ExecuteLog()
   public async start() {
     if (!this.IS_HIDDEN_LAUNCH && !this.isNeedUpdate) {
       await this.createWindow()
