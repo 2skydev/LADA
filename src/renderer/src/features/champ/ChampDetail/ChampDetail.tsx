@@ -109,8 +109,6 @@ const ChampDetail = ({ className, champId, defaultLaneId, autoRuneSetting }: Cha
 
   useEffect(() => {
     if (autoRuneSettingArguments) {
-      console.log(autoRuneSettingArguments.name, autoRuneSettingArguments.runeIds)
-
       window.electron.setRunePageByRuneIds(
         autoRuneSettingArguments.runeIds,
         autoRuneSettingArguments.name,
