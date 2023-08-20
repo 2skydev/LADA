@@ -23,7 +23,6 @@ const useAPI = <FnName extends ElectronContextPropertyName>(
     revalidateOnFocus: false,
     revalidateOnReconnect: false,
     fetcher: async ([, args]: typeof key) => {
-      console.log('useAPI', fnName, args)
       // @ts-ignore
       const response = await window.electron[fnName](...args)
 
