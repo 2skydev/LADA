@@ -63,4 +63,9 @@ export class MigrationModule {
     configStore.set('game.statsProvider', 'LOL.PS')
     configStore.set('game.autoRuneSetting', true)
   }
+
+  public static async 'v0.0.18'() {
+    configStore.set('game.autoSpellSetting', true)
+    configStore.set('game.flashKey', 'F')
+  }
 }

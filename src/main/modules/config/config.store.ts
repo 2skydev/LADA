@@ -17,6 +17,8 @@ export interface ConfigStoreValues {
     autoAcceptDelaySeconds: number
     useCurrentPositionChampionData: boolean
     autoRuneSetting: boolean
+    autoSpellSetting: boolean
+    flashKey: 'D' | 'F'
   }
 }
 
@@ -36,6 +38,8 @@ export const configStore = new Store<ConfigStoreValues>({
       autoAcceptDelaySeconds: 0,
       useCurrentPositionChampionData: true,
       autoRuneSetting: true,
+      autoSpellSetting: true,
+      flashKey: 'F',
     },
   },
 })

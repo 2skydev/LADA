@@ -1,5 +1,5 @@
 import { ThemeConfig } from 'antd/es/config-provider/context'
-import { lighten, rgba } from 'polished'
+import { darken, lighten, rgba } from 'polished'
 
 export const sizes = {}
 
@@ -60,6 +60,11 @@ export const antdTheme: ThemeConfig = {
     },
     Notification: {
       colorBgElevated: colors.sidebarBG,
+    },
+    Segmented: {
+      itemColor: colors.textColor2,
+      itemHoverColor: darken(0.1, colors.textColor1),
+      itemSelectedBg: lighten(0.06, colors.contentBG),
     },
   },
 }
