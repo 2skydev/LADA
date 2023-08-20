@@ -154,12 +154,15 @@ export class LeagueService implements OnModuleInit {
   }
 
   // 현재 롤 클라이언트가 챔피언 선택 중인지 확인
-  public async isLeagueChampSelecting() {
+  public async isChampionSelecting() {
     if (!this.isConnected) return false
 
-    const data = await this.client.get('/lol-champ-select/v1/session')
-
-    return data !== null
+    try {
+      const data = await this.client.get('/lol-champ-select/v1/session')
+      return Boolean(data && data?.httpStatus !== 404)
+    } catch {
+      return false
+    }
   }
 
   private async isCanAddRunePage(): Promise<boolean> {

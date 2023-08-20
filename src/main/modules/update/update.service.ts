@@ -57,10 +57,10 @@ export class UpdateService implements OnModuleInit {
   @ExecuteLog()
   async autoUpdate() {
     return new Promise<boolean>(async resolve => {
-      let isLeagueChampSelectingPromise: Promise<boolean> | null = null
+      let isChampionSelectingPromise: Promise<boolean> | null = null
 
       if (!this.electronService.IS_HIDDEN_LAUNCH) {
-        isLeagueChampSelectingPromise = this.leagueService.isLeagueChampSelecting()
+        isChampionSelectingPromise = this.leagueService.isChampionSelecting()
       }
 
       const stopAutoUpdate = () => {
@@ -72,9 +72,9 @@ export class UpdateService implements OnModuleInit {
 
       const handleUpdateAvailable = async () => {
         if (!this.electronService.IS_HIDDEN_LAUNCH) {
-          const isLeagueChampSelecting = await isLeagueChampSelectingPromise
+          const isChampionSelecting = await isChampionSelectingPromise
 
-          if (isLeagueChampSelecting) {
+          if (isChampionSelecting) {
             // 챔피언 선택 중이면 업데이트 안함
             this.electronService.isNeedUpdateLater = true
             stopAutoUpdate()
