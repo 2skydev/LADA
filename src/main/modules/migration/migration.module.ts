@@ -65,7 +65,7 @@ export class MigrationModule {
   }
 
   public static async 'v0.0.18'() {
-    configStore.set('game.autoSpellSetting', true)
+    configStore.set('game.autoSummonerSpellSetting', true)
     configStore.set('game.flashKey', 'F')
   }
 }

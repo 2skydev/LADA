@@ -58,6 +58,11 @@ export class LeagueController {
     return this.leagueService.setRunePageByRuneIds(...args)
   }
 
+  @IPCHandle()
+  public async setSummonerSpell(...args: Parameters<LeagueService['setSummonerSpell']>) {
+    return this.leagueService.setSummonerSpell(...args)
+  }
+
   @IPCSender({
     windowKeys: [ELECTRON_MAIN_WINDOW_KEY, LEAGUE_CLIENT_OVERLAY_WINDOW_KEY],
   })

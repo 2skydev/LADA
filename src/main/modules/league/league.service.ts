@@ -11,13 +11,13 @@ import { ElectronService } from '@main/modules/electron/electron.service'
 import { LeagueDataDragonProvider } from '@main/modules/league/league-data-dragon.provider'
 import { LeagueAPIClient } from '@main/modules/league/league.client'
 import {
+  FLASH_SUMMONER_SPELL_ID,
   LADA_RUNE_PAGE_NAME_PREFIX,
   LANE_ID_TO_LABEL_MAP,
   LEAGUE_CLIENT_OVERLAY_WINDOW_KEY,
 } from '@main/modules/league/league.constants'
 import { LeagueController } from '@main/modules/league/league.controller'
 import { ChampionSelectSession } from '@main/modules/league/types/champion-select-session.types'
-import { LaneId } from '@main/modules/league/types/lane.types'
 import { Lobby } from '@main/modules/league/types/lobby.types'
 import { Summoner } from '@main/modules/league/types/summoner.types'
 import { convertLaneEnToLaneId } from '@main/modules/league/utils/lane.utils'
@@ -241,33 +241,62 @@ export class LeagueService implements OnModuleInit {
     }
   }
 
-  // 자동 룬 설정 트리거 (설정에서 활성화 시에만 동작)
-  public async triggerAutoRuneSetting(championId: number | null, laneId: LaneId | null) {
-    if (championId === null) return
-    if (!this.configService.get('game.autoRuneSetting')) return
+  public async setSummonerSpell(summonerSpellIds: number[]) {
+    const flashIndex = summonerSpellIds.findIndex(x => x === FLASH_SUMMONER_SPELL_ID)
+
+    if (flashIndex !== -1) {
+      const flashKey = this.configService.get('game.flashKey')
+
+      summonerSpellIds = [summonerSpellIds[+!flashIndex], FLASH_SUMMONER_SPELL_ID]
+
+      if (flashKey === 'D') {
+        summonerSpellIds.reverse()
+      }
+    }
+
+    await this.client.patch('/lol-champ-select/v1/session/my-selection', {
+      spell1Id: summonerSpellIds[0],
+      spell2Id: summonerSpellIds[1],
+    })
+  }
+
+  // 자동 설정 트리거 (설정에서 활성화 시에만 동작)
+  public async triggerAutoSetting(championSelectSession: ChampionSelectSession) {
+    const { championId, tempChampionId, laneId } = championSelectSession
+    const viewChampionId = championId || tempChampionId
+
+    // 선택한 챔피언이 없거나 이전에 선택한 챔피언과 같은 경우 무시
+    if (viewChampionId === null) return
+    if (this.beforeChampionId === viewChampionId) return
+
+    this.beforeChampionId = viewChampionId
 
     const useCurrentPositionChampionData = this.configService.get(
       'game.useCurrentPositionChampionData',
     )
 
-    const {
-      runeBuilds,
-      champion: { name },
-      summary: { laneId: laneIdFromStats },
-    } = await this.statsProviderIntegrationService.getChampionStats(championId, {
-      laneId: useCurrentPositionChampionData ? laneId ?? undefined : undefined,
-    })
+    const championStats = await this.statsProviderIntegrationService.getChampionStats(
+      viewChampionId,
+      {
+        laneId: useCurrentPositionChampionData ? laneId ?? undefined : undefined,
+      },
+    )
 
-    const mainRuneBuild = runeBuilds[0]
+    // 룬 자동 설정
+    if (this.configService.get('game.autoRuneSetting')) {
+      const mainRuneBuild = championStats.runeBuilds[0]
+      if (!mainRuneBuild) return
 
-    if (!mainRuneBuild) {
-      return
+      await this.setRunePageByRuneIds(
+        [...mainRuneBuild.mainRuneIds, ...mainRuneBuild.subRuneIds, ...mainRuneBuild.shardRuneIds],
+        `${LANE_ID_TO_LABEL_MAP[championStats.summary.laneId]} ${championStats.champion.name}`,
+      )
     }
 
-    await this.setRunePageByRuneIds(
-      [...mainRuneBuild.mainRuneIds, ...mainRuneBuild.subRuneIds, ...mainRuneBuild.shardRuneIds],
-      `${LANE_ID_TO_LABEL_MAP[laneIdFromStats]} ${name}`,
-    )
+    // 소환사 주문 자동 설정
+    if (this.configService.get('game.autoSummonerSpellSetting')) {
+      await this.setSummonerSpell(championStats.summary.spells.map(spell => spell.id))
+    }
   }
 
   private handleCurrentSummoner(data: any) {
@@ -286,14 +315,8 @@ export class LeagueService implements OnModuleInit {
 
     this.controller.onChangeChampionSelectSession(convertedData!)
 
-    const championId = convertedData.championId || convertedData.tempChampionId
-
-    if (this.beforeChampionId !== championId) {
-      this.beforeChampionId = championId
-
-      if (!this.electronService.window) {
-        this.triggerAutoRuneSetting(championId, convertedData.laneId)
-      }
+    if (!this.electronService.window) {
+      this.triggerAutoSetting(convertedData)
     }
   }
 

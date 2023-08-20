@@ -153,7 +153,7 @@ const GameSettings = () => {
       >
         <Space>
           <Controller
-            name="autoSpellSetting"
+            name="autoSummonerSpellSetting"
             control={form.control}
             render={({ field }) => (
               <Switch

@@ -6,6 +6,8 @@ export const LADA_RUNE_PAGE_NAME_PREFIX = 'LADA '
 
 export const LANE_IDS = [0, 1, 2, 3, 4] as const
 
+export const FLASH_SUMMONER_SPELL_ID = 4
+
 export const LANE_EN_TO_LANE_ID_MAP = {
   TOP: 0,
   JUNGLE: 1,
