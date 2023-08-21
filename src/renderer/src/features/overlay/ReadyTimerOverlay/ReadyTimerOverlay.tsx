@@ -16,7 +16,7 @@ const ReadyTimerOverlay = ({ className }: ReadyTimerOverlayProps) => {
   useEffect(() => {
     const unsubscribe = window.electron.onAutoAccept(event => {
       if (event.playerResponse === 'None') {
-        setData(data)
+        setData(event)
       } else {
         setData(null)
       }
