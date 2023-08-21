@@ -1,6 +1,6 @@
 import { Controller } from 'react-hook-form'
 
-import { InputNumber, Select, Switch } from 'antd'
+import { InputNumber, Segmented, Select, Space, Switch } from 'antd'
 import clsx from 'clsx'
 import { useAtom } from 'jotai'
 
@@ -87,24 +87,6 @@ const GameSettings = () => {
       </Section>
 
       <Section
-        title="자동 룬 설정"
-        description={<div>챔피언 선택 시 자동으로 룬 페이지를 설정합니다.</div>}
-      >
-        <Controller
-          name="autoRuneSetting"
-          control={form.control}
-          render={({ field }) => (
-            <Switch
-              checked={field.value}
-              onChange={checked => field.onChange(checked)}
-              checkedChildren={<i className="bx bx-check" />}
-              unCheckedChildren={<i className="bx bx-x" />}
-            />
-          )}
-        />
-      </Section>
-
-      <Section
         title="매칭 자동 수락"
         description={
           <div>
@@ -145,6 +127,65 @@ const GameSettings = () => {
             <div>초</div>
           </div>
         </div>
+      </Section>
+
+      <Section
+        title="자동 룬 설정"
+        description={<div>챔피언 선택 시 자동으로 룬 페이지를 설정합니다.</div>}
+      >
+        <Controller
+          name="autoRuneSetting"
+          control={form.control}
+          render={({ field }) => (
+            <Switch
+              checked={field.value}
+              onChange={checked => field.onChange(checked)}
+              checkedChildren={<i className="bx bx-check" />}
+              unCheckedChildren={<i className="bx bx-x" />}
+            />
+          )}
+        />
+      </Section>
+
+      <Section
+        title="자동 스펠 설정"
+        description={<div>챔피언 선택 시 자동으로 스펠을 설정합니다.</div>}
+      >
+        <Space>
+          <Controller
+            name="autoSummonerSpellSetting"
+            control={form.control}
+            render={({ field }) => (
+              <Switch
+                checked={field.value}
+                onChange={checked => field.onChange(checked)}
+                checkedChildren={<i className="bx bx-check" />}
+                unCheckedChildren={<i className="bx bx-x" />}
+              />
+            )}
+          />
+
+          <Controller
+            name="flashKey"
+            control={form.control}
+            render={({ field }) => (
+              <Segmented
+                value={field.value}
+                onChange={value => field.onChange(value)}
+                options={[
+                  {
+                    label: 'D 점멸',
+                    value: 'D',
+                  },
+                  {
+                    label: 'F 점멸',
+                    value: 'F',
+                  },
+                ]}
+              />
+            )}
+          />
+        </Space>
       </Section>
 
       <SaveButton defaultValues={config.game} form={form} />

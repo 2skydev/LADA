@@ -24,7 +24,7 @@ const LiveChampionSelect = () => {
 
 const LiveChampionDetail = () => {
   const {
-    game: { useCurrentPositionChampionData, autoRuneSetting },
+    game: { useCurrentPositionChampionData, autoRuneSetting, autoSummonerSpellSetting },
   } = useAtomValue(configAtom)
 
   const { championId, tempChampionId, laneId } = useAtomValue(championSelectSessionAtom)!
@@ -33,7 +33,12 @@ const LiveChampionDetail = () => {
   const defaultLaneId = laneId === null || !useCurrentPositionChampionData ? undefined : laneId
 
   return (
-    <ChampDetail champId={id!} defaultLaneId={defaultLaneId} autoRuneSetting={autoRuneSetting} />
+    <ChampDetail
+      champId={id!}
+      defaultLaneId={defaultLaneId}
+      autoRuneSetting={autoRuneSetting}
+      autoSummonerSpellSetting={autoSummonerSpellSetting}
+    />
   )
 }
 

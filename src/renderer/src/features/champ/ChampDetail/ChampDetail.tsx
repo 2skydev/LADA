@@ -35,9 +35,16 @@ export interface ChampDetailProps {
   champId: number
   defaultLaneId?: LaneId
   autoRuneSetting?: boolean
+  autoSummonerSpellSetting?: boolean
 }
 
-const ChampDetail = ({ className, champId, defaultLaneId, autoRuneSetting }: ChampDetailProps) => {
+const ChampDetail = ({
+  className,
+  champId,
+  defaultLaneId,
+  autoRuneSetting,
+  autoSummonerSpellSetting,
+}: ChampDetailProps) => {
   const [autoRuneSettingArguments, setAutoRuneSettingArguments] = useState<{
     runeIds: number[]
     name: string
@@ -115,6 +122,12 @@ const ChampDetail = ({ className, champId, defaultLaneId, autoRuneSetting }: Cha
       )
     }
   }, [autoRuneSettingArguments])
+
+  useEffect(() => {
+    if (autoSummonerSpellSetting && data && !isNoData) {
+      window.electron.setSummonerSpell(data.summary.spells.map(spell => spell.id))
+    }
+  }, [autoSummonerSpellSetting, data, isNoData])
 
   return (
     <ChampDetailStyled className={clsx('ChampDetail', className)}>

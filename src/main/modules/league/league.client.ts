@@ -183,6 +183,21 @@ export class LeagueAPIClient {
     return res
   }
 
+  public async patch(url: string, body?: any) {
+    if (!this.credentials) throw new Error('Credentials not found')
+
+    const res = await createHttp1Request(
+      {
+        method: 'PATCH',
+        url,
+        body,
+      },
+      this.credentials,
+    )
+
+    return res
+  }
+
   public async delete(url: string, body?: any) {
     if (!this.credentials) throw new Error('Credentials not found')
 

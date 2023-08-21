@@ -543,4 +543,8 @@ export const InitGlobalStyled = memo(createGlobalStyle`
       margin-right: 3px;
     }
   }
+
+  .ant-segmented .ant-segmented-item:hover:not(.ant-segmented-item-selected):not(.ant-segmented-item-disabled) {
+    color: ${props => props.theme.colors.textColor2};
+  }
 `)
