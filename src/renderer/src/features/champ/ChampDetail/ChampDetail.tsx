@@ -20,7 +20,7 @@ import { rankRangeIdAtom } from '@renderer/features/rank/RankRangeSelect/rankRan
 import RuneBuildButtonRadioList from '@renderer/features/rune/RuneBuildButtonRadioList'
 import RunePage from '@renderer/features/rune/RunePage'
 import useAPI from '@renderer/hooks/useAPI'
-import { useCustomForm } from '@renderer/hooks/useCustomForm'
+import useCustomForm from '@renderer/hooks/useCustomForm'
 
 import { ChampDetailStyled } from './styled'
 

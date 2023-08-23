@@ -9,7 +9,7 @@ import { STATS_PROVIDERS } from '@main/modules/league/league.constants'
 import LayoutConfig from '@renderer/components/LayoutConfig'
 import SaveButton from '@renderer/components/SaveButton'
 import Section from '@renderer/components/Section'
-import { useCustomForm } from '@renderer/hooks/useCustomForm'
+import useCustomForm from '@renderer/hooks/useCustomForm'
 import { configAtom } from '@renderer/stores/atoms/config.atom'
 import { SettingsPageStyled } from '@renderer/styles/pageStyled/settingsPageStyled'
 

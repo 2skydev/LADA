@@ -24,8 +24,8 @@ import { LANE_LABELS } from '@renderer/features/lane/LaneSelect'
 import RankRangeSelect from '@renderer/features/rank/RankRangeSelect'
 import { rankRangeIdAtom } from '@renderer/features/rank/RankRangeSelect/rankRangeId.atom'
 import useAPI from '@renderer/hooks/useAPI'
-import { useCustomForm } from '@renderer/hooks/useCustomForm'
-import { useDidUpdateEffect } from '@renderer/hooks/useDidUpdateEffect'
+import useCustomForm from '@renderer/hooks/useCustomForm'
+import useDidUpdateEffect from '@renderer/hooks/useDidUpdateEffect'
 
 import {
   DuoSynergyTableChampProfileStyled,
