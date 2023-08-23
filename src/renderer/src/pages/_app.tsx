@@ -3,6 +3,7 @@ import { Outlet, useLocation } from 'react-router-dom'
 import Layout from '@renderer/components/Layout'
 import Titlebar from '@renderer/components/Titlebar'
 import NeedUpdateLaterNotification from '@renderer/features/update/NeedUpdateLaterNotification'
+import UpdateNoteModal from '@renderer/features/update/UpdateNoteModal/UpdateNoteModal'
 import useChampionSelectPageAutoNavigate from '@renderer/hooks/autoNavigate/useChampionSelectPageAutoNavigate'
 import useInGamePageAutoNavigate from '@renderer/hooks/autoNavigate/useInGamePageAutoNavigate'
 import useTierListPageAutoNavigate from '@renderer/hooks/autoNavigate/useTierListPageAutoNavigate'
@@ -11,7 +12,6 @@ import useChampionSelectSessionListener from '@renderer/hooks/listener/useChampi
 import useConfigListener from '@renderer/hooks/listener/useConfigListener'
 import useCurrentSummonerListener from '@renderer/hooks/listener/useCurrentSummonerListener'
 import useLeagueListener from '@renderer/hooks/listener/useLeagueListener'
-import { useUpdateContentModal } from '@renderer/hooks/useUpdateContentModal'
 import { InitGlobalStyled } from '@renderer/styles/init'
 
 const noLayoutPaths = [/\/windows\/.+/, /\/overlays\/.+/]
@@ -20,8 +20,6 @@ const App = () => {
   const { pathname } = useLocation()
 
   const isNoLayout = noLayoutPaths.some(path => path.test(pathname))
-
-  useUpdateContentModal({ autoOpen: !isNoLayout })
 
   // listeners
   useConfigListener()
@@ -38,6 +36,7 @@ const App = () => {
       {!isNoLayout && (
         <div id="app">
           <AutoNavigateHooks />
+          <UpdateNoteModal />
           <NeedUpdateLaterNotification />
 
           <Titlebar />

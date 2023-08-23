@@ -1,3 +1,4 @@
+import { useState } from 'react'
 import { Controller } from 'react-hook-form'
 
 import { Select, Switch } from 'antd'
@@ -8,9 +9,9 @@ import { ZOOM_PERCENT_ARRAY } from '@main/modules/electron/electron.constants'
 import LayoutConfig from '@renderer/components/LayoutConfig'
 import SaveButton from '@renderer/components/SaveButton'
 import Section from '@renderer/components/Section'
+import UpdateNoteModal from '@renderer/features/update/UpdateNoteModal'
 import UpdateStatus from '@renderer/features/update/UpdateStatus'
 import { useCustomForm } from '@renderer/hooks/useCustomForm'
-import { useUpdateContentModal } from '@renderer/hooks/useUpdateContentModal'
 import { appUpdateAtom } from '@renderer/stores/atoms/appUpdate.atom'
 import { configAtom } from '@renderer/stores/atoms/config.atom'
 import { SettingsPageStyled } from '@renderer/styles/pageStyled/settingsPageStyled'
@@ -18,7 +19,7 @@ import { SettingsPageStyled } from '@renderer/styles/pageStyled/settingsPageStyl
 const Settings = () => {
   const [config, setConfig] = useAtom(configAtom)
   const { version, status } = useAtomValue(appUpdateAtom)
-  const { open } = useUpdateContentModal()
+  const [openUpdateNoteModal, setOpenUpdateNoteModal] = useState(false)
 
   const form = useCustomForm({
     defaultValues: config.general,
@@ -34,6 +35,8 @@ const Settings = () => {
   return (
     <SettingsPageStyled>
       <LayoutConfig breadcrumbs={['설정', '일반 설정']} />
+
+      <UpdateNoteModal open={openUpdateNoteModal} onClose={() => setOpenUpdateNoteModal(false)} />
 
       <Section
         title="컴퓨터 부팅시 최소화로 자동 시작"
@@ -140,7 +143,7 @@ const Settings = () => {
               앱 릴리즈 목록
             </a>{' '}
             /{' '}
-            <a onClick={open} style={{ cursor: 'pointer' }}>
+            <a onClick={() => setOpenUpdateNoteModal(true)} style={{ cursor: 'pointer' }}>
               업데이트 내역
             </a>
           </div>
