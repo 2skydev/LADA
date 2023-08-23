@@ -1,37 +1,29 @@
-import { Fragment, useEffect, useState } from 'react'
+import { Fragment, useEffect } from 'react'
 
 import { Modal } from 'antd'
 import axios from 'axios'
 import { useAtomValue } from 'jotai'
-import styled from 'styled-components'
 import useSWRImmutable from 'swr/immutable'
 
 import { publish } from '@renderer/../../../electron-builder.json'
 import { appUpdateAtom } from '@renderer/stores/atoms/appUpdate.atom'
 
-const UpdateContentModalStyled = styled.div`
-  margin-bottom: 2rem;
-  margin-top: 1.5rem;
+import { UpdateNoteModalStyled } from './styled'
 
-  h2 {
-    font-size: 0.9rem;
-    margin-top: 1rem;
-    margin-bottom: 0.3rem;
-  }
-
-  p {
-    margin-bottom: 0;
-    padding-left: 2rem;
-  }
-`
-
-export interface UseUpdateContentModalOptions {
-  autoOpen?: boolean
+interface UpdateNoteModal {
+  open?: boolean
+  onClose?: () => void
 }
 
-export const useUpdateContentModal = (options: UseUpdateContentModalOptions = {}) => {
+/**
+ * 앱 업데이트 노트 모달
+ *
+ * `props.open` 값을 `false`, `true`로 설정하면 직접 모달을 열고 닫을 수 있습니다.
+ * 만약 값을 설정하지 않으면 업데이트 될 때 자동으로 열립니다.
+ */
+const UpdateNoteModal = ({ open, onClose }: UpdateNoteModal) => {
+  const [modal, contextHolder] = Modal.useModal()
   const { version } = useAtomValue(appUpdateAtom)
-  const [_open, _setOpen] = useState(localStorage.getItem('lastUpdateContentVersion') !== version)
 
   const { data } = useSWRImmutable(
     `https://api.github.com/repos/${publish[0].owner}/${publish[0].repo}/releases/latest`,
@@ -41,15 +33,15 @@ export const useUpdateContentModal = (options: UseUpdateContentModalOptions = {}
     },
   )
 
-  const open = () => {
-    Modal.info({
+  const openModal = () => {
+    modal.info({
       icon: null,
       width: 600,
       title: `v${version} 업데이트 내역`,
       closable: true,
       maskClosable: true,
       content: (
-        <UpdateContentModalStyled className="UpdateContentModal">
+        <UpdateNoteModalStyled className="UpdateNoteModal">
           {data.body
             .replaceAll('\r', '')
             .split('\n')
@@ -63,19 +55,31 @@ export const useUpdateContentModal = (options: UseUpdateContentModalOptions = {}
                 </Fragment>
               )
             })}
-        </UpdateContentModalStyled>
+        </UpdateNoteModalStyled>
       ),
+      onCancel: () => {
+        onClose?.()
+      },
+      onOk: () => {
+        onClose?.()
+      },
     })
   }
 
   useEffect(() => {
-    if (options.autoOpen && data && localStorage.getItem('lastUpdateContentVersion') !== version) {
-      open()
-      localStorage.setItem('lastUpdateContentVersion', version)
+    if (open) {
+      openModal()
+    } else if (
+      open === undefined &&
+      data &&
+      localStorage.getItem('recentViewedUpdateNoteVersion') !== version
+    ) {
+      openModal()
+      localStorage.setItem('recentViewedUpdateNoteVersion', version)
     }
-  }, [data, options.autoOpen])
+  }, [data, open])
 
-  return {
-    open,
-  }
+  return contextHolder
 }
+
+export default UpdateNoteModal
