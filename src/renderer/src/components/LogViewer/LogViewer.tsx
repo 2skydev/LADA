@@ -3,7 +3,7 @@ import { List } from 'react-virtualized'
 import { Divider } from 'antd'
 import clsx from 'clsx'
 
-import { LogViewerStyled } from './styled'
+import * as Styled from './LogViewer.styled'
 
 export interface LogViewerProps {
   className?: string
@@ -13,7 +13,7 @@ export interface LogViewerProps {
 
 const LogViewer = ({ className, path, lines }: LogViewerProps) => {
   return (
-    <LogViewerStyled className={clsx('LogViewer', className)}>
+    <Styled.Root className={clsx('LogViewer', className)}>
       <div className="path selectable">{path}</div>
 
       <Divider />
@@ -30,7 +30,7 @@ const LogViewer = ({ className, path, lines }: LogViewerProps) => {
           </pre>
         )}
       />
-    </LogViewerStyled>
+    </Styled.Root>
   )
 }
 

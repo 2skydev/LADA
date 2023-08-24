@@ -3,7 +3,7 @@ import { ReactNode } from 'react'
 import 'antd'
 import clsx from 'clsx'
 
-import { SectionStyled } from './styled'
+import * as Styled from './Section.styled'
 
 export interface SectionProps {
   className?: string
@@ -14,7 +14,7 @@ export interface SectionProps {
 
 const Section = ({ className, children, title, description }: SectionProps) => {
   return (
-    <SectionStyled className={clsx('Section', className)}>
+    <Styled.Root className={clsx('Section', className)}>
       <div className="left">
         <h3 className="title">{title}</h3>
 
@@ -22,7 +22,7 @@ const Section = ({ className, children, title, description }: SectionProps) => {
       </div>
 
       <div className="content">{children}</div>
-    </SectionStyled>
+    </Styled.Root>
   )
 }
 

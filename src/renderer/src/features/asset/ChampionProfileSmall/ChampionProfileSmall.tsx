@@ -1,7 +1,7 @@
 import clsx from 'clsx'
 
 import TierIcon, { HoneyIcon, OpIcon } from '../TierIcon'
-import { ChampionProfileSmallStyled } from './styled'
+import * as Styled from './ChampionProfileSmall.styled'
 
 export interface ChampionProfileSmallProps {
   className?: string
@@ -21,7 +21,7 @@ const ChampionProfileSmall = ({
   isHoney,
 }: ChampionProfileSmallProps) => {
   return (
-    <ChampionProfileSmallStyled className={clsx('ChampionProfileSmall', className)}>
+    <Styled.Root className={clsx('ChampionProfileSmall', className)}>
       <div className="profileImage">
         {tier && <TierIcon tier={tier} />}
         {isHoney && <HoneyIcon />}
@@ -36,7 +36,7 @@ const ChampionProfileSmall = ({
       </div>
 
       {championNameKr && <span className="name">{championNameKr}</span>}
-    </ChampionProfileSmallStyled>
+    </Styled.Root>
   )
 }
 

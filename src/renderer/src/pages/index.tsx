@@ -1,14 +1,14 @@
 import LayoutConfig from '@renderer/components/LayoutConfig'
 import TierTable from '@renderer/features/tier/TierTable'
-import { IndexPageStyled } from '@renderer/styles/pageStyled/indexPageStyled'
+import * as Styled from '@renderer/styles/pageStyled/IndexPage.styled'
 
-const Index = () => {
+const IndexPage = () => {
   return (
-    <IndexPageStyled>
+    <Styled.Root>
       <LayoutConfig breadcrumbs={['통계', '챔피언 티어']} />
       <TierTable />
-    </IndexPageStyled>
+    </Styled.Root>
   )
 }
 
-export default Index
+export default IndexPage

@@ -27,11 +27,7 @@ import useAPI from '@renderer/hooks/useAPI'
 import useCustomForm from '@renderer/hooks/useCustomForm'
 import useDidUpdateEffect from '@renderer/hooks/useDidUpdateEffect'
 
-import {
-  DuoSynergyTableChampProfileStyled,
-  DuoSynergyTableLaneTitleStyled,
-  DuoSynergyTableStyled,
-} from './styled'
+import * as Styled from './DuoSynergyTable.styled'
 
 export interface DuoSynergyTableProps {
   className?: string
@@ -144,7 +140,7 @@ const DuoSynergyTable = ({ className }: DuoSynergyTableProps) => {
   }, [championNames, search, championId])
 
   return (
-    <DuoSynergyTableStyled className={clsx('DuoSynergyTable', className)}>
+    <Styled.Root className={clsx('DuoSynergyTable', className)}>
       <header>
         <h2>듀오 시너지</h2>
       </header>
@@ -245,7 +241,7 @@ const DuoSynergyTable = ({ className }: DuoSynergyTableProps) => {
           }
         }}
       />
-    </DuoSynergyTableStyled>
+    </Styled.Root>
   )
 }
 
@@ -257,7 +253,7 @@ export const DuoSynergyTableChampProfile = ({
   const navigate = useNavigate()
 
   return (
-    <DuoSynergyTableChampProfileStyled
+    <Styled.ChampionProfile
       onClick={() => {
         navigate(`/champ/${championId}`)
       }}
@@ -268,15 +264,15 @@ export const DuoSynergyTableChampProfile = ({
         <div className="winRate">{winrate}%</div>
         <div className="name">{championName}</div>
       </div>
-    </DuoSynergyTableChampProfileStyled>
+    </Styled.ChampionProfile>
   )
 }
 
 export const DuoSynergyTableLaneTitle = ({ laneId }: { laneId: LaneId }) => {
   return (
-    <DuoSynergyTableLaneTitleStyled>
+    <Styled.LaneTitle>
       <LaneIcon laneId={laneId} /> {LANE_LABELS[laneId]} 승률
-    </DuoSynergyTableLaneTitleStyled>
+    </Styled.LaneTitle>
   )
 }
 

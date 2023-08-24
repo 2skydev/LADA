@@ -6,9 +6,9 @@ import { LaneId } from '@main/modules/league/types/lane.types'
 
 import LayoutConfig from '@renderer/components/LayoutConfig'
 import ChampDetail from '@renderer/features/champ/ChampDetail'
-import { ChampPageStyled } from '@renderer/styles/pageStyled/champPageStyled'
+import * as Styled from '@renderer/styles/pageStyled/ChampPage.styled'
 
-const Champ = () => {
+const ChampPage = () => {
   const { id } = useParams()
   const { search } = useLocation()
   const { laneId } = QueryString.parse(search, { ignoreQueryPrefix: true })
@@ -16,11 +16,11 @@ const Champ = () => {
   const defaultLaneId = laneId ? (Number(laneId) as LaneId) : undefined
 
   return (
-    <ChampPageStyled>
+    <Styled.Root>
       <LayoutConfig breadcrumbs={['통계', '챔피언 상세']} />
       <ChampDetail champId={Number(id)} defaultLaneId={defaultLaneId} />
-    </ChampPageStyled>
+    </Styled.Root>
   )
 }
 
-export default Champ
+export default ChampPage

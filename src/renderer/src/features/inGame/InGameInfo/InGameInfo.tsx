@@ -18,7 +18,7 @@ import useAPI from '@renderer/hooks/useAPI'
 import { currentSummonerAtom } from '@renderer/stores/atoms/currentSummoner.atom'
 import { leagueAtom } from '@renderer/stores/atoms/league.atom'
 
-import { InGameInfoStyled } from './styled'
+import * as Styled from './InGameInfo.styled'
 
 export interface InGameInfoProps {
   className?: string
@@ -61,7 +61,7 @@ const InGameInfo = ({ className }: InGameInfoProps) => {
   }
 
   return (
-    <InGameInfoStyled className={clsx('InGameInfo', className)}>
+    <Styled.Root className={clsx('InGameInfo', className)}>
       {data && summoner && (
         <>
           <header>
@@ -278,7 +278,7 @@ const InGameInfo = ({ className }: InGameInfoProps) => {
       )}
 
       {!data && <InGameNotFound reload={reload} isLoading={isValidating} />}
-    </InGameInfoStyled>
+    </Styled.Root>
   )
 }
 

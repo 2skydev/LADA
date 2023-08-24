@@ -1,7 +1,7 @@
 import { Button, Result } from 'antd'
 import clsx from 'clsx'
 
-import { InGameNotFoundStyled } from './styled'
+import * as Styled from './InGameNotFound.styled'
 
 export interface InGameNotFoundProps {
   className?: string
@@ -11,7 +11,7 @@ export interface InGameNotFoundProps {
 
 const InGameNotFound = ({ className, reload, isLoading }: InGameNotFoundProps) => {
   return (
-    <InGameNotFoundStyled className={clsx('InGameNotFound', className)}>
+    <Styled.Root className={clsx('InGameNotFound', className)}>
       <Result
         status="warning"
         title="인게임 정보를 불러올 수 없습니다."
@@ -26,7 +26,7 @@ const InGameNotFound = ({ className, reload, isLoading }: InGameNotFoundProps) =
           </>
         }
       />
-    </InGameNotFoundStyled>
+    </Styled.Root>
   )
 }
 

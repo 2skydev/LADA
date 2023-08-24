@@ -11,7 +11,7 @@ import logoImage from '@renderer/assets/images/logo@256.png'
 import LaneIcon from '@renderer/features/asset/LaneIcon'
 import { configAtom } from '@renderer/stores/atoms/config.atom'
 
-import { SidebarStyled } from './styled'
+import * as Styled from './Sidebar.styled'
 
 export interface SidebarProps {
   className?: string
@@ -105,7 +105,7 @@ const Sidebar = ({ className }: SidebarProps) => {
   )
 
   return (
-    <SidebarStyled className={clsx('Sidebar', className)}>
+    <Styled.Root className={clsx('Sidebar', className)}>
       <div className="logo">
         <img src={logoImage} alt="logo" />
         LADA
@@ -165,7 +165,7 @@ const Sidebar = ({ className }: SidebarProps) => {
           ))}
         </div>
       </LayoutGroup>
-    </SidebarStyled>
+    </Styled.Root>
   )
 }
 

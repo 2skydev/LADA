@@ -11,9 +11,9 @@ import SaveButton from '@renderer/components/SaveButton'
 import Section from '@renderer/components/Section'
 import useCustomForm from '@renderer/hooks/useCustomForm'
 import { configAtom } from '@renderer/stores/atoms/config.atom'
-import { SettingsPageStyled } from '@renderer/styles/pageStyled/settingsPageStyled'
+import * as Styled from '@renderer/styles/pageStyled/SettingsPage.styled'
 
-const GameSettings = () => {
+const GameSettingsPage = () => {
   const [config, setConfig] = useAtom(configAtom)
 
   const form = useCustomForm({
@@ -29,7 +29,7 @@ const GameSettings = () => {
   const isAutoAccept = form.watch('autoAccept')
 
   return (
-    <SettingsPageStyled>
+    <Styled.Root>
       <LayoutConfig breadcrumbs={['설정', '게임 설정']} />
 
       <Section
@@ -189,8 +189,8 @@ const GameSettings = () => {
       </Section>
 
       <SaveButton defaultValues={config.game} form={form} />
-    </SettingsPageStyled>
+    </Styled.Root>
   )
 }
 
-export default GameSettings
+export default GameSettingsPage

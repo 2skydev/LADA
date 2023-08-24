@@ -6,7 +6,7 @@ import dayjs from 'dayjs'
 
 import type { UpdateStatus as UpdateStatusType } from '@main/modules/update/types/update-status.type'
 
-import { UpdateStatusStyled } from './styled'
+import * as Styled from './UpdateStatus.styled'
 
 export interface UpdateStatusProps {
   version: string
@@ -34,7 +34,7 @@ const UpdateStatus = ({ className, version, status }: UpdateStatusProps) => {
   }, [status])
 
   return (
-    <UpdateStatusStyled className={clsx('UpdateStatus', className)}>
+    <Styled.Root className={clsx('UpdateStatus', className)}>
       <div className="version">
         현재버전 <em>v{version}</em>
       </div>
@@ -73,7 +73,7 @@ const UpdateStatus = ({ className, version, status }: UpdateStatusProps) => {
           </>
         )}
       </div>
-    </UpdateStatusStyled>
+    </Styled.Root>
   )
 }
 

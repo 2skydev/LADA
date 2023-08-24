@@ -7,7 +7,7 @@ import { LANE_ID_ENUM } from '@main/modules/league/types/lane.types'
 
 import LaneIcon from '@renderer/features/asset/LaneIcon'
 
-import { DuoLaneSelectStyled } from './styled'
+import * as Styled from './DuoLaneSelect.styled'
 
 export interface DuoLaneSelectProps extends RadioGroupProps {
   className?: string
@@ -25,7 +25,7 @@ export const DUO_OPTIONS: [LANE_ID_ENUM, LANE_ID_ENUM, string][] = [
 const DuoLaneSelect = forwardRef<HTMLDivElement, DuoLaneSelectProps>(
   ({ className, ...props }, ref) => {
     return (
-      <DuoLaneSelectStyled className={clsx('DuoLaneSelect', className)}>
+      <Styled.Root className={clsx('DuoLaneSelect', className)}>
         <Radio.Group ref={ref} {...props}>
           {DUO_OPTIONS.map(([laneId1, laneId2, label], index) => (
             <Radio.Button key={index} value={index}>
@@ -35,7 +35,7 @@ const DuoLaneSelect = forwardRef<HTMLDivElement, DuoLaneSelectProps>(
             </Radio.Button>
           ))}
         </Radio.Group>
-      </DuoLaneSelectStyled>
+      </Styled.Root>
     )
   },
 )

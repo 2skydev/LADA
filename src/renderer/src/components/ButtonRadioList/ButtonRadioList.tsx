@@ -2,7 +2,7 @@ import { ReactNode } from 'react'
 
 import clsx from 'clsx'
 
-import { ButtonRadioListStyled } from './styled'
+import * as Styled from './ButtonRadioList.styled'
 
 export interface ButtonRadioListOptions {
   label: ReactNode
@@ -22,7 +22,7 @@ const ButtonRadioList = ({ className, options, value, onChange }: ButtonRadioLis
   }
 
   return (
-    <ButtonRadioListStyled className={clsx('ButtonRadioList', className)}>
+    <Styled.Root className={clsx('ButtonRadioList', className)}>
       {options.map(option => (
         <div
           className={clsx('item', value === option.value && 'checked')}
@@ -33,7 +33,7 @@ const ButtonRadioList = ({ className, options, value, onChange }: ButtonRadioLis
           <div className="radioIcon" />
         </div>
       ))}
-    </ButtonRadioListStyled>
+    </Styled.Root>
   )
 }
 

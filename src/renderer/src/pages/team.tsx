@@ -1,14 +1,14 @@
 import LayoutConfig from '@renderer/components/LayoutConfig'
 import TeamManager from '@renderer/features/team/TeamManager'
-import { TeamPageStyled } from '@renderer/styles/pageStyled/teamPageStyled'
+import * as Styled from '@renderer/styles/pageStyled/TeamPage.styled'
 
-const Team = () => {
+const TeamPage = () => {
   return (
-    <TeamPageStyled>
+    <Styled.Root>
       <LayoutConfig breadcrumbs={['유틸리티', '5:5 팀 구성']} />
       <TeamManager />
-    </TeamPageStyled>
+    </Styled.Root>
   )
 }
 
-export default Team
+export default TeamPage

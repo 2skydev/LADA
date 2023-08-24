@@ -12,7 +12,7 @@ import useChampionSelectSessionListener from '@renderer/hooks/listener/useChampi
 import useConfigListener from '@renderer/hooks/listener/useConfigListener'
 import useCurrentSummonerListener from '@renderer/hooks/listener/useCurrentSummonerListener'
 import useLeagueListener from '@renderer/hooks/listener/useLeagueListener'
-import { InitGlobalStyled } from '@renderer/styles/init'
+import * as Styled from '@renderer/styles/init'
 
 const noLayoutPaths = [/\/windows\/.+/, /\/overlays\/.+/]
 
@@ -30,7 +30,7 @@ const App = () => {
 
   return (
     <>
-      <InitGlobalStyled />
+      <Styled.Init />
       {isNoLayout && <Outlet />}
 
       {!isNoLayout && (

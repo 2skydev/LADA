@@ -22,7 +22,7 @@ import RunePage from '@renderer/features/rune/RunePage'
 import useAPI from '@renderer/hooks/useAPI'
 import useCustomForm from '@renderer/hooks/useCustomForm'
 
-import { ChampDetailStyled } from './styled'
+import * as Styled from './ChampDetail.styled'
 
 export interface ChampDetailFormValue {
   laneId: LaneId | null
@@ -130,7 +130,7 @@ const ChampDetail = ({
   }, [autoSummonerSpellSetting, data, isNoData])
 
   return (
-    <ChampDetailStyled className={clsx('ChampDetail', className)}>
+    <Styled.Root className={clsx('ChampDetail', className)}>
       {!data && (
         <div className="loadingArea">
           <LoadingIcon />
@@ -324,7 +324,7 @@ const ChampDetail = ({
           )}
         </motion.div>
       )}
-    </ChampDetailStyled>
+    </Styled.Root>
   )
 }
 

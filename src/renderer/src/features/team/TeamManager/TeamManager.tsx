@@ -11,7 +11,7 @@ import { Lobby } from '@main/modules/league/types/lobby.types'
 import RankIcon from '@renderer/features/asset/RankIcon'
 import useAPI from '@renderer/hooks/useAPI'
 
-import { TeamManagerStyled } from './styled'
+import * as Styled from './TeamManager.styled'
 
 export interface TeamManagerProps {
   className?: string
@@ -83,7 +83,7 @@ const TeamManager = ({ className }: TeamManagerProps) => {
   }, [key, result])
 
   return (
-    <TeamManagerStyled className={clsx('TeamManager', className)}>
+    <Styled.Root className={clsx('TeamManager', className)}>
       {(!lobby || !lobby.isCustom) && (
         <Result
           status="warning"
@@ -177,7 +177,7 @@ const TeamManager = ({ className }: TeamManagerProps) => {
           </div>
         </>
       )}
-    </TeamManagerStyled>
+    </Styled.Root>
   )
 }
 

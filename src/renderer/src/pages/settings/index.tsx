@@ -14,9 +14,9 @@ import UpdateStatus from '@renderer/features/update/UpdateStatus'
 import useCustomForm from '@renderer/hooks/useCustomForm'
 import { appUpdateAtom } from '@renderer/stores/atoms/appUpdate.atom'
 import { configAtom } from '@renderer/stores/atoms/config.atom'
-import { SettingsPageStyled } from '@renderer/styles/pageStyled/settingsPageStyled'
+import * as Styled from '@renderer/styles/pageStyled/SettingsPage.styled'
 
-const Settings = () => {
+const SettingsPage = () => {
   const [config, setConfig] = useAtom(configAtom)
   const { version, status } = useAtomValue(appUpdateAtom)
   const [openUpdateNoteModal, setOpenUpdateNoteModal] = useState(false)
@@ -33,7 +33,7 @@ const Settings = () => {
   })
 
   return (
-    <SettingsPageStyled>
+    <Styled.Root>
       <LayoutConfig breadcrumbs={['설정', '일반 설정']} />
 
       <UpdateNoteModal open={openUpdateNoteModal} onClose={() => setOpenUpdateNoteModal(false)} />
@@ -153,8 +153,8 @@ const Settings = () => {
       </Section>
 
       <SaveButton defaultValues={config.general} form={form} />
-    </SettingsPageStyled>
+    </Styled.Root>
   )
 }
 
-export default Settings
+export default SettingsPage

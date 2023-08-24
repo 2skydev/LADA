@@ -7,7 +7,7 @@ import { RuneIdsGroupByType, RuneType } from '@main/modules/league/types/rune.ty
 import RuneIcon from '@renderer/features/rune/RuneIcon/RuneIcon'
 import useAPI from '@renderer/hooks/useAPI'
 
-import { RuneGroupStyled } from './styled'
+import * as Styled from './RuneGroup.styled'
 
 export type RuneGroupValue<Type extends RuneType> = RuneIdsGroupByType[`${Type}RuneIds`]
 
@@ -71,10 +71,7 @@ const RuneGroup = <
   }
 
   return (
-    <RuneGroupStyled
-      className={clsx('RuneGroup', type, className)}
-      data-category={categoryData.key}
-    >
+    <Styled.Root className={clsx('RuneGroup', type, className)} data-category={categoryData.key}>
       {categoryData.slots.slice(type === 'sub' ? 1 : 0).map((runes, i) => (
         <div className="slot" key={i}>
           {runes.map(rune => (
@@ -91,7 +88,7 @@ const RuneGroup = <
           ))}
         </div>
       ))}
-    </RuneGroupStyled>
+    </Styled.Root>
   )
 }
 

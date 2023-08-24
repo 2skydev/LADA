@@ -14,7 +14,7 @@ import platinumImage from '@renderer/assets/images/rank/platinum.png'
 import silverImage from '@renderer/assets/images/rank/silver.png'
 import unrankedImage from '@renderer/assets/images/rank/unranked.png'
 
-import { RankIconStyled } from './styled'
+import * as Styled from './RankIcon.styled'
 
 const RANK_IMAGES: Record<Tier, string> = {
   UNRANKED: unrankedImage,
@@ -38,9 +38,7 @@ export interface RankIconProps {
 }
 
 const RankIcon = ({ className, tier }: RankIconProps) => {
-  return (
-    <RankIconStyled className={clsx('RankIcon', className)} src={RANK_IMAGES[tier]} alt={tier} />
-  )
+  return <Styled.Root className={clsx('RankIcon', className)} src={RANK_IMAGES[tier]} alt={tier} />
 }
 
 export default RankIcon

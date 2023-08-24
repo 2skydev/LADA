@@ -1,14 +1,14 @@
 import LayoutConfig from '@renderer/components/LayoutConfig/LayoutConfig'
 import InGameInfo from '@renderer/features/inGame/InGameInfo'
-import { LiveInGamePageStyled } from '@renderer/styles/pageStyled/liveInGamePageStyled'
+import * as Styled from '@renderer/styles/pageStyled/LiveInGamePage.styled'
 
-const LiveInGame = () => {
+const LiveInGamePage = () => {
   return (
-    <LiveInGamePageStyled>
+    <Styled.Root>
       <LayoutConfig breadcrumbs={['라이브 게임', '인게임 정보']} />
       <InGameInfo />
-    </LiveInGamePageStyled>
+    </Styled.Root>
   )
 }
 
-export default LiveInGame
+export default LiveInGamePage

@@ -6,7 +6,7 @@ import { RANK_RANGE_IDS, RANK_RANGE_ID_TO_LABEL_MAP } from '@main/modules/ps/ps.
 
 import { rankRangeIdAtom } from '@renderer/features/rank/RankRangeSelect/rankRangeId.atom'
 
-import { RankRangeSelectStyled } from './styled'
+import * as Styled from './RankRangeSelect.styled'
 
 export interface RankRangeSelectProps {
   className?: string
@@ -20,13 +20,13 @@ const RankRangeSelect = ({ className }: RankRangeSelectProps) => {
   const [rankRangeId, setRankRangeId] = useAtom(rankRangeIdAtom)
 
   return (
-    <RankRangeSelectStyled className={clsx('RankRangeSelect', className)}>
+    <Styled.Root className={clsx('RankRangeSelect', className)}>
       <Select
         value={rankRangeId}
         onChange={value => setRankRangeId(value)}
         options={RANK_RANGE_IDS.map(id => ({ value: id, label: RANK_RANGE_ID_TO_LABEL_MAP[id] }))}
       />
-    </RankRangeSelectStyled>
+    </Styled.Root>
   )
 }
 

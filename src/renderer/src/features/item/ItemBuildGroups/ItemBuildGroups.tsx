@@ -7,7 +7,7 @@ import { ItemBuildGroup } from '@main/modules/league/types/stat.types'
 import ButtonRadioList from '@renderer/components/ButtonRadioList'
 import PickWinRate from '@renderer/components/PickWinRate'
 
-import { ItemBuildGroupsStyled } from './styled'
+import * as Styled from './ItemBuildGroups.styled'
 
 export interface ItemBuildGroupsProps {
   className?: string
@@ -21,7 +21,7 @@ const ItemBuildGroups = ({ className, itemBuildGroups }: ItemBuildGroupsProps) =
   const selectedGroup = itemBuildGroups[selectedGroupIndex]
 
   return (
-    <ItemBuildGroupsStyled className={clsx('ItemBuildGroups', className)}>
+    <Styled.Root className={clsx('ItemBuildGroups', className)}>
       <div className="title">추천 아이템 빌드</div>
 
       <div className="content">
@@ -66,7 +66,7 @@ const ItemBuildGroups = ({ className, itemBuildGroups }: ItemBuildGroupsProps) =
           ))}
         </div>
       </div>
-    </ItemBuildGroupsStyled>
+    </Styled.Root>
   )
 }
 

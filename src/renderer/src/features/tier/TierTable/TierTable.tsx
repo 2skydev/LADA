@@ -20,7 +20,7 @@ import useCustomForm from '@renderer/hooks/useCustomForm'
 import useDidUpdateEffect from '@renderer/hooks/useDidUpdateEffect'
 import useQS from '@renderer/hooks/useQS'
 
-import { TierTableStyled } from './styled'
+import * as Styled from './TierTable.styled'
 
 export interface TierTableProps {
   className?: string
@@ -59,7 +59,7 @@ const TierTable = ({ className }: TierTableProps) => {
   }, [laneId])
 
   return (
-    <TierTableStyled className={clsx('TierTable', className)}>
+    <Styled.Root className={clsx('TierTable', className)}>
       <header>
         <h2>라인별 챔피언 티어</h2>
 
@@ -194,7 +194,7 @@ const TierTable = ({ className }: TierTableProps) => {
         scroll={{ y: 600 }}
         sortDirections={['descend', 'ascend']}
       />
-    </TierTableStyled>
+    </Styled.Root>
   )
 }
 
