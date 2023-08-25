@@ -1,7 +1,7 @@
 import { useAtomValue } from 'jotai'
 
 import LayoutConfig from '@renderer/components/LayoutConfig'
-import ChampDetail from '@renderer/features/champ/ChampDetail/ChampDetail'
+import ChampionStats from '@renderer/features/champion/ChampionStats'
 import LiveChampionSelectNotFound from '@renderer/features/empty/LiveChampionSelectNotFound'
 import { championSelectSessionAtom } from '@renderer/stores/atoms/championSelectSession.atom'
 import { configAtom } from '@renderer/stores/atoms/config.atom'
@@ -33,8 +33,8 @@ const LiveChampionDetail = () => {
   const defaultLaneId = laneId === null || !useCurrentPositionChampionData ? undefined : laneId
 
   return (
-    <ChampDetail
-      champId={id!}
+    <ChampionStats
+      championId={id!}
       defaultLaneId={defaultLaneId}
       autoRuneSetting={autoRuneSetting}
       autoSummonerSpellSetting={autoSummonerSpellSetting}

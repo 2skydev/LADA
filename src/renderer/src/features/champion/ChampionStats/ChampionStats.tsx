@@ -22,35 +22,35 @@ import RunePage from '@renderer/features/rune/RunePage'
 import useAPI from '@renderer/hooks/useAPI'
 import useCustomForm from '@renderer/hooks/useCustomForm'
 
-import * as Styled from './ChampDetail.styled'
+import * as Styled from './ChampionStats.styled'
 
-export interface ChampDetailFormValue {
+export interface ChampionStatsFormValue {
   laneId: LaneId | null
   runeBuildIndex: number
   customRuneIdsGroupByType: RuneIdsGroupByType | null
 }
 
-export interface ChampDetailProps {
+export interface ChampionStatsProps {
   className?: string
-  champId: number
+  championId: number
   defaultLaneId?: LaneId
   autoRuneSetting?: boolean
   autoSummonerSpellSetting?: boolean
 }
 
-const ChampDetail = ({
+const ChampionStats = ({
   className,
-  champId,
+  championId,
   defaultLaneId,
   autoRuneSetting,
   autoSummonerSpellSetting,
-}: ChampDetailProps) => {
+}: ChampionStatsProps) => {
   const [autoRuneSettingArguments, setAutoRuneSettingArguments] = useState<{
     runeIds: number[]
     name: string
   } | null>(null)
 
-  const form = useCustomForm<ChampDetailFormValue>({
+  const form = useCustomForm<ChampionStatsFormValue>({
     defaultValues: {
       laneId: defaultLaneId ?? null,
       runeBuildIndex: 0,
@@ -67,7 +67,7 @@ const ChampDetail = ({
   const { data, isValidating } = useAPI('getChampionStats', {
     dedupingInterval: 1000 * 60 * 5,
     params: [
-      champId,
+      championId,
       {
         laneId: laneId ?? undefined,
         rankRangeId,
@@ -82,8 +82,6 @@ const ChampDetail = ({
   const handleRuneChange = autoRuneSetting
     ? (value: RuneIdsGroupByType) => form.setValue('customRuneIdsGroupByType', value)
     : undefined
-
-  useEffect(() => {}, [])
 
   useEffect(() => {
     if (selectedRuneBuild && !isNoData) {
@@ -130,7 +128,7 @@ const ChampDetail = ({
   }, [autoSummonerSpellSetting, data, isNoData])
 
   return (
-    <Styled.Root className={clsx('ChampDetail', className)}>
+    <Styled.Root className={clsx('ChampionStats', className)}>
       {!data && (
         <div className="loadingArea">
           <LoadingIcon />
@@ -328,4 +326,4 @@ const ChampDetail = ({
   )
 }
 
-export default ChampDetail
+export default ChampionStats

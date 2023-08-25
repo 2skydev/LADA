@@ -5,10 +5,10 @@ import QueryString from 'qs'
 import { LaneId } from '@main/modules/league/types/lane.types'
 
 import LayoutConfig from '@renderer/components/LayoutConfig'
-import ChampDetail from '@renderer/features/champ/ChampDetail'
-import * as Styled from '@renderer/styles/pageStyled/ChampPage.styled'
+import ChampionStats from '@renderer/features/champion/ChampionStats'
+import * as Styled from '@renderer/styles/pageStyled/ChampionStatsPage.styled'
 
-const ChampPage = () => {
+const ChampionStatsPage = () => {
   const { id } = useParams()
   const { search } = useLocation()
   const { laneId } = QueryString.parse(search, { ignoreQueryPrefix: true })
@@ -18,9 +18,9 @@ const ChampPage = () => {
   return (
     <Styled.Root>
       <LayoutConfig breadcrumbs={['통계', '챔피언 상세']} />
-      <ChampDetail champId={Number(id)} defaultLaneId={defaultLaneId} />
+      <ChampionStats championId={Number(id)} defaultLaneId={defaultLaneId} />
     </Styled.Root>
   )
 }
 
-export default ChampPage
+export default ChampionStatsPage

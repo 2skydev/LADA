@@ -42,7 +42,7 @@ const Sidebar = ({ className }: SidebarProps) => {
             icon: <LaneIcon laneId={LANE_ID_ENUM.top} />,
             link: '/',
             text: '챔피언 티어',
-            isActiveFn: (pathname: string) => pathname === '/' || pathname.includes('/champ/'),
+            isActiveFn: (pathname: string) => pathname === '/' || pathname.includes('/champion/'),
           },
           {
             icon: 'bx-group',

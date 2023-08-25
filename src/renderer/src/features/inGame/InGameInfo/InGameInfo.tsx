@@ -57,7 +57,7 @@ const InGameInfo = ({ className }: InGameInfoProps) => {
   }
 
   const moveChampionDetailPage = (championId: number) => {
-    navigate(`/champ/${championId}`)
+    navigate(`/champion/${championId}`)
   }
 
   return (
