@@ -4,7 +4,7 @@ import { useAtom } from 'jotai'
 
 import { RANK_RANGE_IDS, RANK_RANGE_ID_TO_LABEL_MAP } from '@main/modules/ps/ps.constants'
 
-import { rankRangeIdAtom } from '@renderer/features/rank/RankRangeSelect/rankRangeId.atom'
+import { rankRangeIdAtom } from '@renderer/features/rank/RankRangeSelect/atoms/rankRangeId.atom'
 
 import * as Styled from './RankRangeSelect.styled'
 
