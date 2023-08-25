@@ -36,17 +36,17 @@ electron 코드가 실행되는 main process입니다.
 - 복수 파일: `{module-name}/{fileName}s/{fileName}.{type}.ts`
 
 > `{type}`에 복수명이 있는 경우 여러개의 export가 있는 경우입니다.<br/>
-> ex) `utils/rank.utils.ts` (랭크 관련 유틸 함수들이 여러개 있는 파일)
+> ex) `rank.utils.ts` (랭크 관련 유틸 함수들이 여러개 있는 파일)
 
 > 예시
 >
+> - 단일 파일
+>   - `{module-name}.service.ts`
+>   - `{module-name}.constants.ts`
 > - 복수 파일
 >   - `decorators/{file-name}.decorator.ts`
 >   - `utils/{file-name}.utils.ts`
 >   - `types/{file-name}.types.ts`
-> - 단일 파일
->   - `{module-name}.service.ts`
->   - `{module-name}.constants.ts`
 
 ## Renderer
 
@@ -58,7 +58,7 @@ electron 코드가 실행되는 main process입니다.
 - index.html: entry html
 - src/index.tsx: entry point
 - src/assets: 이미지 같은 정적 파일
-- src/components: 공용 컴포넌트
+- src/components: 공용 컴포넌트 (앱 관련 레이아웃 컴포넌트 등 포함)
 - src/hooks: 공용 hook
 - src/styles: 공용 스타일
 - src/stores: 공용 jotai stores, atoms
@@ -67,17 +67,19 @@ electron 코드가 실행되는 main process입니다.
 
 ### component, hook, atom, util, ...
 
-- 공용으로 사용이 가능하고 특정 도메인이 없는 component, hook은 `src/components`, `src/components` 에 위치해야 합니다.
 - component, hook은 `export default`로 내보내야 합니다.
 - 특정 도메인에 종속적인 코드는 `src/features` 디렉토리에 있어야 하며 아래 규칙에 맞게 작성해야 합니다.
   - component: `src/features/{domain}/{ComponentName}.ts`
-  - styled: `src/features/{domain}/{ComponentName?}/{StyledName}.styled.ts`
-  - hook: `src/features/{domain}/{ComponentName?}/hooks/use{HookName}.ts`
-  - util: `src/features/{domain}/{ComponentName?}/utils/{utilName}.utils.ts`
-  - atom: `src/features/{domain}/{ComponentName?}/atoms/{atomName}.atom.ts`
+  - styled: `src/features/{domain}/{ComponentName}/{StyledName}.styled.ts`
+  - hook: `src/features/{domain}/{ComponentName}/hooks/use{HookName}.ts`
+  - util: `src/features/{domain}/{ComponentName}/utils/{utilName}.utils.ts`
+  - atom: `src/features/{domain}/{ComponentName}/atoms/{atomName}.atom.ts`
   - 위 항목에 없는 경우
-    - 단일: `src/features/{domain}/{ComponentName?}/{fileName}.{type}.ts`
-    - 복수: `src/features/{domain}/{ComponentName?}/{fileName}s/{fileName}.{type}.ts`
+    - 단일 파일: `src/features/{domain}/{ComponentName}/{fileName}.{type}.ts`
+    - 복수 파일: `src/features/{domain}/{ComponentName}/{fileName}s/{fileName}.{type}.ts`
+
+> `{type}`에 복수명이 있는 경우 여러개의 export가 있는 경우입니다.<br/>
+> ex) `rank.utils.ts` (랭크 관련 유틸 함수들이 여러개 있는 파일)
 
 ## Preload
 
