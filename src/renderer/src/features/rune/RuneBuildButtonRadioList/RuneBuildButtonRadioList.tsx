@@ -8,7 +8,7 @@ import ButtonRadioList, {
 import PickWinRate from '@renderer/components/PickWinRate'
 import RuneIcon from '@renderer/features/rune/RuneIcon'
 
-import { RuneBuildButtonRadioListStyled } from './styled'
+import * as Styled from './RuneBuildButtonRadioList.styled'
 
 export interface RuneBuildButtonRadioListProps
   extends Pick<ButtonRadioListProps, 'onChange' | 'value'> {
@@ -22,7 +22,7 @@ const RuneBuildButtonRadioList = ({
   ...buttonRadioListProps
 }: RuneBuildButtonRadioListProps) => {
   return (
-    <RuneBuildButtonRadioListStyled className={clsx('RuneBuildButtonRadioList', className)}>
+    <Styled.Root className={clsx('RuneBuildButtonRadioList', className)}>
       <ButtonRadioList
         {...buttonRadioListProps}
         options={items.map((item, i) => ({
@@ -46,7 +46,7 @@ const RuneBuildButtonRadioList = ({
           ),
         }))}
       />
-    </RuneBuildButtonRadioListStyled>
+    </Styled.Root>
   )
 }
 

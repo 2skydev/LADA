@@ -4,7 +4,7 @@ import clsx from 'clsx'
 
 import { AutoAcceptEvent } from '@main/modules/league/types/auto-accept.types'
 
-import { ReadyTimerOverlayStyled } from './styled'
+import * as Styled from './ReadyTimerOverlay.styled'
 
 export interface ReadyTimerOverlayProps {
   className?: string
@@ -30,9 +30,9 @@ const ReadyTimerOverlay = ({ className }: ReadyTimerOverlayProps) => {
   if (!data) return null
 
   return (
-    <ReadyTimerOverlayStyled className={clsx('ReadyTimerOverlay', className)}>
+    <Styled.Root className={clsx('ReadyTimerOverlay', className)}>
       자동 수락까지 <span>{data.autoAcceptDelaySeconds! - data.timer!}</span>초 남았습니다
-    </ReadyTimerOverlayStyled>
+    </Styled.Root>
   )
 }
 

@@ -8,7 +8,7 @@ import useSWRImmutable from 'swr/immutable'
 import { publish } from '@renderer/../../../electron-builder.json'
 import { appUpdateAtom } from '@renderer/stores/atoms/appUpdate.atom'
 
-import { UpdateNoteModalStyled } from './styled'
+import * as Styled from './UpdateNoteModal.styled'
 
 interface UpdateNoteModal {
   open?: boolean
@@ -41,7 +41,7 @@ const UpdateNoteModal = ({ open, onClose }: UpdateNoteModal) => {
       closable: true,
       maskClosable: true,
       content: (
-        <UpdateNoteModalStyled className="UpdateNoteModal">
+        <Styled.Root className="UpdateNoteModal">
           {data.body
             .replaceAll('\r', '')
             .split('\n')
@@ -55,7 +55,7 @@ const UpdateNoteModal = ({ open, onClose }: UpdateNoteModal) => {
                 </Fragment>
               )
             })}
-        </UpdateNoteModalStyled>
+        </Styled.Root>
       ),
       onCancel: () => {
         onClose?.()

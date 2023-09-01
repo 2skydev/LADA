@@ -1,15 +1,15 @@
 import { Empty } from 'antd'
 
 import LayoutConfig from '@renderer/components/LayoutConfig'
-import { NotFoundPageStyled } from '@renderer/styles/pageStyled/404PageStyled'
+import * as Styled from '@renderer/styles/pageStyled/NotFoundPage.styled'
 
-const NotFound = () => {
+const NotFoundPage = () => {
   return (
-    <NotFoundPageStyled>
+    <Styled.Root>
       <LayoutConfig breadcrumbs={['페이지를 찾을 수 없습니다 :(']} />
       <Empty description="페이지를 찾을 수 없습니다 :(" />
-    </NotFoundPageStyled>
+    </Styled.Root>
   )
 }
 
-export default NotFound
+export default NotFoundPage

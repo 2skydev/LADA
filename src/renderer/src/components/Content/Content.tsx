@@ -9,7 +9,7 @@ import { useAtomValue } from 'jotai'
 import { currentSummonerAtom } from '@renderer/stores/atoms/currentSummoner.atom'
 import { layoutAtom } from '@renderer/stores/atoms/layout.atom'
 
-import { ContentStyled } from './styled'
+import * as Styled from './Content.styled'
 
 export interface ContentProps {
   className?: string
@@ -22,7 +22,7 @@ const Content = ({ className, children }: ContentProps) => {
   const { pathname } = useLocation()
 
   return (
-    <ContentStyled className={clsx('Content', className)}>
+    <Styled.Root className={clsx('Content', className)}>
       <div className="header">
         <div className="left">
           <i className="bx bx-hash" />
@@ -68,7 +68,7 @@ const Content = ({ className, children }: ContentProps) => {
           {children}
         </motion.div>
       </div>
-    </ContentStyled>
+    </Styled.Root>
   )
 }
 

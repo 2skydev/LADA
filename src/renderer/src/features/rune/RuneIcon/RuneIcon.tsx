@@ -1,7 +1,8 @@
 import clsx from 'clsx'
 
-import { RuneIconStyled } from '@renderer/features/rune/RuneIcon/styled'
 import useAPI from '@renderer/hooks/useAPI'
+
+import * as Styled from './RuneIcon.styled'
 
 export interface RuneIconProps {
   className?: string
@@ -37,7 +38,7 @@ const RuneIcon = ({
   const src = useCategoryImage ? categoryData.icon : data.icons[runeId]
 
   return (
-    <RuneIconStyled
+    <Styled.Root
       className={clsx(
         'RuneIcon',
         className,
@@ -56,7 +57,7 @@ const RuneIcon = ({
           <div className="ring hover" />
         </>
       )}
-    </RuneIconStyled>
+    </Styled.Root>
   )
 }
 

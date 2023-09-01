@@ -1,6 +1,6 @@
 import { DependencyList, EffectCallback, useEffect, useRef } from 'react'
 
-export const useDidUpdateEffect = (effect: EffectCallback, deps: DependencyList) => {
+const useDidUpdateEffect = (effect: EffectCallback, deps: DependencyList) => {
   const didMountRef = useRef(false)
 
   useEffect(() => {
@@ -8,3 +8,5 @@ export const useDidUpdateEffect = (effect: EffectCallback, deps: DependencyList)
     didMountRef.current = true
   }, deps)
 }
+
+export default useDidUpdateEffect

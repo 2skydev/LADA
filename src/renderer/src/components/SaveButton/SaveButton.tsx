@@ -8,7 +8,7 @@ import { AnimatePresence } from 'framer-motion'
 
 import { UseCustomUseFormReturn } from '@renderer/hooks/useCustomForm'
 
-import { SaveButtonStyled } from './styled'
+import * as Styled from './SaveButton.styled'
 
 export interface SaveButtonProps {
   form: UseCustomUseFormReturn<any, any>
@@ -87,7 +87,7 @@ const SaveButton = ({
   return (
     <AnimatePresence>
       {!isEqual && (
-        <SaveButtonStyled
+        <Styled.Root
           className={clsx('SaveButton', className, { invalid })}
           key="SaveButton"
           {...animation}
@@ -125,7 +125,7 @@ const SaveButton = ({
               </Button>
             </Popconfirm>
           </Space>
-        </SaveButtonStyled>
+        </Styled.Root>
       )}
     </AnimatePresence>
   )

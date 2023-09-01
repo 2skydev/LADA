@@ -1,12 +1,12 @@
 import ReadyTimerOverlay from '@renderer/features/overlay/ReadyTimerOverlay'
-import { OverlaysClientPageStyled } from '@renderer/styles/pageStyled/overlaysClientPageStyled'
+import * as Styled from '@renderer/styles/pageStyled/OverlaysClientPage.styled'
 
-const OverlaysClient = () => {
+const OverlaysClientPage = () => {
   return (
-    <OverlaysClientPageStyled>
+    <Styled.Root>
       <ReadyTimerOverlay />
-    </OverlaysClientPageStyled>
+    </Styled.Root>
   )
 }
 
-export default OverlaysClient
+export default OverlaysClientPage

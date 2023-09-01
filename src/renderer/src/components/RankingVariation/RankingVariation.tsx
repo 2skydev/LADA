@@ -1,6 +1,6 @@
 import clsx from 'clsx'
 
-import { RankingVariationStyled } from './styled'
+import * as Styled from './RankingVariation.styled'
 
 export interface RankingVariationProps {
   className?: string
@@ -20,7 +20,7 @@ const RankingVariation = ({ className, value, max }: RankingVariationProps) => {
   } as const
 
   return (
-    <RankingVariationStyled className={clsx('RankingVariation', { isUp, isDown }, className)}>
+    <Styled.Root className={clsx('RankingVariation', { isUp, isDown }, className)}>
       <svg
         fill="none"
         viewBox="0 0 24 24"
@@ -53,7 +53,7 @@ const RankingVariation = ({ className, value, max }: RankingVariationProps) => {
       </svg>
 
       {max ? (value > max ? 'NEW' : Math.abs(value)) : Math.abs(value)}
-    </RankingVariationStyled>
+    </Styled.Root>
   )
 }
 

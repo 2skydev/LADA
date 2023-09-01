@@ -8,10 +8,10 @@ import { useAtomValue } from 'jotai'
 import { LANE_ID_ENUM } from '@main/modules/league/types/lane.types'
 
 import logoImage from '@renderer/assets/images/logo@256.png'
-import LaneIcon from '@renderer/features/asset/LaneIcon'
+import LaneIcon from '@renderer/features/lane/LaneIcon'
 import { configAtom } from '@renderer/stores/atoms/config.atom'
 
-import { SidebarStyled } from './styled'
+import * as Styled from './Sidebar.styled'
 
 export interface SidebarProps {
   className?: string
@@ -42,7 +42,7 @@ const Sidebar = ({ className }: SidebarProps) => {
             icon: <LaneIcon laneId={LANE_ID_ENUM.top} />,
             link: '/',
             text: '챔피언 티어',
-            isActiveFn: (pathname: string) => pathname === '/' || pathname.includes('/champ/'),
+            isActiveFn: (pathname: string) => pathname === '/' || pathname.includes('/champions/'),
           },
           {
             icon: 'bx-group',
@@ -56,12 +56,12 @@ const Sidebar = ({ className }: SidebarProps) => {
         items: [
           {
             icon: 'bx-user-check',
-            link: '/live/champion-select',
+            link: '/lives/champion-select',
             text: '챔피언 선택',
           },
           {
             icon: 'bx-search-alt',
-            link: '/live/in-game',
+            link: '/lives/in-game',
             text: '인게임 정보',
           },
         ],
@@ -105,7 +105,7 @@ const Sidebar = ({ className }: SidebarProps) => {
   )
 
   return (
-    <SidebarStyled className={clsx('Sidebar', className)}>
+    <Styled.Root className={clsx('Sidebar', className)}>
       <div className="logo">
         <img src={logoImage} alt="logo" />
         LADA
@@ -165,7 +165,7 @@ const Sidebar = ({ className }: SidebarProps) => {
           ))}
         </div>
       </LayoutGroup>
-    </SidebarStyled>
+    </Styled.Root>
   )
 }
 

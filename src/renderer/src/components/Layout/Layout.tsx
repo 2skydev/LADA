@@ -2,7 +2,7 @@ import clsx from 'clsx'
 
 import Content from '../Content'
 import Sidebar from '../Sidebar'
-import { LayoutStyled } from './styled'
+import * as Styled from './Layout.styled'
 
 export interface LayoutProps {
   className?: string
@@ -11,10 +11,10 @@ export interface LayoutProps {
 
 const Layout = ({ className, children }: LayoutProps) => {
   return (
-    <LayoutStyled className={clsx('Layout', className)}>
+    <Styled.Root className={clsx('Layout', className)}>
       <Sidebar />
       <Content>{children}</Content>
-    </LayoutStyled>
+    </Styled.Root>
   )
 }
 
