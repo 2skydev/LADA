@@ -255,7 +255,7 @@ export const DuoSynergyTableChampProfile = ({
   return (
     <Styled.ChampionProfile
       onClick={() => {
-        navigate(`/champion/${championId}`)
+        navigate(`/champions/${championId}`)
       }}
     >
       <ChampionProfileSmall championId={championId} />

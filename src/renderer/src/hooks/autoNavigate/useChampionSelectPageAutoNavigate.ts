@@ -13,7 +13,7 @@ const useChampionSelectPageAutoNavigate = () => {
   const championId = data?.tempChampionId || data?.championId
 
   useEffect(() => {
-    if (championId) navigate('/live/champion-select')
+    if (championId) navigate('/lives/champion-select')
   }, [championId])
 }
 

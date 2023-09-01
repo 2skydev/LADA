@@ -42,7 +42,7 @@ const Sidebar = ({ className }: SidebarProps) => {
             icon: <LaneIcon laneId={LANE_ID_ENUM.top} />,
             link: '/',
             text: '챔피언 티어',
-            isActiveFn: (pathname: string) => pathname === '/' || pathname.includes('/champion/'),
+            isActiveFn: (pathname: string) => pathname === '/' || pathname.includes('/champions/'),
           },
           {
             icon: 'bx-group',
@@ -56,12 +56,12 @@ const Sidebar = ({ className }: SidebarProps) => {
         items: [
           {
             icon: 'bx-user-check',
-            link: '/live/champion-select',
+            link: '/lives/champion-select',
             text: '챔피언 선택',
           },
           {
             icon: 'bx-search-alt',
-            link: '/live/in-game',
+            link: '/lives/in-game',
             text: '인게임 정보',
           },
         ],
