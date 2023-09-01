@@ -8,7 +8,7 @@ import { random } from 'lodash'
 import { PICK_TYPE_TO_LABEL_MAP } from '@main/modules/league/league.constants'
 import { Lobby } from '@main/modules/league/types/lobby.types'
 
-import RankIcon from '@renderer/features/asset/RankIcon'
+import RankIcon from '@renderer/features/rank/RankIcon'
 import useAPI from '@renderer/hooks/useAPI'
 
 import * as Styled from './TeamManager.styled'

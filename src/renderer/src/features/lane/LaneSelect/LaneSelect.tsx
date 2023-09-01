@@ -3,7 +3,7 @@ import { forwardRef } from 'react'
 import { Radio, RadioGroupProps } from 'antd'
 import clsx from 'clsx'
 
-import LaneIcon from '@renderer/features/asset/LaneIcon'
+import LaneIcon from '@renderer/features/lane/LaneIcon'
 
 import * as Styled from './LaneSelect.styled'
 

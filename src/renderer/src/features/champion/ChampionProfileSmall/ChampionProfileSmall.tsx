@@ -1,6 +1,7 @@
 import clsx from 'clsx'
 
-import TierIcon, { HoneyIcon, OpIcon } from '../TierIcon'
+import TierIcon, { HoneyIcon, OpIcon } from '@renderer/features/tier/TierIcon'
+
 import * as Styled from './ChampionProfileSmall.styled'
 
 export interface ChampionProfileSmallProps {

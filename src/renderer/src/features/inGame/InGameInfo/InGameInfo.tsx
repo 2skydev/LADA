@@ -1,7 +1,7 @@
 import { useEffect, useState } from 'react'
 import { useNavigate } from 'react-router-dom'
 
-import { Divider, Space, Tag } from 'antd'
+import { Button, Divider, Result, Space, Tag } from 'antd'
 import clsx from 'clsx'
 import dayjs from 'dayjs'
 import { useAtomValue } from 'jotai'
@@ -9,11 +9,10 @@ import { match, P } from 'ts-pattern'
 
 import { NO_DIVISION_TIERS } from '@main/modules/league/league.constants'
 
-import ChampionProfileSmall from '@renderer/features/asset/ChampionProfileSmall/ChampionProfileSmall'
-import LaneIcon from '@renderer/features/asset/LaneIcon/LaneIcon'
-import RankIcon from '@renderer/features/asset/RankIcon/RankIcon'
-import InGameNotFound from '@renderer/features/inGame/InGameNotFound/InGameNotFound'
-import RuneIcon from '@renderer/features/rune/RuneIcon/RuneIcon'
+import ChampionProfileSmall from '@renderer/features/champion/ChampionProfileSmall'
+import LaneIcon from '@renderer/features/lane/LaneIcon'
+import RankIcon from '@renderer/features/rank/RankIcon'
+import RuneIcon from '@renderer/features/rune/RuneIcon'
 import useAPI from '@renderer/hooks/useAPI'
 import { currentSummonerAtom } from '@renderer/stores/atoms/currentSummoner.atom'
 import { leagueAtom } from '@renderer/stores/atoms/league.atom'
@@ -277,7 +276,22 @@ const InGameInfo = ({ className }: InGameInfoProps) => {
         </>
       )}
 
-      {!data && <InGameNotFound reload={reload} isLoading={isValidating} />}
+      {!data && (
+        <Result
+          status="warning"
+          title="인게임 정보를 불러올 수 없습니다."
+          extra={
+            <>
+              현재 게임에 참여중이지 않거나, 인게임 정보를 불러올 수 없는 상태입니다.
+              <br />
+              <br />
+              <Button onClick={() => reload()} loading={isValidating}>
+                새로고침
+              </Button>
+            </>
+          }
+        />
+      )}
     </Styled.Root>
   )
 }

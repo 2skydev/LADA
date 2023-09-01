@@ -5,7 +5,7 @@ import clsx from 'clsx'
 
 import { LANE_ID_ENUM } from '@main/modules/league/types/lane.types'
 
-import LaneIcon from '@renderer/features/asset/LaneIcon'
+import LaneIcon from '@renderer/features/lane/LaneIcon'
 
 import * as Styled from './DuoLaneSelect.styled'
 

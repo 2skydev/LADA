@@ -16,10 +16,10 @@ import {
   GetDuoSynergyListOptions,
 } from '@main/modules/ps/types/duo.types'
 
-import ChampionProfileSmall from '@renderer/features/asset/ChampionProfileSmall'
-import LaneIcon from '@renderer/features/asset/LaneIcon/LaneIcon'
+import ChampionProfileSmall from '@renderer/features/champion/ChampionProfileSmall'
 import DuoLaneSelect, { DUO_OPTIONS, DuoId } from '@renderer/features/duo/DuoLaneSelect'
 import { duoSynergyTableDuoIdAtom } from '@renderer/features/duo/DuoSynergyTable/atoms/duoSynergyTableDuoId.atom'
+import LaneIcon from '@renderer/features/lane/LaneIcon'
 import { LANE_LABELS } from '@renderer/features/lane/LaneSelect'
 import RankRangeSelect from '@renderer/features/rank/RankRangeSelect'
 import { rankRangeIdAtom } from '@renderer/features/rank/RankRangeSelect/atoms/rankRangeId.atom'

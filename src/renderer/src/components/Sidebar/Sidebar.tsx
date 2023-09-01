@@ -8,7 +8,7 @@ import { useAtomValue } from 'jotai'
 import { LANE_ID_ENUM } from '@main/modules/league/types/lane.types'
 
 import logoImage from '@renderer/assets/images/logo@256.png'
-import LaneIcon from '@renderer/features/asset/LaneIcon'
+import LaneIcon from '@renderer/features/lane/LaneIcon'
 import { configAtom } from '@renderer/stores/atoms/config.atom'
 
 import * as Styled from './Sidebar.styled'

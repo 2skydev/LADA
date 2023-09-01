@@ -10,7 +10,7 @@ import { useAtom, useAtomValue } from 'jotai'
 import { LaneId } from '@main/modules/league/types/lane.types'
 
 import RankingVariation from '@renderer/components/RankingVariation'
-import ChampionProfileSmall from '@renderer/features/asset/ChampionProfileSmall'
+import ChampionProfileSmall from '@renderer/features/champion/ChampionProfileSmall'
 import LaneSelect from '@renderer/features/lane/LaneSelect'
 import RankRangeSelect from '@renderer/features/rank/RankRangeSelect'
 import { rankRangeIdAtom } from '@renderer/features/rank/RankRangeSelect/atoms/rankRangeId.atom'
