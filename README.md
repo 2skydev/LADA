@@ -18,16 +18,22 @@
 
 ## Architecture
 
-> 이미지 클릭시 figma로 이동합니다
+> [figma 링크](https://www.figma.com/file/qJrFt4YVAZX5UdbeKLx6xA/LADA?type=whiteboard&t=oozV2tgJvZuRd6S4-1)
 
-[![image](https://github.com/2skydev/LADA/assets/43225384/a4de6e74-4788-424c-a3f0-a329c853789a)](https://www.figma.com/file/qJrFt4YVAZX5UdbeKLx6xA/LADA?type=whiteboard&t=oozV2tgJvZuRd6S4-1)
+![image](https://github.com/2skydev/LADA/assets/43225384/a4de6e74-4788-424c-a3f0-a329c853789a)
 
 
 ## Github workflow
 
-> 이미지 클릭시 figma로 이동합니다
+> [figma 링크](https://www.figma.com/file/qJrFt4YVAZX5UdbeKLx6xA/LADA?type=whiteboard&t=oozV2tgJvZuRd6S4-1)
 
-[![image](https://github.com/2skydev/LADA/assets/43225384/69dc01b1-0fab-4305-9e69-6821555119fe)](https://www.figma.com/file/qJrFt4YVAZX5UdbeKLx6xA/LADA?type=whiteboard&t=oozV2tgJvZuRd6S4-1)
+![image](https://github.com/2skydev/LADA/assets/43225384/69dc01b1-0fab-4305-9e69-6821555119fe)
+
+<br />
+
+## Code Style Guide
+
+[코드 스타일 가이드 Markdown](https://github.com/2skydev/LADA/blob/main/CODE_STYLES.md)
 
 <br />
 
@@ -64,7 +70,7 @@ yarn build:all
 - Code style: `eslint` + `prettier` + [`@trivago/prettier-plugin-sort-imports`](https://github.com/trivago/prettier-plugin-sort-imports)
 - File system based router: [`react-router-dom v6`](https://reactrouter.com/docs/en/v6) + custom (src/components/FileSystemRoutes)
 - CSS: [`styled-components`](https://styled-components.com/)
-- State management library: [`recoil`](https://hookstate.js.org/)
+- State management library: [`jotai`](https://jotai.org/)
 - Date: [`dayjs`](https://day.js.org/)
 
 <br />
