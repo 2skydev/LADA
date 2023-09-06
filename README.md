@@ -7,18 +7,27 @@
 
 ## 스크린샷들
 
-![image](https://github.com/2skydev/LADA/assets/43225384/3ae69fbd-8b58-4fb7-93c1-2de1c9d7ce49)
-![image](https://github.com/2skydev/LADA/assets/43225384/4f5f6820-66d5-4c06-b18a-e62ec69ef262)
+![image](https://github.com/2skydev/LADA/assets/43225384/d3d9a37c-3b26-4d2d-ad58-782c37b95240)
+![image](https://github.com/2skydev/LADA/assets/43225384/842dbbc4-3d9b-452e-9b71-e52e66930b4e)
+![image](https://github.com/2skydev/LADA/assets/43225384/9a0deb72-934b-4643-9e9a-56a6d6616a01)
 ![image](https://github.com/2skydev/LADA/assets/43225384/cb186443-6477-4942-933a-5b639cb8cc34)
-![image](https://github.com/2skydev/LADA/assets/43225384/409d8370-9eaf-43a8-ae3b-3c43fce6e814)
+![image](https://github.com/2skydev/LADA/assets/43225384/7ce5494d-9677-43ed-b686-29bb82a0bbca)
+![image](https://github.com/2skydev/LADA/assets/43225384/71a44a18-f6e5-4908-92d6-989fdd9f4d6a)
 
 <br />
+
+## Architecture
+
+> 이미지 클릭시 figma로 이동합니다
+
+[![image](https://github.com/2skydev/LADA/assets/43225384/a4de6e74-4788-424c-a3f0-a329c853789a)](https://www.figma.com/file/qJrFt4YVAZX5UdbeKLx6xA/LADA?type=whiteboard&t=oozV2tgJvZuRd6S4-1)
+
 
 ## Github workflow
 
 > 이미지 클릭시 figma로 이동합니다
 
-[![image](https://user-images.githubusercontent.com/43225384/226127143-bdfe4f6a-dd3a-4cf5-a9ea-f9ced9698d68.png)](https://www.figma.com/file/qJrFt4YVAZX5UdbeKLx6xA/LADA-flows?t=nikt7H1DQ6dTKM96-1)
+[![image](https://github.com/2skydev/LADA/assets/43225384/69dc01b1-0fab-4305-9e69-6821555119fe)](https://www.figma.com/file/qJrFt4YVAZX5UdbeKLx6xA/LADA?type=whiteboard&t=oozV2tgJvZuRd6S4-1)
 
 <br />
 
