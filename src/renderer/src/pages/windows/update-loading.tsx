@@ -5,9 +5,9 @@ import { useAtomValue } from 'jotai'
 
 import logoImage from '@renderer/assets/images/logo@256.png'
 import { appUpdateAtom } from '@renderer/stores/atoms/appUpdate.atom'
-import { WindowsUpdateLoadingPageStyled } from '@renderer/styles/pageStyled/windowsUpdatePageStyled'
+import * as Styled from '@renderer/styles/pageStyled/WindowsUpdateLoadingPage.styled'
 
-const WindowsUpdateLoading = () => {
+const WindowsUpdateLoadingPage = () => {
   const [percent, setPercent] = useState(0)
   const [text, setText] = useState('업데이트 다운로드중...')
   const { status } = useAtomValue(appUpdateAtom)
@@ -25,12 +25,12 @@ const WindowsUpdateLoading = () => {
   }, [status])
 
   return (
-    <WindowsUpdateLoadingPageStyled>
+    <Styled.Root>
       <img src={logoImage} alt="logo" />
       <div className="text">{text}</div>
       <Progress percent={percent} showInfo={false} size={[200, 6]} />
-    </WindowsUpdateLoadingPageStyled>
+    </Styled.Root>
   )
 }
 
-export default WindowsUpdateLoading
+export default WindowsUpdateLoadingPage

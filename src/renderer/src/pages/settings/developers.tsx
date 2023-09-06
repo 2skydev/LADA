@@ -7,11 +7,11 @@ import useSWR from 'swr'
 import LayoutConfig from '@renderer/components/LayoutConfig'
 import LogViewer from '@renderer/components/LogViewer'
 import Section from '@renderer/components/Section'
-import { SettingsDevelopersPageStyled } from '@renderer/styles/pageStyled/settingsDevelopersPageStyled'
+import * as Styled from '@renderer/styles/pageStyled/SettingsDevelopersPage.styled'
 
 const RELOAD_MINUTE = 1
 
-const SettingsDevelopers = () => {
+const SettingsDevelopersPage = () => {
   const { data, isValidating, mutate } = useSWR('@app/developers', async () => {
     const storePath = await window.electron.getStorePath()
     const logs = await window.electron.getLogs()
@@ -43,7 +43,7 @@ const SettingsDevelopers = () => {
   }, [])
 
   return (
-    <SettingsDevelopersPageStyled>
+    <Styled.Root>
       <LayoutConfig breadcrumbs={['설정', '개발자 옵션']} />
 
       <Section
@@ -116,8 +116,8 @@ const SettingsDevelopers = () => {
           ))}
         </div>
       )}
-    </SettingsDevelopersPageStyled>
+    </Styled.Root>
   )
 }
 
-export default SettingsDevelopers
+export default SettingsDevelopersPage

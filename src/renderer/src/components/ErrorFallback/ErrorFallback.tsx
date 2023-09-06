@@ -6,7 +6,7 @@ import { Button } from 'antd'
 import errorImage from '@renderer/assets/images/error.webp'
 import Titlebar from '@renderer/components/Titlebar'
 
-import { ErrorFallbackStyled } from './styled'
+import * as Styled from './ErrorFallback.styled'
 
 const ignorePaths = [/\/overlays\/.+/]
 
@@ -30,11 +30,7 @@ const ErrorFallback = () => {
   if (isIgnore) return null
 
   return (
-    <ErrorFallbackStyled
-      className="ErrorFallback"
-      initial={{ opacity: 0 }}
-      animate={{ opacity: 1 }}
-    >
+    <Styled.Root className="ErrorFallback" initial={{ opacity: 0 }} animate={{ opacity: 1 }}>
       <Titlebar />
 
       <img src={errorImage} alt="error" />
@@ -50,7 +46,7 @@ const ErrorFallback = () => {
         <div className="title">오류 내용</div>
         <div className="content">{message}</div>
       </div>
-    </ErrorFallbackStyled>
+    </Styled.Root>
   )
 }
 

@@ -1,6 +1,6 @@
 import clsx from 'clsx'
 
-import { LoadingIconStyled } from './styled'
+import * as Styled from './LoadingIcon.styled'
 
 export interface LoadingIconProps {
   className?: string
@@ -8,11 +8,11 @@ export interface LoadingIconProps {
 
 const LoadingIcon = ({ className }: LoadingIconProps) => {
   return (
-    <LoadingIconStyled className={clsx('LoadingIcon', className)}>
+    <Styled.Root className={clsx('LoadingIcon', className)}>
       <div />
       <div />
       <div />
-    </LoadingIconStyled>
+    </Styled.Root>
   )
 }
 

@@ -2,7 +2,7 @@ import { FieldValues, UseFormProps, UseFormReturn, useForm } from 'react-hook-fo
 
 import deepEqual from 'fast-deep-equal'
 
-import { useDidUpdateEffect } from './useDidUpdateEffect'
+import useDidUpdateEffect from './useDidUpdateEffect'
 
 export interface UseCustomUseFormProps<
   TFieldValues extends FieldValues = FieldValues,
@@ -20,7 +20,7 @@ export interface UseCustomUseFormReturn<
   submit: () => Promise<boolean>
 }
 
-export const useCustomForm = <TFieldValues extends FieldValues = FieldValues, TContext = any>(
+const useCustomForm = <TFieldValues extends FieldValues = FieldValues, TContext = any>(
   props: UseCustomUseFormProps<TFieldValues, TContext>,
 ): UseCustomUseFormReturn<TFieldValues, TContext> => {
   const { onSubmit, syncDefaultValues = false, ...rest } = props
@@ -57,3 +57,5 @@ export const useCustomForm = <TFieldValues extends FieldValues = FieldValues, TC
     },
   }
 }
+
+export default useCustomForm

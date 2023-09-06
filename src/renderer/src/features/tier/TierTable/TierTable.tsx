@@ -10,17 +10,17 @@ import { useAtom, useAtomValue } from 'jotai'
 import { LaneId } from '@main/modules/league/types/lane.types'
 
 import RankingVariation from '@renderer/components/RankingVariation'
-import ChampionProfileSmall from '@renderer/features/asset/ChampionProfileSmall'
+import ChampionProfileSmall from '@renderer/features/champion/ChampionProfileSmall'
 import LaneSelect from '@renderer/features/lane/LaneSelect'
 import RankRangeSelect from '@renderer/features/rank/RankRangeSelect'
-import { rankRangeIdAtom } from '@renderer/features/rank/RankRangeSelect/rankRangeId.atom'
-import { tierTableLaneIdAtom } from '@renderer/features/tier/TierTable/tierTableLaneId.atom'
+import { rankRangeIdAtom } from '@renderer/features/rank/RankRangeSelect/atoms/rankRangeId.atom'
+import { tierTableLaneIdAtom } from '@renderer/features/tier/TierTable/atoms/tierTableLaneId.atom'
 import useAPI from '@renderer/hooks/useAPI'
-import { useCustomForm } from '@renderer/hooks/useCustomForm'
-import { useDidUpdateEffect } from '@renderer/hooks/useDidUpdateEffect'
+import useCustomForm from '@renderer/hooks/useCustomForm'
+import useDidUpdateEffect from '@renderer/hooks/useDidUpdateEffect'
 import useQS from '@renderer/hooks/useQS'
 
-import { TierTableStyled } from './styled'
+import * as Styled from './TierTable.styled'
 
 export interface TierTableProps {
   className?: string
@@ -59,7 +59,7 @@ const TierTable = ({ className }: TierTableProps) => {
   }, [laneId])
 
   return (
-    <TierTableStyled className={clsx('TierTable', className)}>
+    <Styled.Root className={clsx('TierTable', className)}>
       <header>
         <h2>라인별 챔피언 티어</h2>
 
@@ -90,7 +90,7 @@ const TierTable = ({ className }: TierTableProps) => {
       <Table
         onRow={record => ({
           onClick: () => {
-            navigate(`/champ/${record.championId}?laneId=${laneId}`)
+            navigate(`/champions/${record.championId}?laneId=${laneId}`)
           },
         })}
         components={{
@@ -194,7 +194,7 @@ const TierTable = ({ className }: TierTableProps) => {
         scroll={{ y: 600 }}
         sortDirections={['descend', 'ascend']}
       />
-    </TierTableStyled>
+    </Styled.Root>
   )
 }
 

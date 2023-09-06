@@ -5,7 +5,7 @@ import { AppControlAction } from '@main/modules/electron/types/app-control.type'
 
 import { configAtom } from '@renderer/stores/atoms/config.atom'
 
-import { TitlebarStyled } from './styled'
+import * as Styled from './Titlebar.styled'
 
 export interface TitlebarProps {
   className?: string
@@ -21,7 +21,7 @@ const Titlebar = ({ className }: TitlebarProps) => {
   }
 
   return (
-    <TitlebarStyled className={clsx('Titlebar', className)}>
+    <Styled.Root className={clsx('Titlebar', className)}>
       {developerMode && (
         <div onClick={() => appControl('devtools')}>
           <i className="bx bx-code-alt" />
@@ -39,7 +39,7 @@ const Titlebar = ({ className }: TitlebarProps) => {
       <div className="close" onClick={() => appControl('close')}>
         <i className="bx bx-x" />
       </div>
-    </TitlebarStyled>
+    </Styled.Root>
   )
 }
 

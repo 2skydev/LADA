@@ -3,7 +3,7 @@ import { memo } from 'react'
 import { darken, lighten, rgba } from 'polished'
 import { createGlobalStyle } from 'styled-components'
 
-export const InitGlobalStyled = memo(createGlobalStyle`
+export const Init = memo(createGlobalStyle`
   * {
     margin: 0;
     padding: 0;

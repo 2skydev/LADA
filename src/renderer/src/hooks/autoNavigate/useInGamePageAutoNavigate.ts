@@ -12,7 +12,7 @@ const useInGamePageAutoNavigate = () => {
 
   useEffect(() => {
     if (isInGame) {
-      navigate('/live/in-game')
+      navigate('/lives/in-game')
     }
   }, [isInGame])
 }

@@ -3,7 +3,7 @@ import clsx from 'clsx'
 import { RuneIdsGroupByType, RuneType } from '@main/modules/league/types/rune.types'
 
 import RuneGroup, { RuneGroupValue } from '../RuneGroup'
-import { RunePageStyled } from './styled'
+import * as Styled from './RunePage.styled'
 
 export interface RunePageProps extends RuneIdsGroupByType {
   className?: string
@@ -32,7 +32,7 @@ const RunePage = ({
     }
 
   return (
-    <RunePageStyled className={clsx('RunePage', className)}>
+    <Styled.Root className={clsx('RunePage', className)}>
       <RuneGroup
         type="main"
         activeRuneIds={mainRuneIds}
@@ -51,7 +51,7 @@ const RunePage = ({
           onChange={onChange && handleChange('shard')}
         />
       </div>
-    </RunePageStyled>
+    </Styled.Root>
   )
 }
 

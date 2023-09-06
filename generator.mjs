@@ -35,7 +35,7 @@ const createComponentFileText = name => {
     ``,
     `import clsx from 'clsx';`,
     ``,
-    `import { ${name}Styled } from './styled';`,
+    `import * as Styled from './${name}.styled';`,
     ``,
     `export interface ${name}Props {`,
     `  className?: string;`,
@@ -44,9 +44,9 @@ const createComponentFileText = name => {
     ``,
     `const ${name} = ({ className, children }: ${name}Props) => {`,
     `  return (`,
-    `    <${name}Styled className={clsx('${name}', className)}>`,
+    `    <Styled.Root className={clsx('${name}', className)}>`,
     `      {children}`,
-    `    </${name}Styled>`,
+    `    </Styled.Root>`,
     `  );`,
     `};`,
     ``,
@@ -55,11 +55,11 @@ const createComponentFileText = name => {
   ].join('\n')
 }
 
-const createStyledFileText = name => {
+const createStyledFileText = () => {
   return [
     `import styled from 'styled-components';`,
     ``,
-    `export const ${name}Styled = styled.div\``,
+    `export const Root = styled.div\``,
     `  `,
     `\`;`,
     ``,
@@ -69,17 +69,17 @@ const createStyledFileText = name => {
 const createPageFileText = name => {
   return [
     // prettier-ignore
-    `import { ${capitalize(name)}PageStyled } from '@renderer/styles/pageStyled/${name}PageStyled';`,
+    `import * as Styled from '@renderer/styles/pageStyled/${capitalize(name)}Page.styled';`,
     ``,
-    `const ${capitalize(name)} = () => {`,
+    `const ${capitalize(name)}Page = () => {`,
     `  return (`,
-    `    <${capitalize(name)}PageStyled>`,
+    `    <Styled.Root>`,
     `      `,
-    `    </${capitalize(name)}PageStyled>`,
+    `    </Styled.Root>`,
     `  );`,
     `};`,
     ``,
-    `export default ${capitalize(name)};`,
+    `export default ${capitalize(name)}Page;`,
     ``,
   ].join('\n')
 }
@@ -141,7 +141,7 @@ const editParentComponentExportFile = async parentComponentName => {
 
 const createComponentAndFileOpen = (dir, name) => {
   fs.mkdirSync(dir, { recursive: true })
-  fs.writeFileSync(`${dir}/styled.ts`, createStyledFileText(name))
+  fs.writeFileSync(`${dir}/${name}.styled.ts`, createStyledFileText())
   fs.writeFileSync(`${dir}/${name}.tsx`, createComponentFileText(name))
   fs.writeFileSync(`${dir}/index.ts`, createIndexFileText(name))
 
@@ -286,8 +286,8 @@ const start = async () => {
       }
 
       // check page styled file already exists
-      if (fs.existsSync(`${PAGE_STYLED_DIR}/${name}PageStyled.ts`)) {
-        console.log(`🛑 [${PAGE_STYLED_DIR}/${name}PageStyled.ts] already exists`)
+      if (fs.existsSync(`${PAGE_STYLED_DIR}/${capitalize(name)}Page.styled.ts`)) {
+        console.log(`🛑 [${PAGE_STYLED_DIR}/${capitalize(name)}Page.styled.ts] already exists`)
         process.exit(0)
       }
 
@@ -302,8 +302,8 @@ const start = async () => {
       }
 
       fs.writeFileSync(
-        `${PAGE_STYLED_DIR}/${name}PageStyled.ts`,
-        createStyledFileText(capitalize(name) + 'Page'),
+        `${PAGE_STYLED_DIR}/${capitalize(name)}Page.styled.ts`,
+        createStyledFileText(),
       )
 
       fs.writeFileSync(pagePath, createPageFileText(name))

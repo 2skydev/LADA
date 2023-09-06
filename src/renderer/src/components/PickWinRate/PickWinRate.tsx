@@ -1,7 +1,7 @@
 import { Progress } from 'antd'
 import clsx from 'clsx'
 
-import { PickWinRateStyled } from './styled'
+import * as Styled from './PickWinRate.styled'
 
 export interface PickWinRateProps {
   className?: string
@@ -12,7 +12,7 @@ export interface PickWinRateProps {
 
 const PickWinRate = ({ className, winRate, pickRate, count }: PickWinRateProps) => {
   return (
-    <PickWinRateStyled className={clsx('PickWinRate', className)}>
+    <Styled.Root className={clsx('PickWinRate', className)}>
       <div>
         <span className="label">W/R</span> {winRate}%
       </div>
@@ -21,7 +21,7 @@ const PickWinRate = ({ className, winRate, pickRate, count }: PickWinRateProps) 
         <span className="label">게임수</span> {count.toLocaleString()}{' '}
         {pickRate && <Progress type="circle" percent={pickRate} size={14} />}
       </div>
-    </PickWinRateStyled>
+    </Styled.Root>
   )
 }
 
