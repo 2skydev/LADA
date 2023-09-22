@@ -13,7 +13,8 @@ import { Injectable, OnApplicationBootstrap, OnModuleInit } from '@nestjs/common
 import { ModuleRef } from '@nestjs/core'
 import AutoLaunch from 'auto-launch'
 import { paramCase } from 'change-case'
-import { writeFile } from 'fs/promises'
+import { writeFile, readdir, readFile } from 'fs/promises'
+import i18next from 'i18next'
 import { groupBy } from 'lodash'
 import { join } from 'path'
 import { match } from 'path-to-regexp'
@@ -31,6 +32,7 @@ import {
 } from '@main/modules/electron/electron.constants'
 import { ElectronController } from '@main/modules/electron/electron.controller'
 import { AppControlAction } from '@main/modules/electron/types/app-control.type'
+import { LanguageOption } from '@main/modules/electron/types/language.types'
 
 @Injectable()
 export class ElectronService implements OnModuleInit, OnApplicationBootstrap {
@@ -96,6 +98,8 @@ export class ElectronService implements OnModuleInit, OnApplicationBootstrap {
     isHidden: true,
   })
 
+  public languageOptions: LanguageOption[] = []
+
   private controller: ElectronController
 
   constructor(
@@ -119,6 +123,7 @@ export class ElectronService implements OnModuleInit, OnApplicationBootstrap {
     this.controller = this.moduleRef.get(ElectronController)
 
     await app.whenReady()
+    await this.initI18Next()
 
     const gotTheLock = app.requestSingleInstanceLock()
 
@@ -406,6 +411,11 @@ export const generatedIpcOnContext = {`
 
       this.autoLauncher[value ? 'enable' : 'disable']()
     })
+
+    this.configService.onChange('general.language', async value => {
+      await i18next.changeLanguage(value!)
+      this.controller.onChangeLanguage(value!)
+    })
   }
 
   private createTray() {
@@ -427,5 +437,44 @@ export const generatedIpcOnContext = {`
         break
       }
     }
+  }
+
+  private async initI18Next() {
+    const systemLocale = app.getSystemLocale()
+    const savedLanguage = this.configService.get('general.language')
+
+    if (!savedLanguage) {
+      this.configService.set('general.language', systemLocale)
+    }
+
+    const fileNames = await readdir(`${this.RESOURCES_PATH}/locales`)
+
+    const files = await Promise.all(
+      fileNames.map(fileName =>
+        readFile(`${this.RESOURCES_PATH}/locales/${fileName}`, { encoding: 'utf-8' }),
+      ),
+    )
+
+    const resources = files.reduce((resources, file, index) => {
+      const json = JSON.parse(file)
+      const locale = fileNames[index].replace('.json', '')
+
+      resources[locale] = {
+        translation: json,
+      }
+
+      this.languageOptions.push({
+        label: json?.label,
+        value: locale,
+      })
+
+      return resources
+    }, {})
+
+    await i18next.init({
+      lng: savedLanguage ?? systemLocale,
+      fallbackLng: 'ko-KR',
+      resources,
+    })
   }
 }

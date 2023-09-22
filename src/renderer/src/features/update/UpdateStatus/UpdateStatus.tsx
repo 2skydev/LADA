@@ -1,4 +1,5 @@
 import { useEffect, useState } from 'react'
+import { useTranslation } from 'react-i18next'
 
 import { Button } from 'antd'
 import clsx from 'clsx'
@@ -15,6 +16,10 @@ export interface UpdateStatusProps {
 }
 
 const UpdateStatus = ({ className, version, status }: UpdateStatusProps) => {
+  const { t } = useTranslation('translation', {
+    keyPrefix: 'renderer.setting.general.appVersion.updateStatus',
+  })
+
   const [isLoading, setIsLoading] = useState(false)
 
   const handleCheckForUpdate = () => {
@@ -36,40 +41,40 @@ const UpdateStatus = ({ className, version, status }: UpdateStatusProps) => {
   return (
     <Styled.Root className={clsx('UpdateStatus', className)}>
       <div className="version">
-        현재버전 <em>v{version}</em>
+        {t('currentVersion')} <em>v{version}</em>
       </div>
 
       <div className="description">
-        {status.event === 'checking-for-update' && <>업데이트를 확인중입니다...</>}
+        {status.event === 'checking-for-update' && t('checking-for-update.description')}
 
-        {status.event === 'update-available' && <>업데이트가 있습니다. 다운로드중입니다...</>}
+        {status.event === 'update-available' && t('update-available.description')}
 
         {status.event === 'update-not-available' && (
           <>
-            최신 버전입니다. ({dayjs(status.time).fromNow()})
+            {t('update-not-available.description')} ({dayjs(status.time).fromNow()})
             <Button loading={isLoading} onClick={handleCheckForUpdate}>
-              업데이트 확인
+              {t('update-not-available.checkForUpdate')}
             </Button>
           </>
         )}
 
         {status.event === 'error' && (
           <>
-            업데이트를 확인하는 도중 오류가 발생했습니다.
-            <Button onClick={handleCheckForUpdate}>업데이트 확인</Button>
+            {t('error.description')}
+            <Button onClick={handleCheckForUpdate}>{t('error.checkForUpdate')}</Button>
           </>
         )}
 
         {status.event === 'download-progress' && (
-          <>{Number(status.data.percent).toFixed(1)}% 다운로드중입니다...</>
+          <>
+            {Number(status.data.percent).toFixed(1)}% {t('download-progress.description')}
+          </>
         )}
 
         {status.event === 'update-downloaded' && (
           <>
-            업데이트가 다운로드 되었습니다.
-            <br />
-            앱을 재시작하면 업데이트가 적용됩니다.
-            <Button onClick={handleUpdateNow}>지금 설치</Button>
+            {t('update-downloaded.description')}
+            <Button onClick={handleUpdateNow}>{t('update-downloaded.quitAndInstall')}</Button>
           </>
         )}
       </div>

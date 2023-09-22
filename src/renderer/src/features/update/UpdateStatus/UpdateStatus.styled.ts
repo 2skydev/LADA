@@ -11,6 +11,7 @@ export const Root = styled.div`
 
   > .description {
     color: ${props => props.theme.colors.textColor2};
+    white-space: pre-wrap;
 
     .ant-btn {
       display: block;

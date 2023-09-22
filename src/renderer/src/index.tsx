@@ -1,5 +1,6 @@
 import { Suspense } from 'react'
 import { createRoot } from 'react-dom/client'
+import { initReactI18next } from 'react-i18next'
 
 import * as Sentry from '@sentry/electron/renderer'
 import { init as sentryReactInit } from '@sentry/react'
@@ -7,9 +8,28 @@ import 'antd/dist/reset.css'
 import dayjs from 'dayjs'
 import 'dayjs/locale/ko'
 import relativeTime from 'dayjs/plugin/relativeTime'
+import i18next from 'i18next'
 
 import FileSystemRoutes from '@renderer/components/FileSystemRoutes'
 import Providers from '@renderer/components/Providers/Providers'
+
+const currentResource = await window.electron.getCurrentI18nextResource()
+
+i18next.use(initReactI18next).init({
+  lng: currentResource.language,
+  resources: {
+    [currentResource.language]: {
+      [currentResource.ns]: currentResource.resource,
+    },
+  },
+  debug: true,
+})
+
+window.electron.onChangeLanguage(async () => {
+  const resource = await window.electron.getCurrentI18nextResource()
+  i18next.addResourceBundle(resource.language, resource.ns, resource.resource)
+  await i18next.changeLanguage(resource.language)
+})
 
 if (!import.meta.env.DEV) {
   Sentry.init(
