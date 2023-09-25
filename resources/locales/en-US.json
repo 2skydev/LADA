@@ -1,13 +1,20 @@
 {
-  "label": "한국어",
+  "label": "English",
   "league": {
-    "lane": {
-      "TOP": "탑",
-      "JUNGLE": "정글",
-      "MIDDLE": "미드",
-      "BOTTOM": "원딜",
-      "UTILITY": "서폿"
+    "laneEn": {
+      "top": "탑",
+      "jg": "정글",
+      "mid": "미드",
+      "adc": "원딜",
+      "sup": "서폿"
     },
+    "laneId": [
+      "$t(league.laneEn.top)",
+      "$t(league.laneEn.jg)",
+      "$t(league.laneEn.mid)",
+      "$t(league.laneEn.adc)",
+      "$t(league.laneEn.sup)"
+    ],
     "gameMode": {
       "CLASSIC": "소환사의 협곡",
       "ARAM": "칼바람 나락",
@@ -113,9 +120,10 @@
     }
   },
   "renderer": {
-    "menus": {
+    "pages": {
       "stats": "통계",
       "championTier": "챔피언 티어",
+      "championDetail": "챔피언 상세",
       "duoSynergy": "듀오 시너지",
       "live": "라이브 게임",
       "championSelect": "챔피언 선택",
@@ -125,7 +133,95 @@
       "setting": "설정",
       "generalSetting": "일반 설정",
       "gameSetting": "게임 설정",
-      "developerSetting": "개발자 설정"
+      "developerSetting": "개발자 설정",
+      "notFound": "페이지를 찾을 수 없습니다 :("
+    },
+    "form": {
+      "save": {
+        "title": "저장하지 않은 변경 사항이 있어요!",
+        "ok": "변경사항 저장하기",
+        "rollback": "되돌리기",
+        "confirm": {
+          "title": "정말 저장하시겠습니까?",
+          "ok": "저장",
+          "cancel": "취소"
+        }
+      }
+    },
+    "stats": {
+      "gameCount": "게임수",
+      "sampledCount": "표본수",
+      "winRate": "승률",
+      "pickRate": "픽률",
+      "banRate": "밴률",
+      "spell": "스펠",
+      "skillBuild": "스킬 빌드",
+      "startItem": "시작 아이템",
+      "shoes": "신발",
+      "coreItem": "코어 아이템",
+      "recommendItemBuild": "추천 아이템 빌드",
+      "championTier": {
+        "title": "라인별 챔피언 티어",
+        "loading": "불러오는 중...",
+        "timezone": "KST 기준",
+        "minPickRateInfo": "라인별 픽률 0.5% 이상만 표시",
+        "tableColumns": {
+          "score": "PS 스코어",
+          "honeyScore": "꿀챔 점수"
+        }
+      },
+      "champion": {
+        "counter": {
+          "easy": "상대하기 쉬운 챔피언",
+          "hard": "상대하기 어려운 챔피언"
+        },
+        "notFound": {
+          "title": "표시할 데이터가 없습니다",
+          "description": "다른 라인을 선택해주세요"
+        }
+      },
+      "championSelect": {
+        "notFound": {
+          "title": "챔피언 선택 정보를 불러올 수 없습니다.",
+          "description": "현재 게임에 참여중이지 않거나, 챔피언 선택 정보를 불러올 수 없는 상태입니다."
+        }
+      },
+      "duoSynergy": {
+        "title": "듀오 시너지",
+        "searchPlaceholder": "챔피언 이름으로 검색",
+        "tableColumns": {
+          "ranking": "순위",
+          "synergyScore": "시너지 점수",
+          "winRate": "듀오 승률",
+          "pickRate": "듀오 픽률"
+        },
+        "lane": {
+          "adc-sup": "바텀",
+          "mid-jg": "미드 & 정글",
+          "top-jg": "탑 & 정글",
+          "jg-sup": "정글 & 서폿"
+        }
+      },
+      "inGame": {
+        "title": "인게임 정보",
+        "tags": {
+          "gameType": "개인/2인 랭크",
+          "avg": "평균",
+          "avgNotFound": "평균 티어 정보 없음",
+          "playing": "게임중"
+        },
+        "myTeam": "아군",
+        "enemyTeam": "적군",
+        "rankStats": "랭크 통계",
+        "score": "PS Score",
+        "runeBuild": "룬 빌드",
+        "game": "게임",
+        "notFound": {
+          "title": "인게임 정보를 불러올 수 없습니다.",
+          "description": "현재 게임에 참여중이지 않거나, 인게임 정보를 불러올 수 없는 상태입니다.",
+          "reload": "새로고침"
+        }
+      }
     },
     "setting": {
       "general": {
@@ -210,7 +306,7 @@
       "developer": {
         "dataRefreshTime": {
           "title": "데이터 조회일",
-          "description": "아래 모든 데이터의 조회일입니다.\n자동으로 {m}분에 한번씩 새로고침됩니다.\n\n바로 데이터를 업데이트하려면 우측 새로고침 버튼을 눌러주세요.",
+          "description": "아래 모든 데이터의 조회일입니다.\n자동으로 {{minute}}분에 한번씩 새로고침됩니다.\n\n바로 데이터를 업데이트하려면 우측 새로고침 버튼을 눌러주세요.",
           "refresh": "새로고침"
         },
         "storePath": {
@@ -225,6 +321,27 @@
         }
       }
     },
+    "needUpdateLaterNotification": {
+      "title": "업데이트 미뤄짐",
+      "description": "챔피언 선택중이라 업데이트가 미뤄졌습니다.\n앱을 재시작하면 업데이트가 진행됩니다.\n\n수동으로도 업데이트 가능합니다. [일반 설정 > 앱 버전]"
+    },
+    "updateLoading": {
+      "loading": "업데이트 다운로드중...",
+      "autoRestart": "잠시 후 앱이 재시작됩니다."
+    },
+    "teamManager": {
+      "subTitle": "소환사의 협곡 · 5대5 · {{pickType}}",
+      "team": "팀",
+      "empty": "비어있음",
+      "randomTeam": "팀 추첨",
+      "reset": "초기화",
+      "notFound": {
+        "title": "사용자 설정 게임을 생성해주세요.",
+        "description": "게임시작 > 사용자 설정 게임 생성 > 소환사의 협곡으로 생성해주세요."
+      }
+    },
+    "updateNote": "업데이트 내역",
+    "autoAcceptOverlay": "자동 수락까지 {{seconds}}초 남았습니다",
     "error": {
       "title": "알 수 없는 곳으로 와버린 거 같아요",
       "description": "원인은 저희가 찾아볼게요 여러분들은 다시 돌아가는 게 좋을 것 같아요",

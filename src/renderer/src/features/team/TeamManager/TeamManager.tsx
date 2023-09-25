@@ -1,4 +1,5 @@
 import { Fragment, useEffect, useMemo, useState } from 'react'
+import { useTranslation } from 'react-i18next'
 
 import { Button, Divider, Result } from 'antd'
 import clsx from 'clsx'
@@ -31,6 +32,10 @@ const createKey = (lobby: Lobby | null | undefined) => {
 }
 
 const TeamManager = ({ className }: TeamManagerProps) => {
+  const { t } = useTranslation('translation', {
+    keyPrefix: 'renderer.teamManager',
+  })
+
   const [result, setResult] = useState<Lobby['teams'] | null>(null)
 
   const { data: lobby, mutate } = useAPI('getLobby')
@@ -85,18 +90,14 @@ const TeamManager = ({ className }: TeamManagerProps) => {
   return (
     <Styled.Root className={clsx('TeamManager', className)}>
       {(!lobby || !lobby.isCustom) && (
-        <Result
-          status="warning"
-          title="사용자 설정 게임을 생성해주세요."
-          extra="게임시작 > 사용자 설정 게임 생성 > 소환사의 협곡으로 생성해주세요."
-        />
+        <Result status="warning" title={t('notFound.title')} extra={t('notFound.description')} />
       )}
 
       {lobby?.isCustom && (
         <>
           <header>
             <h2>{lobby.title}</h2>
-            <p>소환사의 협곡 · 5대5 · {PICK_TYPE_TO_LABEL_MAP[lobby.pickType!]}</p>
+            <p>{t('subTitle', { pickType: PICK_TYPE_TO_LABEL_MAP[lobby.pickType!] })}</p>
           </header>
 
           <div className="teams">
@@ -105,7 +106,10 @@ const TeamManager = ({ className }: TeamManagerProps) => {
 
               return (
                 <div className="team" key={teamNumber}>
-                  <h3>{teamNumber + 1}팀</h3>
+                  <h3>
+                    {teamNumber + 1}
+                    {t('team')}
+                  </h3>
 
                   <div className="members">
                     {teamSummoners.map((summoner, i: number) => {
@@ -151,7 +155,7 @@ const TeamManager = ({ className }: TeamManagerProps) => {
                       .map((_, i) => (
                         <Fragment key={i}>
                           <div className="member">
-                            <span className="emptyText">비어있음</span>
+                            <span className="emptyText">{t('empty')}</span>
                           </div>
 
                           <Divider />
@@ -164,7 +168,7 @@ const TeamManager = ({ className }: TeamManagerProps) => {
           </div>
 
           <div className="buttons">
-            <Button onClick={createRandomTeam}>팀 추첨</Button>
+            <Button onClick={createRandomTeam}>{t('randomTeam')}</Button>
 
             <Button
               danger
@@ -172,7 +176,7 @@ const TeamManager = ({ className }: TeamManagerProps) => {
                 setResult(null)
               }}
             >
-              초기화
+              {t('reset')}
             </Button>
           </div>
         </>

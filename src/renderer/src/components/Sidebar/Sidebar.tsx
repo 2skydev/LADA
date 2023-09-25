@@ -32,7 +32,7 @@ interface MenuItem {
 
 const Sidebar = ({ className }: SidebarProps) => {
   const { t } = useTranslation('translation', {
-    keyPrefix: 'renderer.menus',
+    keyPrefix: 'renderer.pages',
   })
 
   const config = useAtomValue(configAtom)

@@ -1,4 +1,5 @@
 import { useEffect, useState } from 'react'
+import { useTranslation } from 'react-i18next'
 import { useNavigate } from 'react-router-dom'
 
 import { Button, Divider, Result, Space, Tag } from 'antd'
@@ -38,6 +39,10 @@ const GameTime = ({ gameStartTime }: { gameStartTime: number }) => {
 }
 
 const InGameInfo = ({ className }: InGameInfoProps) => {
+  const { t } = useTranslation('translation', {
+    keyPrefix: 'renderer.stats.inGame',
+  })
+
   const summoner = useAtomValue(currentSummonerAtom)
   const { isInGame } = useAtomValue(leagueAtom)
 
@@ -64,26 +69,26 @@ const InGameInfo = ({ className }: InGameInfoProps) => {
       {data && summoner && (
         <>
           <header>
-            <h2>인게임 정보</h2>
+            <h2>{t('title')}</h2>
 
             <Space className="summaryProperties">
-              <Tag>개인/2인 랭크</Tag>
+              <Tag>{t('tags.gameType')}</Tag>
 
               <Tag>
                 {data.avgRankInfo.tier && (
                   <>
-                    평균 {data.avgRankInfo.tier}{' '}
+                    {t('tags.avg')} {data.avgRankInfo.tier}{' '}
                     {!NO_DIVISION_TIERS.includes(data.avgRankInfo.tier) &&
                       data.avgRankInfo.division}{' '}
                     <span style={{ opacity: 0.6 }}>-</span> {data.avgRankInfo.lp}LP
                   </>
                 )}
 
-                {!data.avgRankInfo.tier && '평균 티어 정보 없음'}
+                {!data.avgRankInfo.tier && t('tags.avgNotFound')}
               </Tag>
 
               <Tag>
-                <GameTime gameStartTime={data.gameStartTime} /> 게임중
+                <GameTime gameStartTime={data.gameStartTime} /> {t('tags.playing')}
               </Tag>
             </Space>
           </header>
@@ -92,10 +97,10 @@ const InGameInfo = ({ className }: InGameInfoProps) => {
             {[data.myTeam, data.enemyTeam].map(team => (
               <div className={clsx('team', team === data.myTeam && 'myTeam')} key={team}>
                 <div className="header">
-                  <div className="title">{team === data.myTeam ? '아군' : '적군'}</div>
-                  <div className="title">랭크 통계</div>
-                  <div className="title">PS Score</div>
-                  <div className="title">룬 빌드</div>
+                  <div className="title">{team === data.myTeam ? t('myTeam') : t('enemyTeam')}</div>
+                  <div className="title">{t('rankStats')}</div>
+                  <div className="title">{t('score')}</div>
+                  <div className="title">{t('runeBuild')}</div>
                 </div>
 
                 {data[team].players.map(player => {
@@ -146,7 +151,7 @@ const InGameInfo = ({ className }: InGameInfoProps) => {
 
                               <div className="championStats">
                                 <div>
-                                  {player.championStats.gameCount} 게임{' '}
+                                  {player.championStats.gameCount} {t('game')}{' '}
                                   <span
                                     className={clsx(
                                       'winRate',
@@ -197,7 +202,9 @@ const InGameInfo = ({ className }: InGameInfoProps) => {
                             <div className={clsx('winRate', seasonWinRateClassName)}>
                               {player.seasonStats.winRate.toFixed(0)}%
                             </div>
-                            <div className="gameCount">{player.seasonStats.gameCount} 게임</div>
+                            <div className="gameCount">
+                              {player.seasonStats.gameCount} {t('game')}
+                            </div>
                           </div>
                         </div>
 
@@ -279,14 +286,14 @@ const InGameInfo = ({ className }: InGameInfoProps) => {
       {!data && (
         <Result
           status="warning"
-          title="인게임 정보를 불러올 수 없습니다."
+          title={t('notFound.title')}
           extra={
             <>
-              현재 게임에 참여중이지 않거나, 인게임 정보를 불러올 수 없는 상태입니다.
+              {t('notFound.description')}
               <br />
               <br />
               <Button onClick={() => reload()} loading={isValidating}>
-                새로고침
+                {t('notFound.reload')}
               </Button>
             </>
           }

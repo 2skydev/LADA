@@ -44,7 +44,7 @@ const SettingsPage = () => {
 
   return (
     <Styled.Root>
-      <LayoutConfig breadcrumbs={[t('menus.setting'), t('menus.generalSetting')]} />
+      <LayoutConfig breadcrumbs={[t('pages.setting'), t('pages.generalSetting')]} />
 
       <UpdateNoteModal open={openUpdateNoteModal} onClose={() => setOpenUpdateNoteModal(false)} />
 

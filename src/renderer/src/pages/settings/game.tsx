@@ -35,7 +35,7 @@ const GameSettingsPage = () => {
 
   return (
     <Styled.Root>
-      <LayoutConfig breadcrumbs={[t('menus.setting'), t('menus.gameSetting')]} />
+      <LayoutConfig breadcrumbs={[t('pages.setting'), t('pages.gameSetting')]} />
 
       <Section
         title={t('setting.game.statsProvider.title')}

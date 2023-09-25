@@ -1,4 +1,5 @@
 import { Fragment, ReactNode, useState } from 'react'
+import { useTranslation } from 'react-i18next'
 
 import clsx from 'clsx'
 
@@ -16,13 +17,17 @@ export interface ItemBuildGroupsProps {
 }
 
 const ItemBuildGroups = ({ className, itemBuildGroups }: ItemBuildGroupsProps) => {
+  const { t } = useTranslation('translation', {
+    keyPrefix: 'renderer.stats',
+  })
+
   const [selectedGroupIndex, setSelectedGroupIndex] = useState(0)
 
   const selectedGroup = itemBuildGroups[selectedGroupIndex]
 
   return (
     <Styled.Root className={clsx('ItemBuildGroups', className)}>
-      <div className="title">추천 아이템 빌드</div>
+      <div className="title">{t('recommendItemBuild')}</div>
 
       <div className="content">
         <ButtonRadioList

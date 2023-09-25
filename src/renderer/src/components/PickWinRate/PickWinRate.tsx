@@ -1,3 +1,5 @@
+import { useTranslation } from 'react-i18next'
+
 import { Progress } from 'antd'
 import clsx from 'clsx'
 
@@ -11,6 +13,10 @@ export interface PickWinRateProps {
 }
 
 const PickWinRate = ({ className, winRate, pickRate, count }: PickWinRateProps) => {
+  const { t } = useTranslation('translation', {
+    keyPrefix: 'renderer.stats',
+  })
+
   return (
     <Styled.Root className={clsx('PickWinRate', className)}>
       <div>
@@ -18,7 +24,7 @@ const PickWinRate = ({ className, winRate, pickRate, count }: PickWinRateProps) 
       </div>
 
       <div className="pickRate">
-        <span className="label">게임수</span> {count.toLocaleString()}{' '}
+        <span className="label">{t('gameCount')}</span> {count.toLocaleString()}{' '}
         {pickRate && <Progress type="circle" percent={pickRate} size={14} />}
       </div>
     </Styled.Root>

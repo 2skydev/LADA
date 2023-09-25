@@ -73,7 +73,7 @@ const TierIcon = ({ tier }: TierIconProps) => {
   )
 }
 
-export const HoneyIcon = () => <img className="HoneyIcon" src={honeyImage} alt="꿀챔" />
+export const HoneyIcon = () => <img className="HoneyIcon" src={honeyImage} alt="honey" />
 
 export const OpIcon = () => (
   <svg

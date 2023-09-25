@@ -1,5 +1,6 @@
 import { ChangeEvent, useCallback, useEffect } from 'react'
 import { Controller } from 'react-hook-form'
+import { useTranslation } from 'react-i18next'
 import { useNavigate } from 'react-router-dom'
 
 import { Input, Table } from 'antd'
@@ -17,10 +18,10 @@ import {
 } from '@main/modules/ps/types/duo.types'
 
 import ChampionProfileSmall from '@renderer/features/champion/ChampionProfileSmall'
-import DuoLaneSelect, { DUO_OPTIONS, DuoId } from '@renderer/features/duo/DuoLaneSelect'
+import DuoLaneSelect, { DuoId } from '@renderer/features/duo/DuoLaneSelect'
+import useDuoLaneOptions from '@renderer/features/duo/DuoLaneSelect/hooks/useDuoLaneOptions'
 import { duoSynergyTableDuoIdAtom } from '@renderer/features/duo/DuoSynergyTable/atoms/duoSynergyTableDuoId.atom'
 import LaneIcon from '@renderer/features/lane/LaneIcon'
-import { LANE_LABELS } from '@renderer/features/lane/LaneSelect'
 import RankRangeSelect from '@renderer/features/rank/RankRangeSelect'
 import { rankRangeIdAtom } from '@renderer/features/rank/RankRangeSelect/atoms/rankRangeId.atom'
 import useAPI from '@renderer/hooks/useAPI'
@@ -47,6 +48,12 @@ export interface FilteredChampionItem {
 }
 
 const DuoSynergyTable = ({ className }: DuoSynergyTableProps) => {
+  const { t } = useTranslation('translation', {
+    keyPrefix: 'renderer.stats',
+  })
+
+  const options = useDuoLaneOptions()
+
   const [duoSynergyTableDuoId, setDuoSynergyTableDuoId] = useAtom(duoSynergyTableDuoIdAtom)
 
   const form = useCustomForm<DuoSynergyForm>({
@@ -142,7 +149,7 @@ const DuoSynergyTable = ({ className }: DuoSynergyTableProps) => {
   return (
     <Styled.Root className={clsx('DuoSynergyTable', className)}>
       <header>
-        <h2>듀오 시너지</h2>
+        <h2>{t('duoSynergy.title')}</h2>
       </header>
 
       <div className="arguments">
@@ -154,7 +161,7 @@ const DuoSynergyTable = ({ className }: DuoSynergyTableProps) => {
 
         <Input
           className="search"
-          placeholder="챔피언 이름으로 검색"
+          placeholder={t('duoSynergy.searchPlaceholder')}
           onChange={handleChangeSearch}
         />
 
@@ -168,20 +175,20 @@ const DuoSynergyTable = ({ className }: DuoSynergyTableProps) => {
           {
             key: 'ranking',
             dataIndex: 'ranking',
-            title: '순위',
+            title: t('duoSynergy.tableColumns.ranking'),
             align: 'center',
             width: 80,
           },
           {
             key: 'champion',
-            title: <DuoSynergyTableLaneTitle laneId={DUO_OPTIONS[duoId][0]} />,
+            title: <DuoSynergyTableLaneTitle laneId={options[duoId][0]} />,
             render: (record: DuoSynergyItem) => {
               return <DuoSynergyTableChampProfile {...record.champion1} />
             },
           },
           {
             key: 'champion',
-            title: <DuoSynergyTableLaneTitle laneId={DUO_OPTIONS[duoId][1]} />,
+            title: <DuoSynergyTableLaneTitle laneId={options[duoId][1]} />,
             render: (record: DuoSynergyItem) => {
               return <DuoSynergyTableChampProfile {...record.champion2} />
             },
@@ -189,7 +196,7 @@ const DuoSynergyTable = ({ className }: DuoSynergyTableProps) => {
           {
             key: 'synergyScore',
             dataIndex: 'synergyScore',
-            title: '시너지 점수',
+            title: t('duoSynergy.tableColumns.synergyScore'),
             align: 'right',
             sorter: (a, b) => a.synergyScore - b.synergyScore,
             sortOrder:
@@ -199,7 +206,7 @@ const DuoSynergyTable = ({ className }: DuoSynergyTableProps) => {
           {
             key: 'duoWinrate',
             dataIndex: 'duoWinrate',
-            title: '듀오 승률',
+            title: t('duoSynergy.tableColumns.winRate'),
             align: 'right',
             sorter: (a, b) => a.duoWinrate - b.duoWinrate,
             sortOrder:
@@ -210,7 +217,7 @@ const DuoSynergyTable = ({ className }: DuoSynergyTableProps) => {
           {
             key: 'pickrate',
             dataIndex: 'pickrate',
-            title: '듀오 픽률',
+            title: t('duoSynergy.tableColumns.pickRate'),
             align: 'right',
             sorter: (a, b) => a.pickrate - b.pickrate,
             sortOrder: criterion === 'pickrate' ? (order === 'desc' ? 'descend' : 'ascend') : null,
@@ -220,7 +227,7 @@ const DuoSynergyTable = ({ className }: DuoSynergyTableProps) => {
           {
             key: 'count',
             dataIndex: 'count',
-            title: '표본수',
+            title: t('sampledCount'),
             align: 'right',
             sorter: (a, b) => a.count - b.count,
             sortOrder: criterion === 'count' ? (order === 'desc' ? 'descend' : 'ascend') : null,
@@ -269,9 +276,13 @@ export const DuoSynergyTableChampProfile = ({
 }
 
 export const DuoSynergyTableLaneTitle = ({ laneId }: { laneId: LaneId }) => {
+  const { t } = useTranslation()
+
+  const labels = t('league.laneId', { returnObjects: true })
+
   return (
     <Styled.LaneTitle>
-      <LaneIcon laneId={laneId} /> {LANE_LABELS[laneId]} 승률
+      <LaneIcon laneId={laneId} /> {labels[laneId]} {t('renderer.stats.winRate')}
     </Styled.LaneTitle>
   )
 }

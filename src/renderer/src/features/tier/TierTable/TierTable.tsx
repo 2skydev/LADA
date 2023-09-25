@@ -1,5 +1,6 @@
 import { useEffect } from 'react'
 import { Controller } from 'react-hook-form'
+import { useTranslation } from 'react-i18next'
 import { useNavigate } from 'react-router-dom'
 
 import { Table, Tooltip } from 'antd'
@@ -27,6 +28,10 @@ export interface TierTableProps {
 }
 
 const TierTable = ({ className }: TierTableProps) => {
+  const { t } = useTranslation('translation', {
+    keyPrefix: 'renderer.stats',
+  })
+
   const navigate = useNavigate()
   const query = useQS<{ laneId?: string }>()
   const [tierTableLaneId, setTierTableLaneIdId] = useAtom(tierTableLaneIdAtom)
@@ -61,18 +66,18 @@ const TierTable = ({ className }: TierTableProps) => {
   return (
     <Styled.Root className={clsx('TierTable', className)}>
       <header>
-        <h2>라인별 챔피언 티어</h2>
+        <h2>{t('championTier.title')}</h2>
 
         <div className="updatedAt">
-          {!updatedAt && '불러오는 중...'}
+          {!updatedAt && t('championTier.loading')}
           {updatedAt && (
             <Tooltip title={dayjs(updatedAt).format('YYYY.MM.DD a h:m')}>
-              {dayjs(updatedAt).fromNow()} KST 기준
+              {dayjs(updatedAt).fromNow()} {t('championTier.timezone')}
             </Tooltip>
           )}
         </div>
 
-        <div className="info">라인별 픽률 0.5% 이상만 표시</div>
+        <div className="info">{t('championTier.minPickRateInfo')}</div>
       </header>
 
       <div className="arguments">
@@ -136,7 +141,7 @@ const TierTable = ({ className }: TierTableProps) => {
           {
             key: 'opScore',
             dataIndex: 'opScore',
-            title: 'PS 스코어',
+            title: t('championTier.tableColumns.score'),
             align: 'right',
             sorter: (a, b) => a.opScore - b.opScore,
             defaultSortOrder: 'descend',
@@ -145,7 +150,7 @@ const TierTable = ({ className }: TierTableProps) => {
           {
             key: 'honeyScore',
             dataIndex: 'honeyScore',
-            title: '꿀챔 점수',
+            title: t('championTier.tableColumns.honeyScore'),
             align: 'right',
             sorter: (a, b) => a.honeyScore - b.honeyScore,
             width: 120,
@@ -153,7 +158,7 @@ const TierTable = ({ className }: TierTableProps) => {
           {
             key: 'winRate',
             dataIndex: 'winRate',
-            title: '승률',
+            title: t('winRate'),
             align: 'right',
             sorter: (a, b) => a.winRate - b.winRate,
             render: (value: number) => value + '%',
@@ -162,7 +167,7 @@ const TierTable = ({ className }: TierTableProps) => {
           {
             key: 'pickRate',
             dataIndex: 'pickRate',
-            title: '픽률',
+            title: t('pickRate'),
             align: 'right',
             sorter: (a, b) => a.pickRate - b.pickRate,
             render: (value: number) => value + '%',
@@ -171,7 +176,7 @@ const TierTable = ({ className }: TierTableProps) => {
           {
             key: 'banRate',
             dataIndex: 'banRate',
-            title: '밴률',
+            title: t('banRate'),
             align: 'right',
             sorter: (a, b) => a.banRate - b.banRate,
             render: (value: number) => value + '%',
@@ -180,7 +185,7 @@ const TierTable = ({ className }: TierTableProps) => {
           {
             key: 'count',
             dataIndex: 'count',
-            title: '표본수',
+            title: t('sampledCount'),
             align: 'right',
             sorter: (a, b) => a.count - b.count,
             render: (value: number) => Number(value).toLocaleString(),

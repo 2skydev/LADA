@@ -49,19 +49,18 @@ const SettingsDevelopersPage = () => {
 
   return (
     <Styled.Root>
-      <LayoutConfig breadcrumbs={[t('menus.setting'), t('menus.developerSetting')]} />
+      <LayoutConfig breadcrumbs={[t('pages.setting'), t('pages.developerSetting')]} />
 
       <Section
         title={t('setting.developer.dataRefreshTime.title')}
-        description={t('setting.developer.dataRefreshTime.description').replace(
-          '{m}',
-          String(RELOAD_MINUTE),
-        )}
+        description={t('setting.developer.dataRefreshTime.description', {
+          minute: RELOAD_MINUTE,
+        })}
       >
         {data && (
           <div className="date">
             {dayjs(data.time).fromNow()}{' '}
-            <span>({dayjs(data.time).format('YYYY.MM.DD / a h시 mm분 ss초')})</span>
+            <span>({dayjs(data.time).format('YYYY.MM.DD / a h:mm:ss')})</span>
             <Button
               className="sectionButton"
               loading={isValidating}
