@@ -3,6 +3,7 @@ import axios from 'axios'
 
 import { ExecuteLog } from '@main/decorators/execute-log.decorator'
 import { ReturnValueCaching } from '@main/decorators/return-value-caching.decorator'
+import { ConfigService } from '@main/modules/config/config.service'
 import {
   FORCE_MYTHICAL_LEVEL_ITEM_NAME_WORDS,
   SHARD_RUNES,
@@ -31,19 +32,31 @@ export type DataDragonImageAssetType =
 @Injectable()
 export class LeagueDataDragonProvider implements OnModuleInit {
   public version: string
+  public language = 'en_US'
+  public languages: string[]
+
+  constructor(private readonly configService: ConfigService) {}
 
   private fetch(filename: string) {
     return axios.get(
-      `https://ddragon.leagueoflegends.com/cdn/${this.version}/data/ko_KR/${filename}`,
+      `https://ddragon.leagueoflegends.com/cdn/${this.version}/data/${this.language}/${filename}`,
     )
   }
 
   @ExecuteLog()
   public async onModuleInit() {
-    const { data: versions } = await axios.get(
-      `https://ddragon.leagueoflegends.com/api/versions.json`,
-    )
+    const [{ data: versions }, { data: languages }] = await Promise.all([
+      axios.get(`https://ddragon.leagueoflegends.com/api/versions.json`),
+      axios.get(`https://ddragon.leagueoflegends.com/cdn/languages.json`),
+    ])
 
+    const configLanguage = this.configService.get('general.language')
+
+    if (configLanguage && languages.includes(configLanguage)) {
+      this.language = configLanguage
+    }
+
+    this.languages = languages
     this.version = versions[0]
   }
 
