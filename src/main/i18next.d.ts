@@ -1,5 +1,5 @@
 import 'i18next'
-import defaultLocale from 'resources/locales/ko-KR.json'
+import defaultLocale from 'resources/locales/ko_KR.json'
 
 declare module 'i18next' {
   interface CustomTypeOptions {

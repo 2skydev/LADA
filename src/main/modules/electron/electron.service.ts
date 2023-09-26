@@ -364,6 +364,11 @@ export const generatedIpcOnContext = {`
     this.applyZoom(zoom)
   }
 
+  public relaunch() {
+    app.relaunch()
+    app.quit()
+  }
+
   private applyZoom(zoom: number) {
     if (!this.window) return
 
@@ -473,7 +478,7 @@ export const generatedIpcOnContext = {`
 
     await i18next.init({
       lng: savedLanguage ?? systemLocale,
-      fallbackLng: 'ko-KR',
+      fallbackLng: 'ko_KR',
       resources,
     })
   }

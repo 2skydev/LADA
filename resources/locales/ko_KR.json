@@ -342,6 +342,10 @@
     },
     "updateNote": "업데이트 내역",
     "autoAcceptOverlay": "자동 수락까지 {{seconds}}초 남았습니다",
+    "languageChangeInfoModal": {
+      "title": "앱 재시작 필요",
+      "description": "변경한 언어로 적용하기 위해 앱 재시작이 필요합니다."
+    },
     "error": {
       "title": "알 수 없는 곳으로 와버린 거 같아요",
       "description": "원인은 저희가 찾아볼게요 여러분들은 다시 돌아가는 게 좋을 것 같아요",

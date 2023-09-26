@@ -19,6 +19,7 @@ export const generatedIpcInvokeContext = {
 
   // ElectronController
   appControl: (...args: Parameters<typeof ElectronController.prototype.appControl>): void => ipcRenderer.send('appControl', ...args),
+  relaunch: (...args: Parameters<typeof ElectronController.prototype.relaunch>): void => ipcRenderer.send('relaunch', ...args),
   getCurrentI18nextResource: async (...args: Parameters<typeof ElectronController.prototype.getCurrentI18nextResource>): Promise<ReturnType<typeof ElectronController.prototype.getCurrentI18nextResource>> => ipcRenderer.invoke('getCurrentI18nextResource', ...args),
   getLanguageOptions: async (...args: Parameters<typeof ElectronController.prototype.getLanguageOptions>): Promise<ReturnType<typeof ElectronController.prototype.getLanguageOptions>> => ipcRenderer.invoke('getLanguageOptions', ...args),
 

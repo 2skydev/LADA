@@ -25,12 +25,6 @@ i18next.use(initReactI18next).init({
   debug: true,
 })
 
-window.electron.onChangeLanguage(async () => {
-  const resource = await window.electron.getCurrentI18nextResource()
-  i18next.addResourceBundle(resource.language, resource.ns, resource.resource)
-  await i18next.changeLanguage(resource.language)
-})
-
 if (!import.meta.env.DEV) {
   Sentry.init(
     {

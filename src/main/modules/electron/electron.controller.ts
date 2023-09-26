@@ -17,6 +17,11 @@ export class ElectronController {
     this.electronService.appControl(action)
   }
 
+  @IPCHandle({ type: 'on' })
+  public relaunch() {
+    this.electronService.relaunch()
+  }
+
   @IPCHandle()
   public getCurrentI18nextResource() {
     return {
