@@ -95,7 +95,7 @@ const TierTable = ({ className }: TierTableProps) => {
       <Table
         onRow={record => ({
           onClick: () => {
-            navigate(`/champions/${record.championId}?laneId=${laneId}`)
+            navigate(`/champions/${record.champion.id}?laneId=${laneId}`)
           },
         })}
         components={{
@@ -104,7 +104,7 @@ const TierTable = ({ className }: TierTableProps) => {
               const item = data[props['data-row-key'] - 1]
 
               return (
-                <tr className={clsx(className, item && `tier${item.opTier}`)} {...props}>
+                <tr className={clsx(className, item && `tier${item.tier}`)} {...props}>
                   {children}
                 </tr>
               )
@@ -119,19 +119,20 @@ const TierTable = ({ className }: TierTableProps) => {
             width: 50,
           },
           {
-            key: 'updown',
+            key: 'rankingVariation',
             dataIndex: 'rankingVariation',
             render: (value: number) => <RankingVariation value={value} max={data.length} />,
             width: 100,
           },
           {
             key: 'champion',
-            render: record => {
+            render: (record: (typeof data)[0]) => {
               return (
                 <ChampionProfileSmall
-                  championId={record.championId}
-                  championNameKr={record.championInfo.nameKr}
-                  tier={record.opTier}
+                  id={record.champion.id}
+                  name={record.champion.name}
+                  image={record.champion.imageFormats.small}
+                  tier={record.tier}
                   isHoney={record.isHoney}
                   isOp={record.isOp}
                 />

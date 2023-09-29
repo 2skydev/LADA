@@ -236,7 +236,7 @@ const DuoSynergyTable = ({ className }: DuoSynergyTableProps) => {
           },
         ]}
         dataSource={data}
-        rowKey={record => `${record.champion1.championId}.${record.champion2.championId}`}
+        rowKey={record => `${record.champion1.id}.${record.champion2.id}`}
         loading={isLoading}
         pagination={false}
         scroll={{ y: 600 }}
@@ -253,23 +253,24 @@ const DuoSynergyTable = ({ className }: DuoSynergyTableProps) => {
 }
 
 export const DuoSynergyTableChampProfile = ({
-  championId,
+  id,
+  name,
+  imageFormats: { small: image },
   winrate,
-  championName,
 }: DuoSynergyItemChampion) => {
   const navigate = useNavigate()
 
   return (
     <Styled.ChampionProfile
       onClick={() => {
-        navigate(`/champions/${championId}`)
+        navigate(`/champions/${id}`)
       }}
     >
-      <ChampionProfileSmall championId={championId} />
+      <ChampionProfileSmall id={id} image={image} />
 
       <div className="texts">
         <div className="winRate">{winrate}%</div>
-        <div className="name">{championName}</div>
+        <div className="name">{name}</div>
       </div>
     </Styled.ChampionProfile>
   )

@@ -134,7 +134,10 @@ const InGameInfo = ({ className }: InGameInfoProps) => {
                               className="championProfile"
                               onClick={() => moveChampionDetailPage(player.champion.id)}
                             >
-                              <ChampionProfileSmall championId={player.champion.id} />
+                              <ChampionProfileSmall
+                                id={player.champion.id}
+                                image={player.champion.imageFormats.small}
+                              />
 
                               <div className="laneIconContainer">
                                 <LaneIcon laneId={player.laneId} />

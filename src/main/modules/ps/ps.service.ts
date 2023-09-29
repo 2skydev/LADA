@@ -23,6 +23,7 @@ import {
   convertPSInGameDataToTeamPlayers,
 } from '@main/modules/ps/utils/convert.utils'
 import { getDivision } from '@main/modules/ps/utils/rank.utils'
+import { ChampionTierItem } from '@main/modules/stats-provider-integration/types/champion.types'
 
 @Injectable()
 export class PSService {
@@ -53,7 +54,12 @@ export class PSService {
     return latestVersion.versionId
   }
 
-  public async getChampionTierList(laneId: LaneId, rankRangeId: RankRangeId = 2) {
+  public async getChampionTierList(
+    laneId: LaneId,
+    rankRangeId: RankRangeId = 2,
+  ): Promise<ChampionTierItem[]> {
+    const champions = await this.leagueDataDragonProvider.getChampions()
+
     const {
       data: { data },
     } = await this.fetch(`/statistics/tierlist.json`, {
@@ -61,7 +67,21 @@ export class PSService {
       lane: laneId,
     })
 
-    return data
+    return data.map(item => ({
+      champion: champions[item.championId],
+      rankingVariation: +item.rankingVariation,
+      ranking: +item.ranking,
+      tier: +item.opTier,
+      isHoney: item.isHoney,
+      isOp: item.isOp,
+      opScore: +item.opScore,
+      honeyScore: +item.honeyScore,
+      winRate: +item.winRate,
+      pickRate: +item.pickRate,
+      banRate: +item.banRate,
+      count: +item.count,
+      updatedAt: item.updatedAt,
+    }))
   }
 
   public async getSummonerStatsByName(summonerName: string): Promise<PSSummonerStats | null> {
@@ -150,7 +170,7 @@ export class PSService {
       order = 'desc',
     } = options || {}
 
-    const championNames = await this.leagueDataDragonProvider.getChampionNames()
+    const champions = await this.leagueDataDragonProvider.getChampions()
 
     const {
       data: { data },
@@ -165,13 +185,11 @@ export class PSService {
     return data.map((item, i) => ({
       ranking: i + 1,
       champion1: {
-        championId: item.championId1,
-        championName: championNames[item.championId1].ko,
+        ...champions[item.championId1],
         winrate: +item.winrate1,
       },
       champion2: {
-        championId: item.championId2,
-        championName: championNames[item.championId2].ko,
+        ...champions[item.championId2],
         winrate: +item.winrate2,
       },
       synergyScore: +item.synergyScore,
