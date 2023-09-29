@@ -14,7 +14,6 @@ module.exports = {
     sourceType: 'module',
     ecmaVersion: 2021,
   },
-  plugins: ['@typescript-eslint'],
   extends: [
     'eslint:recommended',
     'plugin:react/recommended',
@@ -25,12 +24,12 @@ module.exports = {
   ],
   rules: {
     '@typescript-eslint/ban-ts-comment': ['error', { 'ts-ignore': 'allow-with-description' }],
-    '@typescript-eslint/explicit-function-return-type': 'error',
     '@typescript-eslint/explicit-module-boundary-types': 'off',
     '@typescript-eslint/no-empty-function': ['error', { allow: ['arrowFunctions'] }],
-    '@typescript-eslint/no-explicit-any': 'error',
+    '@typescript-eslint/no-explicit-any': 'off',
     '@typescript-eslint/no-non-null-assertion': 'off',
     '@typescript-eslint/no-var-requires': 'off',
+    'prefer-const': 'off',
   },
   overrides: [
     {

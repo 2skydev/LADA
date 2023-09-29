@@ -60,6 +60,8 @@
     "@types/react-virtualized": "^9.21.21",
     "@types/styled-components": "^5.1.26",
     "@types/tcp-port-used": "^1.0.1",
+    "@typescript-eslint/eslint-plugin": "^6.7.3",
+    "@typescript-eslint/parser": "^6.7.3",
     "@vitejs/plugin-react": "^4.0.0",
     "antd": "^5.7.3",
     "clsx": "^1.2.1",
