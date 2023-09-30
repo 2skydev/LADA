@@ -46,8 +46,7 @@ await i18next.use(initReactI18next).init({
 })
 
 dayjs.extend(relativeTime)
-
-await dayjsLocaleResolvers[i18next.language]()
+dayjsLocaleResolvers[i18next.language]()
 
 createRoot(document.getElementById('root') as HTMLElement).render(
   <Providers>
