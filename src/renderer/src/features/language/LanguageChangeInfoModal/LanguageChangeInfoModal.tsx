@@ -13,8 +13,8 @@ const LanguageChangeInfoModal = () => {
         centered: true,
         title: t('renderer.languageChangeInfoModal.title'),
         content: t('renderer.languageChangeInfoModal.description'),
-        okText: '앱 재시작',
-        cancelText: '미루기',
+        okText: t('renderer.languageChangeInfoModal.ok'),
+        cancelText: t('renderer.languageChangeInfoModal.later'),
         onOk: () => {
           window.electron.relaunch()
         },
