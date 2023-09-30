@@ -3,8 +3,12 @@
 리그 오브 레전드 전적 검색 및 챔피언 티어, 룬, 아이템 자동설정 등 여러 기능이 있는 데스크탑 앱 입니다.<br />
 해당 프로젝트는 개인 토이 프로젝트로 개발 기간은 마구잡이일 경우가 있습니다.<br />
 
+<br/>
+
 ## i18n support
 The default language is set by detecting which language you use, and you can also change it directly on the Settings page.
+
+<br/>
 
 ## Features
 - 챔피언 티어, 듀오 시너지 같은 기본적인 통계 정보
@@ -13,6 +17,8 @@ The default language is set by detecting which language you use, and you can als
 - 인 게임 정보
 - 매칭 자동 수락
 - 다국어 지원 i18n (한국어, English)
+
+<br/>
 
 ## Screenshots
 
@@ -26,19 +32,23 @@ The default language is set by detecting which language you use, and you can als
 
 ## Architecture
 
-> [figma 링크](https://www.figma.com/file/qJrFt4YVAZX5UdbeKLx6xA/LADA?type=whiteboard&t=oozV2tgJvZuRd6S4-1)
+> [Figma link](https://www.figma.com/file/qJrFt4YVAZX5UdbeKLx6xA/LADA?type=whiteboard&t=oozV2tgJvZuRd6S4-1)
 
 ![image](https://github.com/2skydev/LADA/assets/43225384/a4de6e74-4788-424c-a3f0-a329c853789a)
 
 ## Github workflow
 
-> [figma 링크](https://www.figma.com/file/qJrFt4YVAZX5UdbeKLx6xA/LADA?type=whiteboard&t=oozV2tgJvZuRd6S4-1)
+> [Figma link](https://www.figma.com/file/qJrFt4YVAZX5UdbeKLx6xA/LADA?type=whiteboard&t=oozV2tgJvZuRd6S4-1)
 
 ![image](https://github.com/2skydev/LADA/assets/43225384/69dc01b1-0fab-4305-9e69-6821555119fe)
 
+<br/>
+
 ## Code style guide
 
-[코드 스타일 가이드 Markdown](https://github.com/2skydev/LADA/blob/main/CODE_STYLES.md)
+[Code style guide markdown](https://github.com/2skydev/LADA/blob/main/CODE_STYLES.md)
+
+<br/>
 
 ## Start develop
 
@@ -53,6 +63,8 @@ yarn dev
 ```bash
 yarn build
 ```
+
+<br/>
 
 ## Overview framework & library
 
@@ -69,6 +81,8 @@ yarn build
 - State management library: [`jotai`](https://jotai.org/)
 - Date: [`dayjs`](https://day.js.org/)
 - i18n: [`i18next`](https://www.i18next.com/) + [`react-i18next`](https://react.i18next.com/)
+
+<br/>
 
 ## Todo
 
