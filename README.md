@@ -16,10 +16,11 @@
 ## 스크린샷들
 
 ![image](https://github.com/2skydev/LADA/assets/43225384/d3d9a37c-3b26-4d2d-ad58-782c37b95240)
+![image](https://github.com/2skydev/LADA/assets/43225384/d1fdfd9b-338f-42bb-8aec-44c5997e5495)
 ![image](https://github.com/2skydev/LADA/assets/43225384/842dbbc4-3d9b-452e-9b71-e52e66930b4e)
 ![image](https://github.com/2skydev/LADA/assets/43225384/9a0deb72-934b-4643-9e9a-56a6d6616a01)
 ![image](https://github.com/2skydev/LADA/assets/43225384/cb186443-6477-4942-933a-5b639cb8cc34)
-![image](https://github.com/2skydev/LADA/assets/43225384/7ce5494d-9677-43ed-b686-29bb82a0bbca)
+![image](https://github.com/2skydev/LADA/assets/43225384/804708fb-256f-4883-9542-5c8f3a5a97b6)
 ![image](https://github.com/2skydev/LADA/assets/43225384/71a44a18-f6e5-4908-92d6-989fdd9f4d6a)
 
 <br />
