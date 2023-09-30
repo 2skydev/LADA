@@ -60,7 +60,7 @@ export const Root = styled.div`
     }
 
     .search {
-      width: 12rem;
+      width: 13rem;
       height: 2.5rem;
       background-color: ${props => props.theme.colors.formFieldBG};
       border-color: transparent;
