@@ -35,6 +35,17 @@
       "CDRScaling": "스킬 가속",
       "AdaptiveForce": "적응형 능력치"
     },
+    /**
+     * Champion Name Alias
+     *
+     * [key] champion id
+     * [value] champion name alias array
+     *
+     * ex) "Aatrox": ["testName1", "abc"]
+     * => When searching for champions, you can search for "Aatrox" as "testName1", "abc"
+     *
+     * Champion ID Reference Link: http://ddragon.leagueoflegends.com/cdn/13.19.1/data/en_US/champion.json
+     */
     "championNameAlias": {
       "Tristana": [
         "트타"

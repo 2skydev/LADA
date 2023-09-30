@@ -37,6 +37,7 @@
     "electron-store": "^8.1.0",
     "electron-updater": "^5.3.0",
     "i18next": "^23.5.1",
+    "jsonc-parser": "^3.2.0",
     "league-connect": "^6.0.0-rc10",
     "lodash": "^4.17.21",
     "p-retry": "4.6.1",

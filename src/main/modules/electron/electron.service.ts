@@ -15,6 +15,7 @@ import AutoLaunch from 'auto-launch'
 import { paramCase } from 'change-case'
 import { writeFile, readdir, readFile } from 'fs/promises'
 import i18next from 'i18next'
+import { parse as jsoncParse } from 'jsonc-parser'
 import { groupBy } from 'lodash'
 import { join } from 'path'
 import { match } from 'path-to-regexp'
@@ -458,7 +459,7 @@ export const generatedIpcOnContext = {`
     )
 
     const resources = files.reduce((resources, file, index) => {
-      const json = JSON.parse(file)
+      const json = jsoncParse(file)
       const locale = fileNames[index].replace('.json', '')
 
       resources[locale] = {
