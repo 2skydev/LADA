@@ -443,7 +443,7 @@ export const generatedIpcOnContext = {`
   }
 
   private async initI18Next() {
-    const systemLocale = app.getSystemLocale()
+    const systemLocale = app.getSystemLocale().replace('-', '_')
     const savedLanguage = this.configService.get('general.language')
 
     if (!savedLanguage) {
