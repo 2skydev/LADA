@@ -110,7 +110,7 @@
         "minPickRateInfo": "Only showing lanes with pick rate above 0.5%",
         "tableColumns": {
           "score": "PS Score",
-          "honeyScore": "Honey Tier Score"
+          "honeyScore": "Honey Score"
         }
       },
       "champion": {
