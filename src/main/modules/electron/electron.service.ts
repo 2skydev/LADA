@@ -72,26 +72,6 @@ export class ElectronService implements OnModuleInit, OnApplicationBootstrap {
 
   public zoom: number
 
-  public contextMenu: MenuItemConstructorOptions[] = [
-    { label: 'LADA 홈 화면 보기', type: 'normal', click: () => this.createWindow() },
-    {
-      label: '앱 비율 설정',
-      type: 'submenu',
-      submenu: [
-        ...this.ZOOM_PERCENT_ARRAY.map(
-          percent =>
-            ({
-              label: `${percent}%`,
-              type: 'normal',
-              click: () => this.setZoom(percent / 100),
-            } as MenuItemConstructorOptions),
-        ),
-      ],
-    },
-    { type: 'separator' },
-    { label: '앱 끄기', role: 'quit', type: 'normal' },
-  ]
-
   public autoLauncher = new AutoLaunch({
     name: 'LADA',
     path: app.getPath('exe'),
@@ -114,8 +94,6 @@ export class ElectronService implements OnModuleInit, OnApplicationBootstrap {
 
     // zoom
     this.zoom = this.configService.get('general.zoom')
-    const index = this.ZOOM_PERCENT_ARRAY.findIndex(percent => percent === this.zoom * 100)
-    this.contextMenu[1].submenu![index].label = `${this.zoom * 100}% (현재값)`
   }
 
   @ExecuteLog()
@@ -346,22 +324,10 @@ export const generatedIpcOnContext = {`
   }
 
   public setZoom(zoom: number) {
-    if (!this.window) return
-
-    if (this.tray) {
-      const beforeIndex = this.ZOOM_PERCENT_ARRAY.findIndex(percent => percent === this.zoom * 100)
-      const afterIndex = this.ZOOM_PERCENT_ARRAY.findIndex(percent => percent === zoom * 100)
-
-      this.contextMenu[1].submenu![beforeIndex].label = `${this.zoom * 100}%`
-      this.contextMenu[1].submenu![afterIndex].label = `${zoom * 100}% (현재값)`
-
-      this.tray.setContextMenu(Menu.buildFromTemplate(this.contextMenu))
-    }
-
     this.zoom = zoom
     this.configService.set('general.zoom', zoom)
-
     this.applyZoom(zoom)
+    this.reloadContextMenu()
   }
 
   public relaunch() {
@@ -428,7 +394,38 @@ export const generatedIpcOnContext = {`
 
     this.tray.on('double-click', () => this.createWindow())
     this.tray.setToolTip(productName)
-    this.tray.setContextMenu(Menu.buildFromTemplate(this.contextMenu))
+
+    this.reloadContextMenu()
+  }
+
+  private reloadContextMenu() {
+    const template: MenuItemConstructorOptions[] = [
+      {
+        label: i18next.t('main.contextMenu.showHome'),
+        type: 'normal',
+        click: () => this.createWindow(),
+      },
+      {
+        label: i18next.t('main.contextMenu.setAppZoom'),
+        type: 'submenu',
+        submenu: [
+          ...this.ZOOM_PERCENT_ARRAY.map(
+            percent =>
+              ({
+                label: `${percent}%${
+                  percent === this.zoom * 100 ? ` (${i18next.t('main.contextMenu.nowValue')})` : ''
+                }`,
+                type: 'normal',
+                click: () => this.setZoom(percent / 100),
+              } as MenuItemConstructorOptions),
+          ),
+        ],
+      },
+      { type: 'separator' },
+      { label: i18next.t('main.contextMenu.quit'), role: 'quit', type: 'normal' },
+    ]
+
+    this.tray?.setContextMenu(Menu.buildFromTemplate(template))
   }
 
   private resolveDeepLink(url: string) {

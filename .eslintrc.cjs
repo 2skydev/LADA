@@ -30,6 +30,7 @@ module.exports = {
     '@typescript-eslint/no-non-null-assertion': 'off',
     '@typescript-eslint/no-var-requires': 'off',
     'prefer-const': 'off',
+    'no-async-promise-executor': 'off',
   },
   overrides: [
     {
