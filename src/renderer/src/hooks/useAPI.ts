@@ -23,10 +23,8 @@ const useAPI = <FnName extends ElectronContextPropertyName>(
     revalidateOnFocus: false,
     revalidateOnReconnect: false,
     fetcher: async ([, args]: typeof key) => {
-      // @ts-ignore
+      // @ts-ignore: ...args
       const response = await window.electron[fnName](...args)
-
-      if (response?.errorCode) throw new Error(response?.message || 'Unknown Error')
 
       return response
     },
