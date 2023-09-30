@@ -1,6 +1,6 @@
 {
   "name": "lada",
-  "version": "0.0.19",
+  "version": "0.0.20",
   "description": "LADA - League of Legends Assistant Desktop App",
   "main": "./out/main/index.js",
   "license": "MIT",
