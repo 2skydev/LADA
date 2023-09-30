@@ -6,7 +6,6 @@ import clsx from 'clsx'
 import { motion } from 'framer-motion'
 import { random } from 'lodash'
 
-import { PICK_TYPE_TO_LABEL_MAP } from '@main/modules/league/league.constants'
 import { Lobby } from '@main/modules/league/types/lobby.types'
 
 import RankIcon from '@renderer/features/rank/RankIcon'
@@ -32,9 +31,7 @@ const createKey = (lobby: Lobby | null | undefined) => {
 }
 
 const TeamManager = ({ className }: TeamManagerProps) => {
-  const { t } = useTranslation('translation', {
-    keyPrefix: 'renderer.teamManager',
-  })
+  const { t } = useTranslation()
 
   const [result, setResult] = useState<Lobby['teams'] | null>(null)
 
@@ -90,14 +87,22 @@ const TeamManager = ({ className }: TeamManagerProps) => {
   return (
     <Styled.Root className={clsx('TeamManager', className)}>
       {(!lobby || !lobby.isCustom) && (
-        <Result status="warning" title={t('notFound.title')} extra={t('notFound.description')} />
+        <Result
+          status="warning"
+          title={t('renderer.teamManager.notFound.title')}
+          extra={t('renderer.teamManager.notFound.description')}
+        />
       )}
 
       {lobby?.isCustom && (
         <>
           <header>
             <h2>{lobby.title}</h2>
-            <p>{t('subTitle', { pickType: PICK_TYPE_TO_LABEL_MAP[lobby.pickType!] })}</p>
+            <p>
+              {t('renderer.teamManager.subTitle', {
+                pickType: t(`league.pickType.${lobby.pickType!}`),
+              })}
+            </p>
           </header>
 
           <div className="teams">
@@ -108,7 +113,7 @@ const TeamManager = ({ className }: TeamManagerProps) => {
                 <div className="team" key={teamNumber}>
                   <h3>
                     {teamNumber + 1}
-                    {t('team')}
+                    {t('renderer.teamManager.team')}
                   </h3>
 
                   <div className="members">
@@ -155,7 +160,7 @@ const TeamManager = ({ className }: TeamManagerProps) => {
                       .map((_, i) => (
                         <Fragment key={i}>
                           <div className="member">
-                            <span className="emptyText">{t('empty')}</span>
+                            <span className="emptyText">{t('renderer.teamManager.empty')}</span>
                           </div>
 
                           <Divider />
@@ -168,7 +173,7 @@ const TeamManager = ({ className }: TeamManagerProps) => {
           </div>
 
           <div className="buttons">
-            <Button onClick={createRandomTeam}>{t('randomTeam')}</Button>
+            <Button onClick={createRandomTeam}>{t('renderer.teamManager.randomTeam')}</Button>
 
             <Button
               danger
@@ -176,7 +181,7 @@ const TeamManager = ({ className }: TeamManagerProps) => {
                 setResult(null)
               }}
             >
-              {t('reset')}
+              {t('renderer.teamManager.reset')}
             </Button>
           </div>
         </>

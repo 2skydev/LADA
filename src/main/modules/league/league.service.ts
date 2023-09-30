@@ -3,6 +3,7 @@ import { OverlayController, OVERLAY_WINDOW_OPTS } from 'electron-overlay-window'
 
 import { Injectable, OnModuleInit } from '@nestjs/common'
 import { ModuleRef } from '@nestjs/core'
+import { t } from 'i18next'
 
 import { ExecuteLog } from '@main/decorators/execute-log.decorator'
 import { ConfigService } from '@main/modules/config/config.service'
@@ -13,7 +14,6 @@ import { LeagueAPIClient } from '@main/modules/league/league.client'
 import {
   FLASH_SUMMONER_SPELL_ID,
   LADA_RUNE_PAGE_NAME_PREFIX,
-  LANE_ID_TO_LABEL_MAP,
   LEAGUE_CLIENT_OVERLAY_WINDOW_KEY,
 } from '@main/modules/league/league.constants'
 import { LeagueController } from '@main/modules/league/league.controller'
@@ -287,9 +287,11 @@ export class LeagueService implements OnModuleInit {
       const mainRuneBuild = championStats.runeBuilds[0]
       if (!mainRuneBuild) return
 
+      const laneLabel = t('league.laneId', { returnObjects: true })[championStats.summary.laneId]
+
       await this.setRunePageByRuneIds(
         [...mainRuneBuild.mainRuneIds, ...mainRuneBuild.subRuneIds, ...mainRuneBuild.shardRuneIds],
-        `${LANE_ID_TO_LABEL_MAP[championStats.summary.laneId]} ${championStats.champion.name}`,
+        `${laneLabel} ${championStats.champion.name}`,
       )
     }
 

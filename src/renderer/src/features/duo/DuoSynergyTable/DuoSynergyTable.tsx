@@ -9,7 +9,6 @@ import { includesByCho, correctByDistance } from 'hangul-util'
 import { useAtom, useAtomValue } from 'jotai'
 import { debounce } from 'lodash'
 
-import { CHAMPION_NAME_ALIAS_MAP } from '@main/modules/league/league.constants'
 import { LaneId } from '@main/modules/league/types/lane.types'
 import {
   DuoSynergyItem,
@@ -42,15 +41,12 @@ export interface DuoSynergyForm extends Omit<GetDuoSynergyListOptions, 'champion
 
 export interface FilteredChampionItem {
   id: number
-  name: string
-  normalizedName: string
+  enName: string
   alias: string[]
 }
 
 const DuoSynergyTable = ({ className }: DuoSynergyTableProps) => {
-  const { t } = useTranslation('translation', {
-    keyPrefix: 'renderer.stats',
-  })
+  const { t } = useTranslation()
 
   const options = useDuoLaneOptions()
 
@@ -105,22 +101,19 @@ const DuoSynergyTable = ({ className }: DuoSynergyTableProps) => {
   }, [duoId])
 
   useEffect(() => {
+    const championNameAlias = t('league.championNameAlias', { returnObjects: true })
+
     const filteredChampions =
       !championNames || !search.trim().length
         ? []
         : Object.keys(championNames).reduce<FilteredChampionItem[]>((acc, id) => {
-            const name = championNames[id].ko
-            const normalizedName = name.replaceAll(' ', '')
-            const alias = CHAMPION_NAME_ALIAS_MAP[normalizedName] ?? []
+            const enName = championNames[id].en
+            const alias = championNameAlias[enName] ?? []
 
-            if (
-              includesByCho(search, normalizedName) ||
-              alias.some(x => includesByCho(search, x))
-            ) {
+            if (includesByCho(search, enName) || alias.some(x => includesByCho(search, x))) {
               acc.push({
                 id: +id,
-                name,
-                normalizedName,
+                enName,
                 alias,
               })
             }
@@ -130,11 +123,11 @@ const DuoSynergyTable = ({ className }: DuoSynergyTableProps) => {
 
     const distanceChampionNames: string[] = correctByDistance(
       search,
-      filteredChampions.map(x => x.normalizedName),
+      filteredChampions.map(x => x.enName),
     )
 
     const filteredChampionId: number | null = distanceChampionNames.length
-      ? filteredChampions.find(x => x.normalizedName === distanceChampionNames[0])!.id
+      ? filteredChampions.find(x => x.enName === distanceChampionNames[0])!.id
       : filteredChampions.length === 1
       ? filteredChampions[0].id
       : null
@@ -149,7 +142,7 @@ const DuoSynergyTable = ({ className }: DuoSynergyTableProps) => {
   return (
     <Styled.Root className={clsx('DuoSynergyTable', className)}>
       <header>
-        <h2>{t('duoSynergy.title')}</h2>
+        <h2>{t('renderer.stats.duoSynergy.title')}</h2>
       </header>
 
       <div className="arguments">
@@ -161,7 +154,7 @@ const DuoSynergyTable = ({ className }: DuoSynergyTableProps) => {
 
         <Input
           className="search"
-          placeholder={t('duoSynergy.searchPlaceholder')}
+          placeholder={t('renderer.stats.duoSynergy.searchPlaceholder')}
           onChange={handleChangeSearch}
         />
 
@@ -175,7 +168,7 @@ const DuoSynergyTable = ({ className }: DuoSynergyTableProps) => {
           {
             key: 'ranking',
             dataIndex: 'ranking',
-            title: t('duoSynergy.tableColumns.ranking'),
+            title: t('renderer.stats.duoSynergy.tableColumns.ranking'),
             align: 'center',
             width: 80,
           },
@@ -196,7 +189,7 @@ const DuoSynergyTable = ({ className }: DuoSynergyTableProps) => {
           {
             key: 'synergyScore',
             dataIndex: 'synergyScore',
-            title: t('duoSynergy.tableColumns.synergyScore'),
+            title: t('renderer.stats.duoSynergy.tableColumns.synergyScore'),
             align: 'right',
             sorter: (a, b) => a.synergyScore - b.synergyScore,
             sortOrder:
@@ -206,7 +199,7 @@ const DuoSynergyTable = ({ className }: DuoSynergyTableProps) => {
           {
             key: 'duoWinrate',
             dataIndex: 'duoWinrate',
-            title: t('duoSynergy.tableColumns.winRate'),
+            title: t('renderer.stats.duoSynergy.tableColumns.winRate'),
             align: 'right',
             sorter: (a, b) => a.duoWinrate - b.duoWinrate,
             sortOrder:
@@ -217,7 +210,7 @@ const DuoSynergyTable = ({ className }: DuoSynergyTableProps) => {
           {
             key: 'pickrate',
             dataIndex: 'pickrate',
-            title: t('duoSynergy.tableColumns.pickRate'),
+            title: t('renderer.stats.duoSynergy.tableColumns.pickRate'),
             align: 'right',
             sorter: (a, b) => a.pickrate - b.pickrate,
             sortOrder: criterion === 'pickrate' ? (order === 'desc' ? 'descend' : 'ascend') : null,
@@ -227,7 +220,7 @@ const DuoSynergyTable = ({ className }: DuoSynergyTableProps) => {
           {
             key: 'count',
             dataIndex: 'count',
-            title: t('sampledCount'),
+            title: t('renderer.stats.sampledCount'),
             align: 'right',
             sorter: (a, b) => a.count - b.count,
             sortOrder: criterion === 'count' ? (order === 'desc' ? 'descend' : 'ascend') : null,

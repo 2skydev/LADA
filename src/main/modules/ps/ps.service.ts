@@ -113,7 +113,7 @@ export class PSService {
   public async getInGameByName(summonerName: string): Promise<PSInGame | null> {
     try {
       const summonerStats = await this.getSummonerStatsByName(summonerName)
-      if (!summonerStats) throw new Error('소환사 정보를 가져올 수 없습니다.')
+      if (!summonerStats) throw new Error('Summoner not found form LOL.PS')
 
       const champions = await this.leagueDataDragonProvider.getChampions()
       const summonerSpells = await this.leagueDataDragonProvider.getSummonerSpells()

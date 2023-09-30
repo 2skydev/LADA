@@ -11,8 +11,7 @@ import { StatsProvider } from '@main/modules/stats-provider-integration/types/pr
 
 @Injectable()
 export class StatsProviderIntegrationService {
-  // TODO: 현재는 제공자를 변경할 수 없어서 사용하지 않음 (이후에 제공자 변경 기능 추가)
-  // @ts-ignore
+  // @ts-ignore: 현재는 제공자를 변경할 수 없어서 사용하지 않음 (이후에 제공자 변경 기능 추가)
   private provider: StatsProvider
 
   constructor(
