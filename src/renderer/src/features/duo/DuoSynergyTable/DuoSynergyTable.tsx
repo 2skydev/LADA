@@ -170,7 +170,7 @@ const DuoSynergyTable = ({ className }: DuoSynergyTableProps) => {
             dataIndex: 'ranking',
             title: t('renderer.stats.duoSynergy.tableColumns.ranking'),
             align: 'center',
-            width: 80,
+            width: 90,
           },
           {
             key: 'champion',
@@ -205,7 +205,7 @@ const DuoSynergyTable = ({ className }: DuoSynergyTableProps) => {
             sortOrder:
               criterion === 'duoWinrate' ? (order === 'desc' ? 'descend' : 'ascend') : null,
             render: (value: number) => value + '%',
-            width: 140,
+            width: 160,
           },
           {
             key: 'pickrate',
@@ -215,7 +215,7 @@ const DuoSynergyTable = ({ className }: DuoSynergyTableProps) => {
             sorter: (a, b) => a.pickrate - b.pickrate,
             sortOrder: criterion === 'pickrate' ? (order === 'desc' ? 'descend' : 'ascend') : null,
             render: (value: number) => value + '%',
-            width: 140,
+            width: 160,
           },
           {
             key: 'count',

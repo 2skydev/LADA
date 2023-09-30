@@ -154,7 +154,7 @@ const TierTable = ({ className }: TierTableProps) => {
             title: t('championTier.tableColumns.honeyScore'),
             align: 'right',
             sorter: (a, b) => a.honeyScore - b.honeyScore,
-            width: 120,
+            width: 140,
           },
           {
             key: 'winRate',
@@ -163,7 +163,7 @@ const TierTable = ({ className }: TierTableProps) => {
             align: 'right',
             sorter: (a, b) => a.winRate - b.winRate,
             render: (value: number) => value + '%',
-            width: 100,
+            width: 130,
           },
           {
             key: 'pickRate',
@@ -172,7 +172,7 @@ const TierTable = ({ className }: TierTableProps) => {
             align: 'right',
             sorter: (a, b) => a.pickRate - b.pickRate,
             render: (value: number) => value + '%',
-            width: 100,
+            width: 130,
           },
           {
             key: 'banRate',
@@ -181,7 +181,7 @@ const TierTable = ({ className }: TierTableProps) => {
             align: 'right',
             sorter: (a, b) => a.banRate - b.banRate,
             render: (value: number) => value + '%',
-            width: 100,
+            width: 130,
           },
           {
             key: 'count',
