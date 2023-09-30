@@ -1,8 +1,10 @@
+import { useTranslation } from 'react-i18next'
+
 import { Select } from 'antd'
 import clsx from 'clsx'
 import { useAtom } from 'jotai'
 
-import { RANK_RANGE_IDS, RANK_RANGE_ID_TO_LABEL_MAP } from '@main/modules/ps/ps.constants'
+import { RANK_RANGE_IDS, RANK_RANGE_ID_TO_I18N_KEY_MAP } from '@main/modules/ps/ps.constants'
 
 import { rankRangeIdAtom } from '@renderer/features/rank/RankRangeSelect/atoms/rankRangeId.atom'
 
@@ -17,6 +19,7 @@ export interface RankRangeSelectProps {
  * 자동으로 전역 상태를 업데이트하며 값 접근은 rankRangeIdAtom을 통해 가능합니다.
  */
 const RankRangeSelect = ({ className }: RankRangeSelectProps) => {
+  const { t } = useTranslation()
   const [rankRangeId, setRankRangeId] = useAtom(rankRangeIdAtom)
 
   return (
@@ -24,7 +27,10 @@ const RankRangeSelect = ({ className }: RankRangeSelectProps) => {
       <Select
         value={rankRangeId}
         onChange={value => setRankRangeId(value)}
-        options={RANK_RANGE_IDS.map(id => ({ value: id, label: RANK_RANGE_ID_TO_LABEL_MAP[id] }))}
+        options={RANK_RANGE_IDS.map(id => ({
+          value: id,
+          label: t(RANK_RANGE_ID_TO_I18N_KEY_MAP[id]),
+        }))}
       />
     </Styled.Root>
   )

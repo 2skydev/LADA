@@ -1,4 +1,5 @@
 import { Fragment, useEffect } from 'react'
+import { useTranslation } from 'react-i18next'
 
 import { Modal } from 'antd'
 import axios from 'axios'
@@ -22,6 +23,8 @@ interface UpdateNoteModal {
  * 만약 값을 설정하지 않으면 업데이트 될 때 자동으로 열립니다.
  */
 const UpdateNoteModal = ({ open, onClose }: UpdateNoteModal) => {
+  const { t } = useTranslation()
+
   const [modal, contextHolder] = Modal.useModal()
   const { version } = useAtomValue(appUpdateAtom)
 
@@ -37,7 +40,7 @@ const UpdateNoteModal = ({ open, onClose }: UpdateNoteModal) => {
     modal.info({
       icon: null,
       width: 600,
-      title: `v${version} 업데이트 내역`,
+      title: `v${version} ${t('renderer.updateNote')}`,
       closable: true,
       maskClosable: true,
       content: (

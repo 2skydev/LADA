@@ -1,4 +1,5 @@
 import { ReactNode, useMemo } from 'react'
+import { useTranslation } from 'react-i18next'
 import { Link, useLocation } from 'react-router-dom'
 
 import clsx from 'clsx'
@@ -30,71 +31,75 @@ interface MenuItem {
 }
 
 const Sidebar = ({ className }: SidebarProps) => {
+  const { t } = useTranslation('translation', {
+    keyPrefix: 'renderer.pages',
+  })
+
   const config = useAtomValue(configAtom)
   const { pathname } = useLocation()
 
   const menus: Menu[] = useMemo(
     () => [
       {
-        title: '통계',
+        title: t('stats'),
         items: [
           {
             icon: <LaneIcon laneId={LANE_ID_ENUM.top} />,
             link: '/',
-            text: '챔피언 티어',
+            text: t('championTier'),
             isActiveFn: (pathname: string) => pathname === '/' || pathname.includes('/champions/'),
           },
           {
             icon: 'bx-group',
             link: '/duo-synergy',
-            text: '듀오 시너지',
+            text: t('duoSynergy'),
           },
         ],
       },
       {
-        title: '라이브 게임',
+        title: t('live'),
         items: [
           {
             icon: 'bx-user-check',
             link: '/lives/champion-select',
-            text: '챔피언 선택',
+            text: t('championSelect'),
           },
           {
             icon: 'bx-search-alt',
             link: '/lives/in-game',
-            text: '인게임 정보',
+            text: t('inGame'),
           },
         ],
       },
       {
-        title: '유틸리티',
+        title: t('utility'),
         items: [
           {
             icon: 'bx-network-chart',
             link: '/team',
-            text: '5:5 팀 구성',
+            text: t('customGameTeamManager'),
           },
         ],
       },
       {
-        title: '설정',
+        title: t('setting'),
         items: [
           {
             icon: 'bx-cog',
             link: '/settings',
-            text: '일반 설정',
+            text: t('generalSetting'),
           },
           {
             icon: 'bx-joystick',
             link: '/settings/game',
-            text: '게임 설정',
+            text: t('gameSetting'),
           },
           ...(config.general.developerMode
             ? [
                 {
                   icon: 'bx-code-alt',
                   link: '/settings/developers',
-                  text: '개발자 옵션',
+                  text: t('developerSetting'),
                 },
               ]
             : []),

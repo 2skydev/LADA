@@ -6,8 +6,9 @@ import * as Styled from './ChampionProfileSmall.styled'
 
 export interface ChampionProfileSmallProps {
   className?: string
-  championId: number
-  championNameKr?: string
+  id: number
+  image: string
+  name?: string
   tier?: number
   isOp?: boolean
   isHoney?: boolean
@@ -15,8 +16,9 @@ export interface ChampionProfileSmallProps {
 
 const ChampionProfileSmall = ({
   className,
-  championId,
-  championNameKr,
+  id,
+  image,
+  name,
   tier,
   isOp,
   isHoney,
@@ -29,14 +31,11 @@ const ChampionProfileSmall = ({
         {isOp && <OpIcon />}
 
         <div className="imageMask">
-          <img
-            src={`https://cdn.lol.ps/assets/img/champion-portraits/${championId}_60.webp`}
-            alt={String(championNameKr || championId)}
-          />
+          <img src={image} alt={String(id)} />
         </div>
       </div>
 
-      {championNameKr && <span className="name">{championNameKr}</span>}
+      {name && <span className="name">{name}</span>}
     </Styled.Root>
   )
 }

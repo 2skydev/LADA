@@ -1,5 +1,6 @@
 import { useEffect } from 'react'
 import { Controller } from 'react-hook-form'
+import { useTranslation } from 'react-i18next'
 import { useNavigate } from 'react-router-dom'
 
 import { Table, Tooltip } from 'antd'
@@ -27,6 +28,10 @@ export interface TierTableProps {
 }
 
 const TierTable = ({ className }: TierTableProps) => {
+  const { t } = useTranslation('translation', {
+    keyPrefix: 'renderer.stats',
+  })
+
   const navigate = useNavigate()
   const query = useQS<{ laneId?: string }>()
   const [tierTableLaneId, setTierTableLaneIdId] = useAtom(tierTableLaneIdAtom)
@@ -61,18 +66,18 @@ const TierTable = ({ className }: TierTableProps) => {
   return (
     <Styled.Root className={clsx('TierTable', className)}>
       <header>
-        <h2>라인별 챔피언 티어</h2>
+        <h2>{t('championTier.title')}</h2>
 
         <div className="updatedAt">
-          {!updatedAt && '불러오는 중...'}
+          {!updatedAt && t('championTier.loading')}
           {updatedAt && (
             <Tooltip title={dayjs(updatedAt).format('YYYY.MM.DD a h:m')}>
-              {dayjs(updatedAt).fromNow()} KST 기준
+              {dayjs(updatedAt).fromNow()} {t('championTier.timezone')}
             </Tooltip>
           )}
         </div>
 
-        <div className="info">라인별 픽률 0.5% 이상만 표시</div>
+        <div className="info">{t('championTier.minPickRateInfo')}</div>
       </header>
 
       <div className="arguments">
@@ -90,7 +95,7 @@ const TierTable = ({ className }: TierTableProps) => {
       <Table
         onRow={record => ({
           onClick: () => {
-            navigate(`/champions/${record.championId}?laneId=${laneId}`)
+            navigate(`/champions/${record.champion.id}?laneId=${laneId}`)
           },
         })}
         components={{
@@ -99,7 +104,7 @@ const TierTable = ({ className }: TierTableProps) => {
               const item = data[props['data-row-key'] - 1]
 
               return (
-                <tr className={clsx(className, item && `tier${item.opTier}`)} {...props}>
+                <tr className={clsx(className, item && `tier${item.tier}`)} {...props}>
                   {children}
                 </tr>
               )
@@ -114,19 +119,20 @@ const TierTable = ({ className }: TierTableProps) => {
             width: 50,
           },
           {
-            key: 'updown',
+            key: 'rankingVariation',
             dataIndex: 'rankingVariation',
             render: (value: number) => <RankingVariation value={value} max={data.length} />,
             width: 100,
           },
           {
             key: 'champion',
-            render: record => {
+            render: (record: (typeof data)[0]) => {
               return (
                 <ChampionProfileSmall
-                  championId={record.championId}
-                  championNameKr={record.championInfo.nameKr}
-                  tier={record.opTier}
+                  id={record.champion.id}
+                  name={record.champion.name}
+                  image={record.champion.imageFormats.small}
+                  tier={record.tier}
                   isHoney={record.isHoney}
                   isOp={record.isOp}
                 />
@@ -136,7 +142,7 @@ const TierTable = ({ className }: TierTableProps) => {
           {
             key: 'opScore',
             dataIndex: 'opScore',
-            title: 'PS 스코어',
+            title: t('championTier.tableColumns.score'),
             align: 'right',
             sorter: (a, b) => a.opScore - b.opScore,
             defaultSortOrder: 'descend',
@@ -145,42 +151,42 @@ const TierTable = ({ className }: TierTableProps) => {
           {
             key: 'honeyScore',
             dataIndex: 'honeyScore',
-            title: '꿀챔 점수',
+            title: t('championTier.tableColumns.honeyScore'),
             align: 'right',
             sorter: (a, b) => a.honeyScore - b.honeyScore,
-            width: 120,
+            width: 140,
           },
           {
             key: 'winRate',
             dataIndex: 'winRate',
-            title: '승률',
+            title: t('winRate'),
             align: 'right',
             sorter: (a, b) => a.winRate - b.winRate,
             render: (value: number) => value + '%',
-            width: 100,
+            width: 130,
           },
           {
             key: 'pickRate',
             dataIndex: 'pickRate',
-            title: '픽률',
+            title: t('pickRate'),
             align: 'right',
             sorter: (a, b) => a.pickRate - b.pickRate,
             render: (value: number) => value + '%',
-            width: 100,
+            width: 130,
           },
           {
             key: 'banRate',
             dataIndex: 'banRate',
-            title: '밴률',
+            title: t('banRate'),
             align: 'right',
             sorter: (a, b) => a.banRate - b.banRate,
             render: (value: number) => value + '%',
-            width: 100,
+            width: 130,
           },
           {
             key: 'count',
             dataIndex: 'count',
-            title: '표본수',
+            title: t('sampledCount'),
             align: 'right',
             sorter: (a, b) => a.count - b.count,
             render: (value: number) => Number(value).toLocaleString(),

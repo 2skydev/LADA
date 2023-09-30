@@ -1,3 +1,4 @@
+import { Champion } from '@main/modules/league/types/champion.types'
 import { RankRangeId } from '@main/modules/ps/types/rank.types'
 
 export type DuoId = 0 | 1 | 2 | 3
@@ -9,9 +10,7 @@ export interface GetDuoSynergyListOptions {
   order: 'asc' | 'desc'
 }
 
-export interface DuoSynergyItemChampion {
-  championId: number
-  championName: string
+export interface DuoSynergyItemChampion extends Champion {
   winrate: number
 }
 

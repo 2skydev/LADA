@@ -18,6 +18,11 @@ export const generatedIpcOnContext = {
     ipcRenderer.on('onChangeConfigValue', handler)
     return () => ipcRenderer.off('onChangeConfigValue', handler)
   },
+  onChangeLanguage: (callback: (data: ReturnType<typeof ElectronController.prototype.onChangeLanguage>) => void): Unsubscribe => {
+    const handler = (_, data) => callback(data)
+    ipcRenderer.on('onChangeLanguage', handler)
+    return () => ipcRenderer.off('onChangeLanguage', handler)
+  },
 
   // LeagueController
   onChangeLeagueClientConnection: (callback: (data: ReturnType<typeof LeagueController.prototype.onChangeLeagueClientConnection>) => void): Unsubscribe => {

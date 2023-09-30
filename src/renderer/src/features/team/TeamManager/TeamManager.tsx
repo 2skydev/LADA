@@ -1,11 +1,11 @@
 import { Fragment, useEffect, useMemo, useState } from 'react'
+import { useTranslation } from 'react-i18next'
 
 import { Button, Divider, Result } from 'antd'
 import clsx from 'clsx'
 import { motion } from 'framer-motion'
 import { random } from 'lodash'
 
-import { PICK_TYPE_TO_LABEL_MAP } from '@main/modules/league/league.constants'
 import { Lobby } from '@main/modules/league/types/lobby.types'
 
 import RankIcon from '@renderer/features/rank/RankIcon'
@@ -31,6 +31,8 @@ const createKey = (lobby: Lobby | null | undefined) => {
 }
 
 const TeamManager = ({ className }: TeamManagerProps) => {
+  const { t } = useTranslation()
+
   const [result, setResult] = useState<Lobby['teams'] | null>(null)
 
   const { data: lobby, mutate } = useAPI('getLobby')
@@ -87,8 +89,8 @@ const TeamManager = ({ className }: TeamManagerProps) => {
       {(!lobby || !lobby.isCustom) && (
         <Result
           status="warning"
-          title="사용자 설정 게임을 생성해주세요."
-          extra="게임시작 > 사용자 설정 게임 생성 > 소환사의 협곡으로 생성해주세요."
+          title={t('renderer.teamManager.notFound.title')}
+          extra={t('renderer.teamManager.notFound.description')}
         />
       )}
 
@@ -96,7 +98,11 @@ const TeamManager = ({ className }: TeamManagerProps) => {
         <>
           <header>
             <h2>{lobby.title}</h2>
-            <p>소환사의 협곡 · 5대5 · {PICK_TYPE_TO_LABEL_MAP[lobby.pickType!]}</p>
+            <p>
+              {t('renderer.teamManager.subTitle', {
+                pickType: t(`league.pickType.${lobby.pickType!}`),
+              })}
+            </p>
           </header>
 
           <div className="teams">
@@ -105,7 +111,10 @@ const TeamManager = ({ className }: TeamManagerProps) => {
 
               return (
                 <div className="team" key={teamNumber}>
-                  <h3>{teamNumber + 1}팀</h3>
+                  <h3>
+                    {teamNumber + 1}
+                    {t('renderer.teamManager.team')}
+                  </h3>
 
                   <div className="members">
                     {teamSummoners.map((summoner, i: number) => {
@@ -151,7 +160,7 @@ const TeamManager = ({ className }: TeamManagerProps) => {
                       .map((_, i) => (
                         <Fragment key={i}>
                           <div className="member">
-                            <span className="emptyText">비어있음</span>
+                            <span className="emptyText">{t('renderer.teamManager.empty')}</span>
                           </div>
 
                           <Divider />
@@ -164,7 +173,7 @@ const TeamManager = ({ className }: TeamManagerProps) => {
           </div>
 
           <div className="buttons">
-            <Button onClick={createRandomTeam}>팀 추첨</Button>
+            <Button onClick={createRandomTeam}>{t('renderer.teamManager.randomTeam')}</Button>
 
             <Button
               danger
@@ -172,7 +181,7 @@ const TeamManager = ({ className }: TeamManagerProps) => {
                 setResult(null)
               }}
             >
-              초기화
+              {t('renderer.teamManager.reset')}
             </Button>
           </div>
         </>

@@ -1,6 +1,7 @@
 import { useEffect } from 'react'
 
 import { notification } from 'antd'
+import { t } from 'i18next'
 
 const NeedUpdateLaterNotification = () => {
   const [api, contextHolder] = notification.useNotification()
@@ -8,14 +9,11 @@ const NeedUpdateLaterNotification = () => {
   useEffect(() => {
     window.electron.onNeedUpdateLater(() => {
       api.warning({
-        message: '업데이트 미뤄짐',
+        message: t('renderer.needUpdateLaterNotification.title'),
         description: (
-          <>
-            챔피언 선택중이라 업데이트가 미뤄졌습니다. <br />
-            앱을 재시작하면 업데이트가 진행됩니다. <br />
-            <br />
-            수동으로도 업데이트 가능합니다. [일반 설정 &gt; 앱 버전]
-          </>
+          <div style={{ whiteSpace: 'pre-wrap' }}>
+            {t('renderer.needUpdateLaterNotification.description')}
+          </div>
         ),
         style: {
           width: 500,
