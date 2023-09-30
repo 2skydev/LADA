@@ -1,4 +1,5 @@
 import { Controller } from 'react-hook-form'
+import { useTranslation } from 'react-i18next'
 
 import { InputNumber, Segmented, Select, Space, Switch } from 'antd'
 import clsx from 'clsx'
@@ -14,6 +15,10 @@ import { configAtom } from '@renderer/stores/atoms/config.atom'
 import * as Styled from '@renderer/styles/pageStyled/SettingsPage.styled'
 
 const GameSettingsPage = () => {
+  const { t } = useTranslation('translation', {
+    keyPrefix: 'renderer',
+  })
+
   const [config, setConfig] = useAtom(configAtom)
 
   const form = useCustomForm({
@@ -30,20 +35,11 @@ const GameSettingsPage = () => {
 
   return (
     <Styled.Root>
-      <LayoutConfig breadcrumbs={['설정', '게임 설정']} />
+      <LayoutConfig breadcrumbs={[t('pages.setting'), t('pages.gameSetting')]} />
 
       <Section
-        title="통계 정보 제공자"
-        description={
-          <div>
-            통계 정보를 제공하는 서비스를 선택합니다.
-            <br />
-            챔피언 티어와 같은 통계 관련된 데이터를 제공하는 서비스를 변경할 수 있습니다.
-            <br />
-            <br />
-            현재는 LOL.PS 만 지원합니다.
-          </div>
-        }
+        title={t('setting.game.statsProvider.title')}
+        description={t('setting.game.statsProvider.description')}
       >
         <Controller
           name="statsProvider"
@@ -64,13 +60,8 @@ const GameSettingsPage = () => {
       </Section>
 
       <Section
-        title="챔피언 정보 - 배치된 포지션 우선"
-        description={
-          <div>
-            챔피언 선택 시 보여주는 정보를 현재 배치된 포지션 우선으로 표시됩니다.
-            <br />이 설정을 비활성화하면 챔피언 선택 시 해당 챔피언의 주 포지션으로 표시됩니다.
-          </div>
-        }
+        title={t('setting.game.useCurrentPositionChampionData.title')}
+        description={t('setting.game.useCurrentPositionChampionData.description')}
       >
         <Controller
           name="useCurrentPositionChampionData"
@@ -87,13 +78,8 @@ const GameSettingsPage = () => {
       </Section>
 
       <Section
-        title="매칭 자동 수락"
-        description={
-          <div>
-            게임 매칭을 자동으로 수락할지 설정합니다.
-            <br />이 설정을 활성화하면 수락 버튼을 누르지 않아도 매칭이 수락됩니다.
-          </div>
-        }
+        title={t('setting.game.autoAccept.title')}
+        description={t('setting.game.autoAccept.description')}
       >
         <div className="autoAcceptField">
           <Controller
@@ -110,7 +96,7 @@ const GameSettingsPage = () => {
           />
 
           <div className={clsx('delay', !isAutoAccept && 'disabled')}>
-            <div>자동 수락까지 대기시간</div>
+            <div>{t('setting.game.autoAccept.autoAcceptDelaySeconds.label')}</div>
             <Controller
               name="autoAcceptDelaySeconds"
               control={form.control}
@@ -124,14 +110,14 @@ const GameSettingsPage = () => {
               )}
             />
 
-            <div>초</div>
+            <div>{t('setting.game.autoAccept.autoAcceptDelaySeconds.seconds')}</div>
           </div>
         </div>
       </Section>
 
       <Section
-        title="자동 룬 설정"
-        description={<div>챔피언 선택 시 자동으로 룬 페이지를 설정합니다.</div>}
+        title={t('setting.game.autoRuneSetting.title')}
+        description={t('setting.game.autoRuneSetting.description')}
       >
         <Controller
           name="autoRuneSetting"
@@ -148,8 +134,8 @@ const GameSettingsPage = () => {
       </Section>
 
       <Section
-        title="자동 스펠 설정"
-        description={<div>챔피언 선택 시 자동으로 스펠을 설정합니다.</div>}
+        title={t('setting.game.autoSummonerSpellSetting.title')}
+        description={t('setting.game.autoSummonerSpellSetting.description')}
       >
         <Space>
           <Controller
@@ -174,11 +160,11 @@ const GameSettingsPage = () => {
                 onChange={value => field.onChange(value)}
                 options={[
                   {
-                    label: 'D 점멸',
+                    label: `D ${t('setting.game.autoSummonerSpellSetting.flash')}`,
                     value: 'D',
                   },
                   {
-                    label: 'F 점멸',
+                    label: `F ${t('setting.game.autoSummonerSpellSetting.flash')}`,
                     value: 'F',
                   },
                 ]}

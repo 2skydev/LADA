@@ -1,5 +1,6 @@
 import { ReactNode, useEffect, useState } from 'react'
 import { useWatch } from 'react-hook-form'
+import { useTranslation } from 'react-i18next'
 
 import { Button, Popconfirm, Space } from 'antd'
 import clsx from 'clsx'
@@ -52,6 +53,10 @@ const SaveButton = ({
   confirmText,
   useConfirm = false,
 }: SaveButtonProps) => {
+  const { t } = useTranslation('translation', {
+    keyPrefix: 'renderer.form.save',
+  })
+
   const [invalid, setInvalid] = useState(false)
   const [confirmVisible, setConfirmVisible] = useState(false)
   const [loading, setLoading] = useState(false)
@@ -92,17 +97,17 @@ const SaveButton = ({
           key="SaveButton"
           {...animation}
         >
-          <span>저장하지 않은 변경 사항이 있어요!</span>
+          <span>{t('title')}</span>
 
           <Space>
             <Button className="cancel" disabled={loading} onClick={() => form.reset(defaultValues)}>
-              되돌리기
+              {t('rollback')}
             </Button>
 
             <Popconfirm
-              title={confirmText || '정말 저장하시겠습니까?'}
-              okText="저장"
-              cancelText="취소"
+              title={confirmText || t('confirm.title')}
+              okText={t('confirm.ok')}
+              cancelText={t('confirm.cancel')}
               placement="topRight"
               open={confirmVisible}
               onOpenChange={(visible: boolean) => {
@@ -121,7 +126,7 @@ const SaveButton = ({
                 loading={loading}
                 onClick={useConfirm ? undefined : handleSave}
               >
-                변경사항 저장하기
+                {t('ok')}
               </Button>
             </Popconfirm>
           </Space>

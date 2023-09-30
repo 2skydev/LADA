@@ -1,12 +1,12 @@
 import { Fragment, useEffect, useState } from 'react'
 import { Controller } from 'react-hook-form'
+import { useTranslation } from 'react-i18next'
 
 import clsx from 'clsx'
 import deepEqual from 'fast-deep-equal'
 import { motion } from 'framer-motion'
 import { useAtomValue } from 'jotai'
 
-import { LANE_ID_TO_LABEL_MAP } from '@main/modules/league/league.constants'
 import { LaneId } from '@main/modules/league/types/lane.types'
 import { RuneIdsGroupByType } from '@main/modules/league/types/rune.types'
 import { CounterChampionsItem } from '@main/modules/league/types/stat.types'
@@ -45,6 +45,8 @@ const ChampionStats = ({
   autoRuneSetting,
   autoSummonerSpellSetting,
 }: ChampionStatsProps) => {
+  const { t } = useTranslation()
+
   const [autoRuneSettingArguments, setAutoRuneSettingArguments] = useState<{
     runeIds: number[]
     name: string
@@ -101,9 +103,11 @@ const ChampionStats = ({
         ...customRuneIdsGroupByType.shardRuneIds,
       ]
 
+      const laneLabel = t('league.laneId', { returnObjects: true })[data.summary.laneId]
+
       const args = {
         runeIds,
-        name: `${LANE_ID_TO_LABEL_MAP[data.summary.laneId]} ${data.champion.name}`,
+        name: `${laneLabel} ${data.champion.name}`,
       }
 
       if (!deepEqual(args, autoRuneSettingArguments)) {
@@ -184,14 +188,15 @@ const ChampionStats = ({
                   <h2 className="championName">
                     {data.champion.name}
                     <span>
-                      표본수: {data.summary.count.toLocaleString()} · 승률: {data.summary.winRate}%
+                      {t('renderer.stats.sampledCount')}: {data.summary.count.toLocaleString()} ·{' '}
+                      {t('renderer.stats.winRate')}: {data.summary.winRate}%
                     </span>
                   </h2>
 
                   {!isNoData && (
                     <div className="spellAndSkill">
                       <div className="spell imageGroup">
-                        <div className="title">스펠</div>
+                        <div className="title">{t('renderer.stats.spell')}</div>
                         <div className="images">
                           <img src={data.summary.spells[0].image} />
                           <img src={data.summary.spells[1].image} />
@@ -199,7 +204,7 @@ const ChampionStats = ({
                       </div>
 
                       <div className="skill imageGroup">
-                        <div className="title">스킬 빌드</div>
+                        <div className="title">{t('renderer.stats.skillBuild')}</div>
 
                         <div className="images">
                           {data.summary.skillMasterList.map((skillId, i: number) => (
@@ -229,8 +234,8 @@ const ChampionStats = ({
                       <i className="bx bx-message-error" />
 
                       <div className="texts">
-                        <h3>표시할 데이터가 없습니다</h3>
-                        <p>다른 라인을 선택해주세요</p>
+                        <h3>{t('renderer.stats.champion.notFound.title')}</h3>
+                        <p>{t('renderer.stats.champion.notFound.description')}</p>
                       </div>
                     </div>
                   )}
@@ -240,7 +245,7 @@ const ChampionStats = ({
               {!isNoData && (
                 <div className="itemGroups">
                   <div className="imageGroup">
-                    <div className="title">시작 아이템</div>
+                    <div className="title">{t('renderer.stats.startItem')}</div>
                     <div className="images">
                       {data.summary.startingItemList.map((item, i) => (
                         <img key={`${i}.${item.id}`} src={item.image} />
@@ -249,7 +254,7 @@ const ChampionStats = ({
                   </div>
 
                   <div className="imageGroup">
-                    <div className="title">신발</div>
+                    <div className="title">{t('renderer.stats.shoes')}</div>
                     <div className="images">
                       {data.summary.shoesItemList.map(item => (
                         <img key={item.id} src={item.image} />
@@ -258,7 +263,7 @@ const ChampionStats = ({
                   </div>
 
                   <div className="imageGroup">
-                    <div className="title">코어 아이템</div>
+                    <div className="title">{t('renderer.stats.coreItem')}</div>
                     <div className="images">
                       {data.summary.coreItemList.map(item => (
                         <img key={item.id} src={item.image} />
@@ -294,7 +299,7 @@ const ChampionStats = ({
               {['down', 'up'].map(counterType => (
                 <section key={counterType} className="counter">
                   <div className="title">
-                    상대하기 {counterType === 'up' ? '쉬운' : '어려운'} 챔피언
+                    {t(`renderer.stats.champion.counter.${counterType === 'up' ? 'easy' : 'hard'}`)}
                   </div>
 
                   <div className="championList">
@@ -307,7 +312,7 @@ const ChampionStats = ({
                           </div>
 
                           <div className="texts">
-                            <div className="label">승률</div>
+                            <div className="label">{t('renderer.stats.winRate')}</div>
 
                             <div className={`value ${counterType}`}>
                               {counter.winRate.toFixed(2)}%

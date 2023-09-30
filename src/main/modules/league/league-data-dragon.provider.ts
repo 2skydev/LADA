@@ -1,12 +1,11 @@
 import { Injectable, OnModuleInit } from '@nestjs/common'
 import axios from 'axios'
+import { t } from 'i18next'
 
 import { ExecuteLog } from '@main/decorators/execute-log.decorator'
 import { ReturnValueCaching } from '@main/decorators/return-value-caching.decorator'
-import {
-  FORCE_MYTHICAL_LEVEL_ITEM_NAME_WORDS,
-  SHARD_RUNES,
-} from '@main/modules/league/league.constants'
+import { ConfigService } from '@main/modules/config/config.service'
+import { SHARD_RUNES } from '@main/modules/league/league.constants'
 import type { ChampionNames, Champions } from '@main/modules/league/types/champion.types'
 import type { GameItemData, GameItems } from '@main/modules/league/types/item.types'
 import type {
@@ -31,19 +30,31 @@ export type DataDragonImageAssetType =
 @Injectable()
 export class LeagueDataDragonProvider implements OnModuleInit {
   public version: string
+  public language = 'en_US'
+  public languages: string[]
+
+  constructor(private readonly configService: ConfigService) {}
 
   private fetch(filename: string) {
     return axios.get(
-      `https://ddragon.leagueoflegends.com/cdn/${this.version}/data/ko_KR/${filename}`,
+      `https://ddragon.leagueoflegends.com/cdn/${this.version}/data/${this.language}/${filename}`,
     )
   }
 
   @ExecuteLog()
   public async onModuleInit() {
-    const { data: versions } = await axios.get(
-      `https://ddragon.leagueoflegends.com/api/versions.json`,
-    )
+    const [{ data: versions }, { data: languages }] = await Promise.all([
+      axios.get(`https://ddragon.leagueoflegends.com/api/versions.json`),
+      axios.get(`https://ddragon.leagueoflegends.com/cdn/languages.json`),
+    ])
 
+    const configLanguage = this.configService.get('general.language')
+
+    if (configLanguage && languages.includes(configLanguage)) {
+      this.language = configLanguage
+    }
+
+    this.languages = languages
     this.version = versions[0]
   }
 
@@ -106,9 +117,7 @@ export class LeagueDataDragonProvider implements OnModuleInit {
         id: +itemId,
         name: item.name,
         image: this.getImageUrl('item', item.image.full),
-        isMythicalLevel:
-          item.description.includes('신화급 기본 지속 효과') ||
-          FORCE_MYTHICAL_LEVEL_ITEM_NAME_WORDS.some(word => item.name.includes(word)),
+        isMythicalLevel: item.description.includes('<rarityMythic>'),
       }
     }
 
@@ -124,8 +133,11 @@ export class LeagueDataDragonProvider implements OnModuleInit {
   public async getRuneData(): Promise<RuneData> {
     const { data } = await this.fetch('runesReforged.json')
 
+    const shardLabel = t('league.rune.Shard')
+
     const shardRunes = SHARD_RUNES.map(rune => ({
       ...rune,
+      name: t(rune.name),
       icon: this.getImageUrl('perk-images', rune.icon),
     }))
 
@@ -159,7 +171,7 @@ export class LeagueDataDragonProvider implements OnModuleInit {
         5000: {
           id: 5000,
           icon: '',
-          name: '파편',
+          name: shardLabel,
           key: 'Shard',
           runes: shardRunes,
           slots: [

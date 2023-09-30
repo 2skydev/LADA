@@ -1,4 +1,5 @@
 import { useEffect, useState } from 'react'
+import { useTranslation } from 'react-i18next'
 
 import { Progress } from 'antd'
 import { useAtomValue } from 'jotai'
@@ -8,8 +9,12 @@ import { appUpdateAtom } from '@renderer/stores/atoms/appUpdate.atom'
 import * as Styled from '@renderer/styles/pageStyled/WindowsUpdateLoadingPage.styled'
 
 const WindowsUpdateLoadingPage = () => {
+  const { t } = useTranslation('translation', {
+    keyPrefix: 'renderer.updateLoading',
+  })
+
   const [percent, setPercent] = useState(0)
-  const [text, setText] = useState('업데이트 다운로드중...')
+  const [text, setText] = useState(t('loading'))
   const { status } = useAtomValue(appUpdateAtom)
 
   useEffect(() => {
@@ -19,7 +24,7 @@ const WindowsUpdateLoadingPage = () => {
         break
 
       case 'update-downloaded':
-        setText('잠시 후 앱이 재시작됩니다.')
+        setText(t('autoRestart'))
         break
     }
   }, [status])

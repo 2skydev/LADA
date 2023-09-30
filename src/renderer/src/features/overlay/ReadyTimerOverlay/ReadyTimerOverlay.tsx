@@ -1,4 +1,5 @@
 import { useEffect, useState } from 'react'
+import { useTranslation } from 'react-i18next'
 
 import clsx from 'clsx'
 
@@ -11,6 +12,10 @@ export interface ReadyTimerOverlayProps {
 }
 
 const ReadyTimerOverlay = ({ className }: ReadyTimerOverlayProps) => {
+  const { t } = useTranslation('translation', {
+    keyPrefix: 'renderer',
+  })
+
   const [data, setData] = useState<AutoAcceptEvent | null>(null)
 
   useEffect(() => {
@@ -31,7 +36,9 @@ const ReadyTimerOverlay = ({ className }: ReadyTimerOverlayProps) => {
 
   return (
     <Styled.Root className={clsx('ReadyTimerOverlay', className)}>
-      자동 수락까지 <span>{data.autoAcceptDelaySeconds! - data.timer!}</span>초 남았습니다
+      {t('autoAcceptOverlay', {
+        seconds: data.autoAcceptDelaySeconds! - data.timer!,
+      })}
     </Styled.Root>
   )
 }

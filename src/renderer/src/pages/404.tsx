@@ -1,13 +1,19 @@
+import { useTranslation } from 'react-i18next'
+
 import { Empty } from 'antd'
 
 import LayoutConfig from '@renderer/components/LayoutConfig'
 import * as Styled from '@renderer/styles/pageStyled/NotFoundPage.styled'
 
 const NotFoundPage = () => {
+  const { t } = useTranslation('translation', {
+    keyPrefix: 'renderer.pages',
+  })
+
   return (
     <Styled.Root>
-      <LayoutConfig breadcrumbs={['페이지를 찾을 수 없습니다 :(']} />
-      <Empty description="페이지를 찾을 수 없습니다 :(" />
+      <LayoutConfig breadcrumbs={[t('notFound')]} />
+      <Empty description={t('notFound')} />
     </Styled.Root>
   )
 }

@@ -2,6 +2,7 @@ import { Outlet, useLocation } from 'react-router-dom'
 
 import Layout from '@renderer/components/Layout'
 import Titlebar from '@renderer/components/Titlebar'
+import LanguageChangeInfoModal from '@renderer/features/language/LanguageChangeInfoModal'
 import NeedUpdateLaterNotification from '@renderer/features/update/NeedUpdateLaterNotification'
 import UpdateNoteModal from '@renderer/features/update/UpdateNoteModal/UpdateNoteModal'
 import useChampionSelectPageAutoNavigate from '@renderer/hooks/autoNavigate/useChampionSelectPageAutoNavigate'
@@ -37,6 +38,7 @@ const App = () => {
         <div id="app">
           <AutoNavigateHooks />
           <UpdateNoteModal />
+          <LanguageChangeInfoModal />
           <NeedUpdateLaterNotification />
 
           <Titlebar />

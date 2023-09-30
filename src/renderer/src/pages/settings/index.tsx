@@ -1,5 +1,6 @@
 import { useState } from 'react'
 import { Controller } from 'react-hook-form'
+import { useTranslation } from 'react-i18next'
 
 import { Select, Switch } from 'antd'
 import { useAtom, useAtomValue } from 'jotai'
@@ -11,12 +12,21 @@ import SaveButton from '@renderer/components/SaveButton'
 import Section from '@renderer/components/Section'
 import UpdateNoteModal from '@renderer/features/update/UpdateNoteModal'
 import UpdateStatus from '@renderer/features/update/UpdateStatus'
+import useAPI from '@renderer/hooks/useAPI'
 import useCustomForm from '@renderer/hooks/useCustomForm'
 import { appUpdateAtom } from '@renderer/stores/atoms/appUpdate.atom'
 import { configAtom } from '@renderer/stores/atoms/config.atom'
 import * as Styled from '@renderer/styles/pageStyled/SettingsPage.styled'
 
 const SettingsPage = () => {
+  const { data: languageOptions } = useAPI('getLanguageOptions', {
+    revalidateIfStale: false,
+  })
+
+  const { t } = useTranslation('translation', {
+    keyPrefix: 'renderer',
+  })
+
   const [config, setConfig] = useAtom(configAtom)
   const { version, status } = useAtomValue(appUpdateAtom)
   const [openUpdateNoteModal, setOpenUpdateNoteModal] = useState(false)
@@ -34,13 +44,13 @@ const SettingsPage = () => {
 
   return (
     <Styled.Root>
-      <LayoutConfig breadcrumbs={['설정', '일반 설정']} />
+      <LayoutConfig breadcrumbs={[t('pages.setting'), t('pages.generalSetting')]} />
 
       <UpdateNoteModal open={openUpdateNoteModal} onClose={() => setOpenUpdateNoteModal(false)} />
 
       <Section
-        title="컴퓨터 부팅시 최소화로 자동 시작"
-        description={<div>컴퓨터가 켜진 후 자동으로 앱이 최소화 모드로 시작되도록 설정합니다.</div>}
+        title={t('setting.general.autoLaunch.title')}
+        description={t('setting.general.autoLaunch.description')}
       >
         <Controller
           name="autoLaunch"
@@ -57,14 +67,8 @@ const SettingsPage = () => {
       </Section>
 
       <Section
-        title="LADA 자동 창 열기"
-        description={
-          <div>
-            롤 클라이언트가 켜지면 자동으로 LADA 창이 열립니다.
-            <br />
-            LADA가 최소화 모드로 실행되어 있어야 합니다.
-          </div>
-        }
+        title={t('setting.general.openWindowWhenLeagueClientLaunch.title')}
+        description={t('setting.general.openWindowWhenLeagueClientLaunch.description')}
       >
         <Controller
           name="openWindowWhenLeagueClientLaunch"
@@ -81,14 +85,29 @@ const SettingsPage = () => {
       </Section>
 
       <Section
-        title="앱 비율 설정"
-        description={
-          <div>
-            앱 화면의 비율을 설정합니다.
-            <br />
-            기본 값은 100% 입니다.
-          </div>
-        }
+        title={t('setting.general.language.title')}
+        description={t('setting.general.language.description')}
+      >
+        <Controller
+          name="language"
+          control={form.control}
+          render={({ field }) => (
+            <Select
+              style={{ width: '10rem' }}
+              value={field.value}
+              onChange={value => field.onChange(value)}
+              options={(languageOptions || []).map(({ label, value }) => ({
+                label: `${label} / ${value}`,
+                value,
+              }))}
+            />
+          )}
+        />
+      </Section>
+
+      <Section
+        title={t('setting.general.zoom.title')}
+        description={t('setting.general.zoom.description')}
       >
         <Controller
           name="zoom"
@@ -107,14 +126,8 @@ const SettingsPage = () => {
       </Section>
 
       <Section
-        title="개발자모드 설정"
-        description={
-          <div>
-            개발자모드를 활성화할지 설정합니다.
-            <br />
-            개발자모드가 활성화되면 개발자 도구가 활성화됩니다.
-          </div>
-        }
+        title={t('setting.general.developerMode.title')}
+        description={t('setting.general.developerMode.description')}
       >
         <Controller
           name="developerMode"
@@ -131,20 +144,17 @@ const SettingsPage = () => {
       </Section>
 
       <Section
-        title="앱 버전"
+        title={t('setting.general.appVersion.title')}
         description={
           <div>
-            현재 앱 버전이 몇인지 확인하실 수 있습니다.
-            <br />
-            아래 링크를 통해 변경된 사항을 확인하실 수 있습니다.
-            <br />
+            {t('setting.general.appVersion.description')}
             <div className="spacing" />
             <a href="https://github.com/2skydev/LADA/releases" target="_blank">
-              앱 릴리즈 목록
+              {t('setting.general.appVersion.releaseList')}
             </a>{' '}
             /{' '}
             <a onClick={() => setOpenUpdateNoteModal(true)} style={{ cursor: 'pointer' }}>
-              업데이트 내역
+              {t('setting.general.appVersion.updateNote')}
             </a>
           </div>
         }
