@@ -59,9 +59,9 @@ export class MigrationModule {
         for (const version of executableMigrationVersions) {
           try {
             await this[version]()
-            log.info(`[Migration Module] Migrated to ${currentVersion}`)
+            log.info(`[Migration Module] Migrated to ${version}`)
           } catch (error) {
-            log.error(`[Migration Module] ${currentVersion}\n`, error)
+            log.error(`[Migration Module] ${version}\n`, error)
           }
         }
 
