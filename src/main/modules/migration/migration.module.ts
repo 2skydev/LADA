@@ -61,7 +61,7 @@ export class MigrationModule {
             await this[version]()
             log.info(`[Migration Module] Migrated to ${currentVersion}`)
           } catch (error) {
-            log.error(`[Migration Module] ${currentVersion}`, error)
+            log.error(`[Migration Module] ${currentVersion}\n`, error)
           }
         }
 
