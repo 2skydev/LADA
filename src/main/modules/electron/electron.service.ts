@@ -443,13 +443,6 @@ export const generatedIpcOnContext = {`
   }
 
   private async initI18Next() {
-    const systemLocale = app.getSystemLocale().replace('-', '_')
-    const savedLanguage = this.configService.get('general.language')
-
-    if (!savedLanguage) {
-      this.configService.set('general.language', systemLocale)
-    }
-
     const fileNames = await readdir(`${this.RESOURCES_PATH}/locales`)
 
     const files = await Promise.all(
@@ -458,7 +451,7 @@ export const generatedIpcOnContext = {`
       ),
     )
 
-    const resources = files.reduce((resources, file, index) => {
+    const resources: Record<string, any> = files.reduce((resources, file, index) => {
       const json = jsoncParse(file)
       const locale = fileNames[index].replace('.json', '')
 
@@ -474,10 +467,19 @@ export const generatedIpcOnContext = {`
       return resources
     }, {})
 
+    const systemLocale = app.getSystemLocale().replace('-', '_')
+    const configLocale = this.configService.get('general.language')
+
+    const inputLocale = configLocale ?? systemLocale
+    const outputLocale = resources[inputLocale] ? inputLocale : 'en_US'
+
     await i18next.init({
-      lng: savedLanguage ?? systemLocale,
-      fallbackLng: 'ko_KR',
+      lng: outputLocale,
       resources,
     })
+
+    if (!configLocale) {
+      this.configService.set('general.language', outputLocale)
+    }
   }
 }
