@@ -26,7 +26,7 @@ const LogViewer = ({ className, path, lines: _lines }: LogViewerProps) => {
     colors: { red, orange },
   } = useTheme()
 
-  const lines = _lines.toReversed()
+  const lines = [..._lines].reverse()
 
   const statusColors = {
     error: red,
