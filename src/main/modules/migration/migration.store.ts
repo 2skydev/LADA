@@ -1,6 +1,10 @@
 import Store from 'electron-store'
 
-export type MigrationStoreValues = Record<string, boolean>
+export interface MigrationStoreValues {
+  initialInstallationVersion?: string
+  migratedVersions?: string[]
+  executedMigrationVersions?: string[]
+}
 
 export const migrationStore = new Store<MigrationStoreValues>({
   name: 'migration',
