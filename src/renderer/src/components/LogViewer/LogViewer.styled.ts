@@ -11,7 +11,7 @@ export const Root = styled.div`
     width: auto !important;
 
     .ReactVirtualized__Grid__innerScrollContainer {
-      overflow-x: auto !important;
+      overflow: initial !important;
       max-width: initial !important;
     }
   }
