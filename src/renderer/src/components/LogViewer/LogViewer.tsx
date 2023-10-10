@@ -44,13 +44,14 @@ const LogViewer = ({ className, path, lines: _lines }: LogViewerProps) => {
       {/* @ts-ignore 라이브러리 내부 타입 오류 무시 */}
       <List
         width={500}
-        height={300}
+        height={280}
         rowCount={lines.length}
         rowHeight={({ index }) => {
           return 20 * lines[index].split('\n').length + 10
         }}
         rowRenderer={({ index, key, style }) => {
           let line = lines[index]
+
           const date = line.match(/^\[([0-9\-._:\s]+)\]/)?.[1]
           const status = line.match(
             /^\[[0-9\-._:\s]+\] \[(info|debug|log|warn|error|verbose)\]/,
@@ -58,8 +59,8 @@ const LogViewer = ({ className, path, lines: _lines }: LogViewerProps) => {
 
           const color = statusColors[status!]
 
-          line = line.replace(/^\[[0-9\-._:\s]+\] /, '')
-          line = line.replace(/^\[(info|debug|log|warn|error|verbose)\] /, '')
+          line = line.replace(/^\[[0-9\-._:\s]+\]\s+/, '')
+          line = line.replace(/^\[(info|debug|log|warn|error|verbose)\]\s+/, '')
 
           return (
             <div
@@ -85,7 +86,7 @@ const LogViewer = ({ className, path, lines: _lines }: LogViewerProps) => {
                     {dayjs(date).fromNow()}
                   </div>
                   <Divider type="vertical" style={{ borderColor: color, margin: '0 .6rem' }} />
-                  <div className="selectable" style={{ width: '2.5rem' }}>
+                  <div className="selectable" style={{ width: '3.3rem' }}>
                     {status}
                   </div>
                   <Divider type="vertical" style={{ borderColor: color, margin: '0 .6rem' }} />
@@ -93,9 +94,9 @@ const LogViewer = ({ className, path, lines: _lines }: LogViewerProps) => {
 
                 <div>
                   {line.split('\n').map((text, i) => (
-                    <div key={i} className="selectable" style={{ height: 20 }}>
+                    <pre key={i} className="selectable" style={{ height: 20 }}>
                       {text}
-                    </div>
+                    </pre>
                   ))}
                 </div>
               </div>

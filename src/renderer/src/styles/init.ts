@@ -28,6 +28,11 @@ export const Init = memo(createGlobalStyle`
     border: 1px solid transparent;
   }
 
+  *::-webkit-scrollbar-corner,
+  *::-webkit-scrollbar-button {
+    display: none;
+  }
+
   *::selection {
     background: ${props => props.theme.colors.primary};
   }
