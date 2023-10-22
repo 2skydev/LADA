@@ -103,7 +103,7 @@ const DuoSynergyTable = ({ className }: DuoSynergyTableProps) => {
   useEffect(() => {
     const championNameAlias = t('league.championNameAlias', { returnObjects: true })
 
-    const query = search.trim().toLowerCase()
+    const query = search.replaceAll(' ', '').toLowerCase()
 
     const filteredChampions =
       !championNames || !query.length
