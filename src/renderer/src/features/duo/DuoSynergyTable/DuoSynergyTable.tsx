@@ -41,7 +41,7 @@ export interface DuoSynergyForm extends Omit<GetDuoSynergyListOptions, 'champion
 
 export interface FilteredChampionItem {
   id: number
-  enName: string
+  normalizedName: string
   alias: string[]
 }
 
@@ -103,17 +103,20 @@ const DuoSynergyTable = ({ className }: DuoSynergyTableProps) => {
   useEffect(() => {
     const championNameAlias = t('league.championNameAlias', { returnObjects: true })
 
+    const query = search.trim().toLowerCase()
+
     const filteredChampions =
-      !championNames || !search.trim().length
+      !championNames || !query.length
         ? []
         : Object.keys(championNames).reduce<FilteredChampionItem[]>((acc, id) => {
-            const enName = championNames[id].en
+            const { en: enName, ko: name } = championNames[id]
             const alias = championNameAlias[enName] ?? []
+            const normalizedName = name.replaceAll(' ', '').toLowerCase()
 
-            if (includesByCho(search, enName) || alias.some(x => includesByCho(search, x))) {
+            if (includesByCho(query, normalizedName) || alias.some(x => includesByCho(query, x))) {
               acc.push({
                 id: +id,
-                enName,
+                normalizedName,
                 alias,
               })
             }
@@ -122,12 +125,12 @@ const DuoSynergyTable = ({ className }: DuoSynergyTableProps) => {
           }, [])
 
     const distanceChampionNames: string[] = correctByDistance(
-      search,
-      filteredChampions.map(x => x.enName),
+      query,
+      filteredChampions.map(x => x.normalizedName),
     )
 
     const filteredChampionId: number | null = distanceChampionNames.length
-      ? filteredChampions.find(x => x.enName === distanceChampionNames[0])!.id
+      ? filteredChampions.find(x => x.normalizedName === distanceChampionNames[0])!.id
       : filteredChampions.length === 1
       ? filteredChampions[0].id
       : null
