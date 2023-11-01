@@ -139,4 +139,10 @@ export class MigrationModule {
       configStore.set('general.language', null)
     }
   }
+
+  public static async 'v0.0.25'() {
+    if (configStore.get('general.restoreWindowPosition') === undefined) {
+      configStore.set('general.restoreWindowPosition', true)
+    }
+  }
 }
