@@ -11,6 +11,7 @@ export interface ConfigStoreValues {
     openWindowWhenLeagueClientLaunch: boolean
     language: string | null
     zoom: number
+    restoreWindowPosition: boolean
   }
   game: {
     statsProvider: StatsProvider
@@ -33,6 +34,7 @@ export const configStore = new Store<ConfigStoreValues>({
       openWindowWhenLeagueClientLaunch: true,
       language: null,
       zoom: 1.0,
+      restoreWindowPosition: true,
     },
     game: {
       statsProvider: 'LOL.PS',

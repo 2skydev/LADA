@@ -129,7 +129,7 @@ export class LeagueAPIClient {
             .catch(reject)
         }),
       {
-        // @ts-ignore
+        // @ts-ignore: 라이브러리 자체 타입 오류 무시
         retries: 100,
       },
     )

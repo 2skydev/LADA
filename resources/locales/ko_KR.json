@@ -127,7 +127,8 @@
       "showHome": "LADA 홈 화면 보기",
       "setAppZoom": "앱 비율 설정",
       "quit": "앱 끄기",
-      "nowValue": "현재값"
+      "nowValue": "현재값",
+      "resetWindowPosition": "창 위치 초기화"
     }
   },
   "renderer": {
@@ -255,6 +256,10 @@
         "developerMode": {
           "title": "개발자모드 설정",
           "description": "개발자모드를 활성화할지 설정합니다.\n개발자모드가 활성화되면 개발자 도구가 활성화됩니다."
+        },
+        "restoreWindowPosition": {
+          "title": "창 위치 복원",
+          "description": "LADA 창이 켜질 때 이전 위치로 열립니다.\n비활성화 시 항상 화면 중앙에 열립니다."
         },
         "appVersion": {
           "title": "앱 버전",

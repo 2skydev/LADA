@@ -126,6 +126,24 @@ const SettingsPage = () => {
       </Section>
 
       <Section
+        title={t('setting.general.restoreWindowPosition.title')}
+        description={t('setting.general.restoreWindowPosition.description')}
+      >
+        <Controller
+          name="restoreWindowPosition"
+          control={form.control}
+          render={({ field }) => (
+            <Switch
+              checked={field.value}
+              onChange={checked => field.onChange(checked)}
+              checkedChildren={<i className="bx bx-check" />}
+              unCheckedChildren={<i className="bx bx-x" />}
+            />
+          )}
+        />
+      </Section>
+
+      <Section
         title={t('setting.general.developerMode.title')}
         description={t('setting.general.developerMode.description')}
       >
@@ -149,7 +167,7 @@ const SettingsPage = () => {
           <div>
             {t('setting.general.appVersion.description')}
             <div className="spacing" />
-            <a href="https://github.com/2skydev/LADA/releases" target="_blank">
+            <a href="https://github.com/2skydev/LADA/releases" target="_blank" rel="noreferrer">
               {t('setting.general.appVersion.releaseList')}
             </a>{' '}
             /{' '}

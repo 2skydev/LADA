@@ -59,7 +59,8 @@
       "showHome": "Show LADA Home",
       "setAppZoom": "Set App Display Scale",
       "quit": "Quit LADA",
-      "nowValue": "Now"
+      "nowValue": "Now",
+      "resetWindowPosition": "Reset Window Position"
     }
   },
   "renderer": {
@@ -187,6 +188,10 @@
         "developerMode": {
           "title": "Developer Mode Settings",
           "description": "Enables or disables developer mode.\nWhen enabled, developer tools are activated."
+        },
+        "restoreWindowPosition": {
+          "title": "Restore Window Position",
+          "description": "Opens to the previous location when the LADA window is lit.\nIt always opens in the center of the screen when disabled."
         },
         "appVersion": {
           "title": "App Version",
