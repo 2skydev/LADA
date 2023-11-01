@@ -32,11 +32,14 @@ import {
   ZOOM_PERCENT_ARRAY,
 } from '@main/modules/electron/electron.constants'
 import { ElectronController } from '@main/modules/electron/electron.controller'
+import { electronStore } from '@main/modules/electron/electron.store'
 import { AppControlAction } from '@main/modules/electron/types/app-control.type'
 import { LanguageOption } from '@main/modules/electron/types/language.types'
 
 @Injectable()
 export class ElectronService implements OnModuleInit, OnApplicationBootstrap {
+  private readonly store = electronStore
+
   public readonly APP_PATH = app.getAppPath()
   public readonly PROTOCOL = protocols.name
   public readonly IS_MAC = process.platform === 'darwin'
@@ -254,6 +257,8 @@ export const generatedIpcOnContext = {`
         return
       }
 
+      const windowPosition = this.store.get('windowPosition')
+
       this.window = new BrowserWindow({
         width: this.APP_WIDTH,
         height: this.APP_HEIGHT,
@@ -264,6 +269,7 @@ export const generatedIpcOnContext = {`
         frame: false,
         icon: this.ICON,
         resizable: false,
+        ...windowPosition,
         webPreferences: {
           preload: this.PRELOAD_PATH,
         },
@@ -286,6 +292,10 @@ export const generatedIpcOnContext = {`
 
       this.window.on('close', () => {
         this.window = null
+      })
+
+      this.window.on('moved', () => {
+        this.saveCurrentWindowPosition()
       })
 
       this.window.webContents.setWindowOpenHandler(({ url }) => {
@@ -388,6 +398,14 @@ export const generatedIpcOnContext = {`
       await i18next.changeLanguage(value!)
       this.controller.onChangeLanguage(value!)
     })
+
+    this.configService.onChange('general.restoreWindowPosition', value => {
+      if (value) {
+        this.saveCurrentWindowPosition()
+      } else {
+        this.store.delete('windowPosition')
+      }
+    })
   }
 
   private createTray() {
@@ -399,12 +417,38 @@ export const generatedIpcOnContext = {`
     this.reloadContextMenu()
   }
 
+  private saveCurrentWindowPosition() {
+    if (this.configService.get('general.restoreWindowPosition') === false || !this.window) return
+
+    const { x, y } = this.window.getBounds()
+
+    this.store.set('windowPosition', {
+      x,
+      y,
+    })
+  }
+
+  private resetWindowPosition() {
+    if (this.window) {
+      this.window.center()
+      this.window.focus()
+      this.saveCurrentWindowPosition()
+    } else {
+      this.store.delete('windowPosition')
+    }
+  }
+
   private reloadContextMenu() {
     const template: MenuItemConstructorOptions[] = [
       {
         label: i18next.t('main.contextMenu.showHome'),
         type: 'normal',
         click: () => this.createWindow(),
+      },
+      {
+        label: i18next.t('main.contextMenu.resetWindowPosition'),
+        type: 'normal',
+        click: () => this.resetWindowPosition(),
       },
       {
         label: i18next.t('main.contextMenu.setAppZoom'),
