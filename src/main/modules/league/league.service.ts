@@ -216,7 +216,7 @@ export class LeagueService implements OnModuleInit {
   // 현재 로비 가져오기
   public async getLobby() {
     const data = await this.client.get('/lol-lobby/v2/lobby')
-    return this.convertLobbyData(data)
+    return await this.convertLobbyData(data)
   }
 
   // 현재 챔피언 선택 세션 가져오기
@@ -306,8 +306,8 @@ export class LeagueService implements OnModuleInit {
     this.controller.onChangeCurrentSummoner(convertedData!)
   }
 
-  private handleLobby(data: any) {
-    const convertedData = this.convertLobbyData(data)
+  private async handleLobby(data: any) {
+    const convertedData = await this.convertLobbyData(data)
     this.controller.onChangeLobby(convertedData!)
   }
 
@@ -353,58 +353,78 @@ export class LeagueService implements OnModuleInit {
   private convertSummonerData(data: any): Summoner | null {
     if (!data || data?.httpStatus === 404) return null
 
-    const { summonerId, displayName, summonerLevel, profileIconId } = data
+    const { summonerId, gameName, tagLine, summonerLevel, profileIconId } = data
 
     return {
       id: summonerId,
-      name: displayName,
+      name: gameName + '#' + tagLine,
       level: summonerLevel,
       profileIcon: this.leagueDataDragonProvider.getImageUrl('profileicon', profileIconId),
     }
   }
 
-  private convertLobbyData(data: any): Lobby | null {
+  private async getSummonerByPuuidCached(puuid: string) {
+    const data = await this.client.get(`/lol-summoner/v1/summoners-by-puuid-cached/${puuid}`)
+
+    return this.convertSummonerData(data)
+  }
+
+  private async convertLobbyData(data: any): Promise<Lobby | null> {
     if (!data || data?.httpStatus === 404) return null
 
-    const summoners = data.members.map((member: any) => {
-      return {
-        id: member.summonerId,
-        name: member.summonerInternalName,
-        level: member.summonerLevel,
-        profileIcon: this.leagueDataDragonProvider.getImageUrl(
-          'profileicon',
-          member.summonerIconId,
-        ),
-        firstLaneId: convertLaneEnToLaneId(member.firstPositionPreference),
-        secondLaneId: convertLaneEnToLaneId(member.secondPositionPreference),
-      }
-    })
+    const summoners = await Promise.all(
+      data.members.map(async (member: any) => {
+        const summoner = await this.getSummonerByPuuidCached(member.puuid)
 
-    const spectators = data.gameConfig.customSpectators.map((member: any) => {
-      return {
-        id: member.summonerId,
-        name: member.summonerInternalName,
-        level: member.summonerLevel,
-        profileIcon: this.leagueDataDragonProvider.getImageUrl(
-          'profileicon',
-          member.summonerIconId,
-        ),
-      }
-    })
-
-    const teams = ['customTeam100', 'customTeam200'].map(teamPropertyKey => {
-      return data.gameConfig[teamPropertyKey].map((member: any) => {
         return {
           id: member.summonerId,
-          name: member.summonerInternalName,
+          name: summoner?.name ?? '',
+          level: member.summonerLevel,
+          profileIcon: this.leagueDataDragonProvider.getImageUrl(
+            'profileicon',
+            member.summonerIconId,
+          ),
+          firstLaneId: convertLaneEnToLaneId(member.firstPositionPreference),
+          secondLaneId: convertLaneEnToLaneId(member.secondPositionPreference),
+        }
+      }),
+    )
+
+    const spectators = await Promise.all(
+      data.gameConfig.customSpectators.map(async (member: any) => {
+        const summoner = await this.getSummonerByPuuidCached(member.puuid)
+
+        return {
+          id: member.summonerId,
+          name: summoner?.name ?? '',
           level: member.summonerLevel,
           profileIcon: this.leagueDataDragonProvider.getImageUrl(
             'profileicon',
             member.summonerIconId,
           ),
         }
-      })
-    }) as Lobby['teams']
+      }),
+    )
+
+    const teams = (await Promise.all(
+      ['customTeam100', 'customTeam200'].map(async teamPropertyKey => {
+        return await Promise.all(
+          data.gameConfig[teamPropertyKey].map(async (member: any) => {
+            const summoner = await this.getSummonerByPuuidCached(member.puuid)
+
+            return {
+              id: member.summonerId,
+              name: summoner?.name ?? '',
+              level: member.summonerLevel,
+              profileIcon: this.leagueDataDragonProvider.getImageUrl(
+                'profileicon',
+                member.summonerIconId,
+              ),
+            }
+          }),
+        )
+      }),
+    )) as Lobby['teams']
 
     return {
       title: data.gameConfig.customLobbyName,
