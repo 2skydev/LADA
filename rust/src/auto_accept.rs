@@ -102,7 +102,7 @@ async fn run_session(
             }
             _ = config_rx.changed() => {}
             _ = lockfile_check.tick() => {
-                if let Ok(current) = lcu::discover_lockfile(&config_rx.borrow().league_dir) {
+                if let Ok(current) = lcu::Lockfile::read(credentials.lockfile_path.clone()) {
                     if Credentials::from(current) != credentials {
                         scheduler.cancel();
                         return Ok(());
@@ -112,7 +112,7 @@ async fn run_session(
                     return Ok(());
                 }
             }
-            next_event = events.next() => {
+            next_event = events.next(&client) => {
                 let Some(event) = next_event? else {
                     scheduler.cancel();
                     return Ok(());

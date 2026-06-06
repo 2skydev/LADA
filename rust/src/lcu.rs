@@ -7,7 +7,6 @@ use base64::{Engine, engine::general_purpose::STANDARD};
 use futures_util::{SinkExt, StreamExt};
 use native_tls::TlsConnector;
 use reqwest::{Client, StatusCode};
-use serde::Deserialize;
 use serde_json::{Value, json};
 use sysinfo::System;
 use thiserror::Error;
@@ -130,21 +129,29 @@ impl From<Lockfile> for Credentials {
     }
 }
 
-#[derive(Debug, Clone, PartialEq, Eq, Deserialize)]
+#[derive(Debug, Clone, PartialEq, Eq)]
 pub struct ReadyCheck {
-    #[serde(rename = "playerResponse")]
     pub player_response: PlayerResponse,
-    #[serde(default)]
     pub timer: u64,
 }
 
-#[derive(Debug, Clone, PartialEq, Eq, Deserialize)]
+#[derive(Debug, Clone, PartialEq, Eq)]
 pub enum PlayerResponse {
     None,
     Accepted,
     Declined,
-    #[serde(other)]
     Other,
+}
+
+impl PlayerResponse {
+    fn from_lcu(value: &str) -> Self {
+        match value {
+            "None" => Self::None,
+            "Accepted" => Self::Accepted,
+            "Declined" => Self::Declined,
+            _ => Self::Other,
+        }
+    }
 }
 
 impl fmt::Display for PlayerResponse {
@@ -198,7 +205,8 @@ impl LcuClient {
             return Err(LcuError::UnexpectedStatus(response.status()));
         }
 
-        Ok(Some(response.json().await?))
+        let value = response.json().await?;
+        Ok(parse_ready_check_data(&value))
     }
 
     pub async fn accept_ready_check(&self) -> Result<(), LcuError> {
@@ -264,14 +272,19 @@ pub struct ReadyCheckEvents {
 }
 
 impl ReadyCheckEvents {
-    pub async fn next(&mut self) -> Result<Option<ReadyCheck>, LcuError> {
+    pub async fn next(&mut self, client: &LcuClient) -> Result<Option<ReadyCheck>, LcuError> {
         while let Some(message) = self.socket.next().await {
             match message? {
-                Message::Text(text) => {
-                    if let Some(event) = parse_ready_check_event(text.as_ref())? {
-                        return Ok(Some(event));
+                Message::Text(text) => match parse_ready_check_event_message(text.as_ref())? {
+                    ReadyCheckEventMessage::Ignored => {}
+                    ReadyCheckEventMessage::Changed(Some(event)) => return Ok(Some(event)),
+                    ReadyCheckEventMessage::Changed(None) => {
+                        if let Some(event) = client.ready_check().await? {
+                            return Ok(Some(event));
+                        }
                     }
-                }
+                },
+                Message::Ping(payload) => self.socket.send(Message::Pong(payload)).await?,
                 Message::Close(_) => return Ok(None),
                 _ => {}
             }
@@ -305,24 +318,69 @@ pub fn lockfile_candidates(league_dir: &str) -> Vec<PathBuf> {
 }
 
 pub fn parse_ready_check_event(message: &str) -> Result<Option<ReadyCheck>, serde_json::Error> {
+    match parse_ready_check_event_message(message)? {
+        ReadyCheckEventMessage::Ignored | ReadyCheckEventMessage::Changed(None) => Ok(None),
+        ReadyCheckEventMessage::Changed(Some(event)) => Ok(Some(event)),
+    }
+}
+
+#[derive(Debug, Clone, PartialEq, Eq)]
+enum ReadyCheckEventMessage {
+    Ignored,
+    Changed(Option<ReadyCheck>),
+}
+
+fn parse_ready_check_event_message(
+    message: &str,
+) -> Result<ReadyCheckEventMessage, serde_json::Error> {
     let value: Value = serde_json::from_str(message)?;
     let Some(items) = value.as_array() else {
-        return Ok(None);
+        return Ok(ReadyCheckEventMessage::Ignored);
     };
 
     if items.len() < 3 || items.first().and_then(Value::as_i64) != Some(8) {
-        return Ok(None);
+        return Ok(ReadyCheckEventMessage::Ignored);
     }
 
     if items.get(1).and_then(Value::as_str) != Some(READY_CHECK_TOPIC) {
-        return Ok(None);
+        return Ok(ReadyCheckEventMessage::Ignored);
     }
 
     let Some(data) = items.get(2).and_then(|payload| payload.get("data")) else {
-        return Ok(None);
+        return Ok(ReadyCheckEventMessage::Changed(None));
     };
 
-    serde_json::from_value(data.clone()).map(Some)
+    Ok(ReadyCheckEventMessage::Changed(parse_ready_check_data(
+        data,
+    )))
+}
+
+fn parse_ready_check_data(data: &Value) -> Option<ReadyCheck> {
+    let player_response = data
+        .get("playerResponse")
+        .and_then(Value::as_str)
+        .map(PlayerResponse::from_lcu)?;
+    let timer = data.get("timer").and_then(parse_timer).unwrap_or_default();
+
+    Some(ReadyCheck {
+        player_response,
+        timer,
+    })
+}
+
+fn parse_timer(value: &Value) -> Option<u64> {
+    if let Some(timer) = value.as_u64() {
+        return Some(timer);
+    }
+
+    if let Some(timer) = value.as_f64() {
+        return Some(timer.max(0.0).floor() as u64);
+    }
+
+    value
+        .as_str()
+        .and_then(|timer| timer.parse::<f64>().ok())
+        .map(|timer| timer.max(0.0).floor() as u64)
 }
 
 fn process_lockfile_candidates() -> Vec<PathBuf> {
@@ -415,6 +473,34 @@ mod tests {
 
         assert_eq!(event.player_response, PlayerResponse::None);
         assert_eq!(event.timer, 3);
+    }
+
+    #[test]
+    fn parses_ready_check_timer_as_float_or_string() {
+        let float_message = r#"[8,"OnJsonApiEvent_lol-matchmaking_v1_ready-check",{"data":{"playerResponse":"None","timer":3.9}}]"#;
+        let string_message = r#"[8,"OnJsonApiEvent_lol-matchmaking_v1_ready-check",{"data":{"playerResponse":"None","timer":"4.2"}}]"#;
+
+        assert_eq!(
+            parse_ready_check_event(float_message)
+                .unwrap()
+                .unwrap()
+                .timer,
+            3
+        );
+        assert_eq!(
+            parse_ready_check_event(string_message)
+                .unwrap()
+                .unwrap()
+                .timer,
+            4
+        );
+    }
+
+    #[test]
+    fn ignores_ready_check_event_without_ready_check_data() {
+        let message = r#"[8,"OnJsonApiEvent_lol-matchmaking_v1_ready-check",{"data":null}]"#;
+
+        assert!(parse_ready_check_event(message).unwrap().is_none());
     }
 
     #[test]
