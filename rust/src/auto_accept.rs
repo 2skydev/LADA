@@ -100,13 +100,7 @@ async fn run_session(
                     return Ok(());
                 }
             }
-            _ = config_rx.changed() => {
-                let config = config_rx.borrow().clone();
-                if !config.enabled {
-                    scheduler.cancel();
-                    (status_callback)(BackendStatus::Connected);
-                }
-            }
+            _ = config_rx.changed() => {}
             _ = lockfile_check.tick() => {
                 if let Ok(current) = lcu::discover_lockfile(&config_rx.borrow().league_dir) {
                     if Credentials::from(current) != credentials {
@@ -198,7 +192,7 @@ pub fn accept_decision(
         return AcceptDecision::CancelPending;
     }
 
-    if !config.enabled || has_pending_accept {
+    if has_pending_accept {
         return AcceptDecision::Ignore;
     }
 
@@ -289,7 +283,7 @@ mod tests {
     }
 
     #[test]
-    fn ignores_when_disabled() {
+    fn legacy_enabled_field_does_not_disable_accept() {
         let config = AppConfig {
             enabled: false,
             ..AppConfig::default()
@@ -297,6 +291,6 @@ mod tests {
 
         let decision = accept_decision(&ready_check(PlayerResponse::None, 0), &config, false);
 
-        assert_eq!(decision, AcceptDecision::Ignore);
+        assert_eq!(decision, AcceptDecision::Schedule(Duration::from_secs(0)));
     }
 }

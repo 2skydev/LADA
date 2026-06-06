@@ -11,13 +11,11 @@ use crate::{
     config::{APP_NAME, AppConfig},
 };
 
-const MENU_AUTO_ACCEPT: &str = "auto_accept";
 const MENU_START_WITH_WINDOWS: &str = "start_with_windows";
 const MENU_QUIT: &str = "quit";
 const MENU_DELAY_PREFIX: &str = "delay_";
 
 pub enum TrayAction {
-    ToggleAutoAccept,
     SetDelay(u8),
     ToggleStartWithWindows,
     Quit,
@@ -37,7 +35,6 @@ pub enum TrayError {
 pub struct TrayApp {
     _tray_icon: TrayIcon,
     status_item: MenuItem,
-    auto_accept_item: CheckMenuItem,
     start_with_windows_item: CheckMenuItem,
     delay_items: Vec<CheckMenuItem>,
 }
@@ -45,16 +42,14 @@ pub struct TrayApp {
 impl TrayApp {
     pub fn new(config: &AppConfig) -> Result<Self, TrayError> {
         let tray_menu = Menu::new();
-        let status_item = MenuItem::new("Status: Disconnected", false, None);
-        let auto_accept_item =
-            CheckMenuItem::with_id(MENU_AUTO_ACCEPT, "Auto Accept", true, config.enabled, None);
-        let delay_menu = Submenu::new("Delay", true);
+        let status_item = MenuItem::new("상태: 연결 안 됨", false, None);
+        let delay_menu = Submenu::new("대기시간", true);
         let mut delay_items = Vec::new();
 
         for seconds in 0..=8 {
             let item = CheckMenuItem::with_id(
                 delay_menu_id(seconds),
-                format!("{seconds}s"),
+                format!("{seconds}초"),
                 true,
                 config.delay_seconds == seconds,
                 None,
@@ -65,16 +60,15 @@ impl TrayApp {
 
         let start_with_windows_item = CheckMenuItem::with_id(
             MENU_START_WITH_WINDOWS,
-            "Start with Windows",
+            "부팅 시 앱 자동 실행",
             true,
             config.start_with_windows,
             None,
         );
-        let quit_item = MenuItem::with_id(MENU_QUIT, "Quit", true, None);
+        let quit_item = MenuItem::with_id(MENU_QUIT, "앱 종료", true, None);
 
         tray_menu.append(&status_item)?;
         tray_menu.append(&PredefinedMenuItem::separator())?;
-        tray_menu.append(&auto_accept_item)?;
         tray_menu.append(&delay_menu)?;
         tray_menu.append(&start_with_windows_item)?;
         tray_menu.append(&PredefinedMenuItem::separator())?;
@@ -89,14 +83,12 @@ impl TrayApp {
         Ok(Self {
             _tray_icon: tray_icon,
             status_item,
-            auto_accept_item,
             start_with_windows_item,
             delay_items,
         })
     }
 
     pub fn update_config(&self, config: &AppConfig) {
-        self.auto_accept_item.set_checked(config.enabled);
         self.start_with_windows_item
             .set_checked(config.start_with_windows);
         for (seconds, item) in self.delay_items.iter().enumerate() {
@@ -106,12 +98,12 @@ impl TrayApp {
 
     pub fn update_status(&self, status: BackendStatus) {
         self.status_item.set_text(format!(
-            "Status: {}",
+            "상태: {}",
             match status {
-                BackendStatus::Disconnected => "Disconnected",
-                BackendStatus::Connected => "Connected",
-                BackendStatus::Waiting => "Waiting",
-                BackendStatus::Accepted => "Accepted",
+                BackendStatus::Disconnected => "연결 안 됨",
+                BackendStatus::Connected => "연결됨",
+                BackendStatus::Waiting => "대기 중",
+                BackendStatus::Accepted => "수락됨",
             }
         ));
     }
@@ -119,10 +111,6 @@ impl TrayApp {
 
 pub fn action_from_menu_event(event: &MenuEvent) -> TrayAction {
     let id = event.id.as_ref();
-
-    if id == MENU_AUTO_ACCEPT {
-        return TrayAction::ToggleAutoAccept;
-    }
 
     if id == MENU_START_WITH_WINDOWS {
         return TrayAction::ToggleStartWithWindows;

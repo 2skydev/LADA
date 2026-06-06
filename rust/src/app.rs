@@ -119,15 +119,6 @@ struct TrayActionContext<'a> {
 
 fn handle_tray_action(action: TrayAction, context: TrayActionContext<'_>) {
     match action {
-        TrayAction::ToggleAutoAccept => {
-            context.config.enabled = !context.config.enabled;
-            save_and_broadcast(
-                context.config,
-                context.store,
-                context.tray,
-                context.config_tx,
-            );
-        }
         TrayAction::SetDelay(delay) => {
             context.config.delay_seconds = delay;
             context.config.normalize();
