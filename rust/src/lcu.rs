@@ -25,6 +25,7 @@ use tokio_tungstenite::{
 pub const READY_CHECK_PATH: &str = "/lol-matchmaking/v1/ready-check";
 pub const READY_CHECK_ACCEPT_PATH: &str = "/lol-matchmaking/v1/ready-check/accept";
 pub const READY_CHECK_TOPIC: &str = "OnJsonApiEvent_lol-matchmaking_v1_ready-check";
+pub const CURRENT_SUMMONER_PATH: &str = "/lol-summoner/v1/current-summoner";
 const WAMP_PROTOCOL: &str = "wamp";
 
 #[derive(Debug, Error)]
@@ -183,6 +184,26 @@ impl LcuClient {
 
     pub fn credentials(&self) -> &Credentials {
         &self.credentials
+    }
+
+    pub async fn is_ready(&self) -> Result<bool, LcuError> {
+        let response = self
+            .http
+            .get(format!(
+                "{}{}",
+                self.credentials.http_base_url(),
+                CURRENT_SUMMONER_PATH
+            ))
+            .header(AUTHORIZATION.as_str(), self.credentials.auth_header())
+            .send()
+            .await?;
+
+        if !response.status().is_success() {
+            return Ok(false);
+        }
+
+        let value: Value = response.json().await?;
+        Ok(value.get("summonerId").and_then(Value::as_u64).is_some())
     }
 
     pub async fn ready_check(&self) -> Result<Option<ReadyCheck>, LcuError> {

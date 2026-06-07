@@ -86,6 +86,10 @@ async fn run_session(
     status_callback: StatusCallback,
 ) -> Result<(), AutoAcceptError> {
     let client = LcuClient::new(credentials.clone())?;
+    if !wait_until_lcu_ready(&client, &credentials, config_rx, shutdown_rx).await {
+        return Ok(());
+    }
+
     let mut events = client.ready_check_events().await?;
     let mut scheduler = AcceptScheduler::default();
     let mut lockfile_check = time::interval(Duration::from_secs(3));
@@ -123,6 +127,41 @@ async fn run_session(
             }
         }
     }
+}
+
+async fn wait_until_lcu_ready(
+    client: &LcuClient,
+    credentials: &Credentials,
+    config_rx: &mut watch::Receiver<AppConfig>,
+    shutdown_rx: &mut watch::Receiver<bool>,
+) -> bool {
+    loop {
+        if *shutdown_rx.borrow() {
+            return false;
+        }
+
+        if !credentials_are_current(credentials) {
+            return false;
+        }
+
+        match client.is_ready().await {
+            Ok(true) => return true,
+            Ok(false) => {}
+            Err(error) => debug!("LCU not ready yet: {error}"),
+        }
+
+        tokio::select! {
+            _ = time::sleep(Duration::from_secs(1)) => {}
+            _ = config_rx.changed() => {}
+            _ = shutdown_rx.changed() => {}
+        }
+    }
+}
+
+fn credentials_are_current(credentials: &Credentials) -> bool {
+    lcu::Lockfile::read(credentials.lockfile_path.clone())
+        .map(Credentials::from)
+        .is_ok_and(|current| current == *credentials)
 }
 
 async fn wait_for_retry_or_change(
